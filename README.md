@@ -6,7 +6,7 @@ Gradle brukes som byggverktøy og er bundlet inn.
 
 `./gradlew sA b`
 
-# Henvendelser
+## Henvendelser
 
 Spørsmål knyttet til koden eller prosjektet kan rettes mot:
 
