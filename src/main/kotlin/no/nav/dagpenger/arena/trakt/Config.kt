@@ -19,7 +19,11 @@ internal object Config {
             "DB_PASSWORD" to "password",
             "DB_PORT" to "5432",
             "DB_USERNAME" to "username",
-            "HTTP_PORT" to "8080"
+            "HTTP_PORT" to "8080",
+            "RAPID_APP_NAME" to "dp-arena-trakt",
+            "KAFKA_CONSUMER_GROUP_ID" to "dp-arena-trakt-v1",
+            "KAFKA_RAPID_TOPIC" to "teamdagpenger.rapid.v1",
+            "KAFKA_RESET_POLICY" to "latest",
         )
     )
 
@@ -51,5 +55,9 @@ internal object Config {
             connectionTimeout = 1000
             maxLifetime = 30001
         }
+    }
+
+    val config: Map<String, String> = properties.list().reversed().fold(emptyMap()) { map, pair ->
+        map + pair.second
     }
 }
