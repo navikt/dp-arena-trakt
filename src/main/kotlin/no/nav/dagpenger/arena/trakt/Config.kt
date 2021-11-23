@@ -11,6 +11,9 @@ import com.natpryce.konfig.stringType
 import com.zaxxer.hikari.HikariDataSource
 
 internal object Config {
+    private fun arenaGoldenGateTopics(miljø: String) =
+        """teamarenanais.aapen-arena-beregningsleddendret-v1-$miljø,
+           teamarenanais.aapen-arena-vedtakfaktaendret-v1-$miljø""".trimMargin()
 
     private val defaultProperties = ConfigurationMap(
         mapOf(
@@ -23,6 +26,7 @@ internal object Config {
             "RAPID_APP_NAME" to "dp-arena-trakt",
             "KAFKA_CONSUMER_GROUP_ID" to "dp-arena-trakt-v1",
             "KAFKA_RAPID_TOPIC" to "teamdagpenger.rapid.v1",
+            "KAFKA_EXTRA_TOPIC" to arenaGoldenGateTopics(miljø = "q2"),
             "KAFKA_RESET_POLICY" to "latest",
         )
     )
