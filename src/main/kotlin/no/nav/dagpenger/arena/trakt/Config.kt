@@ -11,9 +11,10 @@ import com.natpryce.konfig.stringType
 import com.zaxxer.hikari.HikariDataSource
 
 internal object Config {
-    private fun arenaGoldenGateTopics(miljø: String) =
-        """teamarenanais.aapen-arena-beregningsleddendret-v1-$miljø,
-           teamarenanais.aapen-arena-vedtakfaktaendret-v1-$miljø""".trimMargin()
+    private fun arenaGoldenGateTopics(miljø: String) = """
+        teamarenanais.aapen-arena-beregningsleddendret-v1-$miljø,
+        teamarenanais.aapen-arena-vedtakfaktaendret-v1-$miljø
+        """.trimMargin()
 
     private val defaultProperties = ConfigurationMap(
         mapOf(

@@ -8,7 +8,7 @@ import no.nav.helse.rapids_rivers.River
 
 val log = KotlinLogging.logger {}
 
-const val MAX_ANTALL_MELDINGER_LEST = 1000
+const val MAX_ANTALL_MELDINGER_LEST = 100
 
 class BeregningsleddoppdateringService(rapidsConnection: RapidsConnection) : River.PacketListener {
     var meldingerLest = 0;
@@ -16,7 +16,7 @@ class BeregningsleddoppdateringService(rapidsConnection: RapidsConnection) : Riv
     init {
         River(rapidsConnection).apply {
             validate {
-                //TODO: En eller annen key
+                it.rejectKey("@id")
             }
         }
     }

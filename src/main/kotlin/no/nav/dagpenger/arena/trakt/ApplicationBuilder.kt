@@ -2,6 +2,7 @@ package no.nav.dagpenger.arena.trakt
 
 import mu.KotlinLogging
 import no.nav.dagpenger.arena.trakt.hendelser.BeregningsleddoppdateringService
+import no.nav.helse.rapids_rivers.KafkaRapid
 import no.nav.helse.rapids_rivers.RapidApplication
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.RapidsConnection.StatusListener
@@ -9,9 +10,10 @@ import no.nav.helse.rapids_rivers.RapidsConnection.StatusListener
 val log = KotlinLogging.logger {}
 
 internal class ApplicationBuilder(config: Map<String, String>) : StatusListener {
+
     private val rapidsConnection = RapidApplication.Builder(
         RapidApplication.RapidApplicationConfig.fromEnv(config)
-    ).build()
+    ).build { _, kafkaRapid -> kafkaRapid.seekToBeginning() }
 
     init {
         rapidsConnection.register(this)
@@ -22,7 +24,6 @@ internal class ApplicationBuilder(config: Map<String, String>) : StatusListener 
 
     override fun onStartup(rapidsConnection: RapidsConnection) {
         log.info("starter dp-arena-trakt")
-
         BeregningsleddoppdateringService(rapidsConnection)
     }
 }
