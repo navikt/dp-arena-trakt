@@ -16,7 +16,7 @@ class BeregningsleddoppdateringService(rapidsConnection: RapidsConnection) : Riv
     init {
         River(rapidsConnection).apply {
             validate {
-                it.requireKey("beregningsledd_id")
+                //TODO: En eller annen key
             }
         }
     }
