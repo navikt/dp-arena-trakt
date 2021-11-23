@@ -17,7 +17,6 @@ internal class ApplicationBuilder(config: Map<String, String>) : StatusListener 
         rapidsConnection.register(this)
     }
 
-
     fun start() = rapidsConnection.start()
     fun stop() = rapidsConnection.stop()
 
