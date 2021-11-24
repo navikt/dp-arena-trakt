@@ -1,23 +1,15 @@
 package no.nav.dagpenger.arena.trakt
 
+import no.nav.dagpenger.arena.trakt.db.BeregningsleddRepository
 import org.intellij.lang.annotations.Language
 
 internal abstract class Datakrav(val navn: String) {
     internal abstract fun oppfyltFor(vedtak: Vedtak): Boolean
 }
 
-internal class Beregningsledd(navn: String) : Datakrav(navn) {
+internal class Beregningsledd(navn: String, val beregningsleddRepository: BeregningsleddRepository) : Datakrav(navn) {
     override fun oppfyltFor(vedtak: Vedtak): Boolean {
-        @Language("PostgreSQL")
-        val query = """SELECT data -> 'after' ->> 'BEREGNINGSLEDD_ID' AS id,
-            |       data -> 'after' ->> 'VERDI'             AS verdi
-            |FROM beregningsledd
-            |WHERE data ->> 'op_type' = 'I'
-            |  AND data -> 'after' ->> 'BEREGNINGSLEDDKODE' = '$navn'
-            |  AND data -> 'after' ->> 'TABELLNAVNALIAS_KILDE' = 'VEDTAK'
-            |  AND data -> 'after' ->> 'OBJEKT_ID_KILDE' = '${vedtak.id}'
-            """.trimMargin()
-        return false
+        return beregningsleddRepository.finn(navn, "vedtak", vedtak.id)
     }
 }
 

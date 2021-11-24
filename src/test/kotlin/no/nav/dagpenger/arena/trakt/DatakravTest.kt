@@ -6,7 +6,9 @@ import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Test
 
 internal class DatakravTest {
-    private val beregningsledd = Beregningsledd("DPTEL")
+    private val beregningsleddRepository = BeregningsleddRepository()
+
+    private val beregningsledd = Beregningsledd("DPTEL", beregningsleddRepository)
     private val vedtak = Vedtak("872397432", beregningsledd)
 
     @Test
@@ -31,12 +33,12 @@ private val JSON = """{
   "pos": "00000000000003215801",
   "after": {
     "BEREGNINGSLEDD_ID": 232916770,
-    "BEREGNINGSLEDDKODE": "BOAAP",
+    "BEREGNINGSLEDDKODE": "DPTEL",
     "DATO_FRA": "2018-06-10 00:00:00",
     "PERSON_ID": 4785892,
     "DATO_TIL": null,
-    "TABELLNAVNALIAS_KILDE": "KVOTBR",
-    "OBJEKT_ID_KILDE": 254588967,
+    "TABELLNAVNALIAS_KILDE": "VEDTAK",
+    "OBJEKT_ID_KILDE": 872397432,
     "REG_USER": "JD4402",
     "REG_DATO": "2021-02-27 20:10:20",
     "MOD_USER": "JD4402",
