@@ -2,7 +2,6 @@ package no.nav.dagpenger.arena.trakt
 
 import mu.KotlinLogging
 import no.nav.dagpenger.arena.trakt.hendelser.BeregningsleddoppdateringService
-import no.nav.helse.rapids_rivers.KafkaRapid
 import no.nav.helse.rapids_rivers.RapidApplication
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.RapidsConnection.StatusListener
