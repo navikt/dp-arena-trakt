@@ -20,7 +20,7 @@ class BeregningsleddoppdateringService(rapidsConnection: RapidsConnection) : Riv
 
     override fun onPacket(packet: JsonMessage, context: MessageContext) {
         if (meldingerLest < MAX_ANTALL_MELDINGER_LEST) {
-            log.info("log message {} {}", keyValue("ting", "pakke motatt"), keyValue("innhold", packet))
+            log.info("log message {} {}", keyValue("ting", "pakke motatt"), keyValue("innhold", packet.toJson()))
             meldingerLest++
         }
     }
