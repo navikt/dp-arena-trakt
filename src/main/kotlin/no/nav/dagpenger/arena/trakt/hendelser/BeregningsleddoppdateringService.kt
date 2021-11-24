@@ -15,10 +15,7 @@ class BeregningsleddoppdateringService(rapidsConnection: RapidsConnection) : Riv
     var meldingerLest = 0
 
     init {
-        River(rapidsConnection).apply {
-            validate {
-            }
-        }
+        River(rapidsConnection).register(this)
     }
 
     override fun onPacket(packet: JsonMessage, context: MessageContext) {
