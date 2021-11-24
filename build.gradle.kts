@@ -10,9 +10,7 @@ dependencies {
     implementation(Database.HikariCP)
     implementation(Database.Kotlinquery)
     implementation(Database.Postgres)
-    implementation("org.junit.jupiter:junit-jupiter:5.7.0")
-    implementation("org.junit.jupiter:junit-jupiter:5.7.0")
-    implementation("org.junit.jupiter:junit-jupiter:5.7.0")
+    testImplementation(TestContainers.postgresql)
 }
 
 application {
