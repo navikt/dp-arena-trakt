@@ -1,5 +1,7 @@
-package no.nav.dagpenger.arena.trakt
+package no.nav.dagpenger.arena.trakt.datakrav
 
+import no.nav.dagpenger.arena.trakt.IverksattVedtak
+import no.nav.dagpenger.arena.trakt.VedtakJSON
 import no.nav.dagpenger.arena.trakt.db.VedtakRepository
 import no.nav.dagpenger.arena.trakt.helpers.Postgres.withMigratedDb
 import org.junit.jupiter.api.Assertions.assertFalse

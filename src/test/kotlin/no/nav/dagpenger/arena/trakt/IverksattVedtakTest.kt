@@ -1,5 +1,7 @@
 package no.nav.dagpenger.arena.trakt
 
+import no.nav.dagpenger.arena.trakt.datakrav.Beregningsledd
+import no.nav.dagpenger.arena.trakt.datakrav.Vedtaksfakta
 import no.nav.dagpenger.arena.trakt.db.BeregningsleddRepository
 import no.nav.dagpenger.arena.trakt.db.VedtaksfaktaRepository
 import no.nav.dagpenger.arena.trakt.helpers.Postgres
