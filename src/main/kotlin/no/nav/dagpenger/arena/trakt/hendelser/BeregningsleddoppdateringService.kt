@@ -1,6 +1,7 @@
 package no.nav.dagpenger.arena.trakt.hendelser
 
 import mu.KotlinLogging
+import mu.withLoggingContext
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.RapidsConnection
@@ -13,12 +14,18 @@ class BeregningsleddoppdateringService(rapidsConnection: RapidsConnection) : Riv
     var meldingerLest = 0
 
     init {
-        River(rapidsConnection).register(this)
+        River(rapidsConnection).validate {
+            it.demandKey("table")
+        }.register(this)
     }
 
     override fun onPacket(packet: JsonMessage, context: MessageContext) {
         if (meldingerLest++ < MAX_ANTALL_MELDINGER_LEST) {
-            sikkerlogg.info { packet.toJson() }
+            withLoggingContext(
+                "tabell" to packet["table"].asText(),
+            ) {
+                sikkerlogg.info { packet.toJson() }
+            }
         }
     }
 }
