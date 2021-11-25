@@ -11,15 +11,16 @@ import com.natpryce.konfig.stringType
 import com.zaxxer.hikari.HikariDataSource
 
 internal object Config {
-    private fun arenaGoldenGateTopics(miljø: String) = """
-        teamarenanais.aapen-arena-beregningsleddendret-v1-$miljø,
-        teamarenanais.aapen-arena-vedtakfaktaendret-v1-$miljø,
-        teamarenanais.aapen-arena-vedtak-v1-$miljø,
-        teamarenanais.aapen-arena-kvotebruk-v1-$miljø,
-        teamarenanais.aapen-arena-beregningslogg-v1-$miljø,
-        teamarenanais.aapen-arena-meldekort-v1-$miljø,
-        teamarenanais.aapen-arena-sak-v1-$miljø,
-        """.trimMargin()
+    private fun lagArenaTopicNavn(navn: String, miljø: String) = "teamarenanais.aapen-arena-${navn}endret-v1-$miljø"
+    private fun arenaTopics(miljø: String) = listOf(
+        "beregningsledd",
+        "vedtakfakta",
+        "vedtak",
+        "kvotebruk",
+        "beregningslogg",
+        "meldekort",
+        "sak"
+    ).joinToString(",") { lagArenaTopicNavn(it, miljø) }
 
     private val defaultProperties = ConfigurationMap(
         mapOf(
@@ -32,15 +33,13 @@ internal object Config {
             "RAPID_APP_NAME" to "dp-arena-trakt",
             "KAFKA_CONSUMER_GROUP_ID" to "dp-arena-trakt-v1",
             "KAFKA_RAPID_TOPIC" to "teamdagpenger.rapid.v1",
-            "KAFKA_EXTRA_TOPIC" to arenaGoldenGateTopics(miljø = "q2"),
+            "KAFKA_EXTRA_TOPIC" to arenaTopics(miljø = "q2"),
             "KAFKA_RESET_POLICY" to "latest",
         )
     )
-
     private val prodProperties = ConfigurationMap(
         mapOf()
     )
-
     val properties: Configuration by lazy {
         val systemAndEnvProperties = ConfigurationProperties.systemProperties() overriding EnvironmentVariables()
         when (System.getenv().getOrDefault("NAIS_CLUSTER_NAME", "LOCAL")) {
@@ -48,9 +47,7 @@ internal object Config {
             else -> systemAndEnvProperties overriding defaultProperties
         }
     }
-
     val port = properties[Key("HTTP_PORT", intType)]
-
     val dataSource by lazy {
         HikariDataSource().apply {
             dataSourceClassName = "org.postgresql.ds.PGSimpleDataSource"
@@ -66,7 +63,6 @@ internal object Config {
             maxLifetime = 30001
         }
     }
-
     val config: Map<String, String> = properties.list().reversed().fold(emptyMap()) { map, pair ->
         map + pair.second
     }
