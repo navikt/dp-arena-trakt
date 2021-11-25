@@ -2,6 +2,7 @@ package no.nav.dagpenger.arena.trakt
 
 import mu.KotlinLogging
 import no.nav.dagpenger.arena.trakt.hendelser.BeregningsleddoppdateringService
+import no.nav.dagpenger.arena.trakt.hendelser.VedtakService
 import no.nav.helse.rapids_rivers.RapidApplication
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.RapidsConnection.StatusListener
@@ -24,5 +25,6 @@ internal class ApplicationBuilder(config: Map<String, String>) : StatusListener 
     override fun onStartup(rapidsConnection: RapidsConnection) {
         log.info("starter dp-arena-trakt")
         BeregningsleddoppdateringService(rapidsConnection)
+        VedtakService(rapidsConnection)
     }
 }
