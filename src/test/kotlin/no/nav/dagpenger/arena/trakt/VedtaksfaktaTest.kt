@@ -9,12 +9,12 @@ import org.junit.jupiter.api.Test
 internal class VedtaksfaktaTest {
     private val repository = VedtaksfaktaRepository()
     private val vedtaksfakta = Vedtaksfakta("ENDRTILUNN", repository)
-    private val vedtak = Vedtak("123", vedtaksfakta)
+    private val vedtak = IverksattVedtak("123", vedtaksfakta)
 
     @Test
     fun `Vedtaksfaktakrav er ikke oppfylt`() {
         withMigratedDb {
-            assertFalse(vedtaksfakta .oppfyltFor(vedtak))
+            assertFalse(vedtaksfakta.oppfyltFor(vedtak))
         }
     }
 

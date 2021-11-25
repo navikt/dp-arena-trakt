@@ -13,7 +13,12 @@ import com.zaxxer.hikari.HikariDataSource
 internal object Config {
     private fun arenaGoldenGateTopics(miljø: String) = """
         teamarenanais.aapen-arena-beregningsleddendret-v1-$miljø,
-        teamarenanais.aapen-arena-vedtakfaktaendret-v1-$miljø
+        teamarenanais.aapen-arena-vedtakfaktaendret-v1-$miljø,
+        teamarenanais.aapen-arena-vedtak-v1-$miljø,
+        teamarenanais.aapen-arena-kvotebruk-v1-$miljø,
+        teamarenanais.aapen-arena-beregningslogg-v1-$miljø,
+        teamarenanais.aapen-arena-meldekort-v1-$miljø,
+        teamarenanais.aapen-arena-sak-v1-$miljø,
         """.trimMargin()
 
     private val defaultProperties = ConfigurationMap(

@@ -7,10 +7,9 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 internal class BeregningsleddTest {
-
     private val beregningsleddRepository = BeregningsleddRepository()
     private val beregningsledd = Beregningsledd("DPTEL", beregningsleddRepository)
-    private val vedtak = Vedtak("123", beregningsledd)
+    private val vedtak = IverksattVedtak("123", beregningsledd)
 
     @Test
     fun `Beregningsleddkrav er ikke oppfylt`() {

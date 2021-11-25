@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
-internal class VedtakTest {
+internal class IverksattVedtakTest {
     private val vedtaksid = "123"
     private val beregningsleddRepository = BeregningsleddRepository()
     private val vedtaksfaktaRepository = VedtaksfaktaRepository()
@@ -15,7 +15,7 @@ internal class VedtakTest {
     @Test
     fun `Vedtak skal ikke være komplett`() {
         Postgres.withMigratedDb {
-            val vedtak = Vedtak(
+            val vedtak = IverksattVedtak(
                 vedtaksid,
                 Beregningsledd("DPTEL", beregningsleddRepository),
                 Vedtaksfakta("ANTB", vedtaksfaktaRepository)
@@ -27,7 +27,7 @@ internal class VedtakTest {
     @Test
     fun `Vedtak skal være komplett`() {
         Postgres.withMigratedDb {
-            val vedtak = Vedtak(
+            val vedtak = IverksattVedtak(
                 vedtaksid,
                 Beregningsledd("DPTEL", beregningsleddRepository),
                 Vedtaksfakta("ENDRTILUNN", vedtaksfaktaRepository)
