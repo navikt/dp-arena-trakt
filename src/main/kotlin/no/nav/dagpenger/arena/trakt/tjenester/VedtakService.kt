@@ -1,4 +1,4 @@
-package no.nav.dagpenger.arena.trakt.hendelser
+package no.nav.dagpenger.arena.trakt.tjenester
 
 import mu.KotlinLogging
 import mu.withLoggingContext
