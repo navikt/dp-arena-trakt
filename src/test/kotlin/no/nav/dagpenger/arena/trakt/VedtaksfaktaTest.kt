@@ -21,7 +21,7 @@ internal class VedtaksfaktaTest {
     @Test
     fun `Vedtaksfaktakrav er oppfylt`() {
         withMigratedDb {
-            VedtaksfaktaRepository().insert(VedtaksFaktaJSON)
+            repository.insert(VedtaksFaktaJSON)
             assertTrue(vedtaksfakta.oppfyltFor(vedtak))
         }
     }

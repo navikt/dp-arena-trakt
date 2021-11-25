@@ -7,8 +7,8 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 internal class BeregningsleddTest {
-    private val beregningsleddRepository = BeregningsleddRepository()
-    private val beregningsledd = Beregningsledd("DPTEL", beregningsleddRepository)
+    private val repository = BeregningsleddRepository()
+    private val beregningsledd = Beregningsledd("DPTEL", repository)
     private val vedtak = IverksattVedtak("123", beregningsledd)
 
     @Test
@@ -21,7 +21,7 @@ internal class BeregningsleddTest {
     @Test
     fun `Beregningsleddkrav er oppfylt`() {
         withMigratedDb {
-            BeregningsleddRepository().insert(BeregningsleddJSON)
+            repository.insert(BeregningsleddJSON)
             assertTrue(beregningsledd.oppfyltFor(vedtak))
         }
     }

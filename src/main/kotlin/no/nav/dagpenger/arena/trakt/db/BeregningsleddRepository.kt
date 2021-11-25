@@ -7,13 +7,12 @@ import no.nav.dagpenger.arena.trakt.db.PostgresDataSourceBuilder.dataSource
 import org.intellij.lang.annotations.Language
 
 class BeregningsleddRepository {
-
     fun finn(navn: String, relatertObjektType: String, relatertObjektId: String): Boolean {
         val beregningsledd = using(sessionOf(dataSource)) { session ->
             session.run(
                 queryOf(finnQuery, navn, relatertObjektType, relatertObjektId)
                     .map { row ->
-                         row.string("id")
+                        row.string("id")
                     }.asSingle
             )
         }

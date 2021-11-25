@@ -12,13 +12,12 @@ class VedtaksfaktaRepository {
         using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
             session.run(queryOf(query, json).asUpdate)
         }
-
     }
 
     fun finn(vedtakfaktaKode: String, vedtakId: String): Boolean {
         val vedtaksfakta = using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
             session.run(
-                queryOf(finnVedtaksfaktaQuery, vedtakfaktaKode,vedtakId)
+                queryOf(finnVedtaksfaktaQuery, vedtakfaktaKode, vedtakId)
                     .map { row ->
                         row.string("id")
                     }.asSingle
@@ -28,12 +27,12 @@ class VedtaksfaktaRepository {
     }
 
     @Language("PostgreSQL")
-    private val finnVedtaksfaktaQuery = """SELECT data -> 'after' ->> 'VEDTAK_ID' AS id,
-            |       data -> 'after' ->> 'VEDTAKFAKTAKODE' AS verdi
-            |FROM vedtaksfakta
-            |WHERE data ->> 'op_type' = 'I'
-            |  AND data -> 'after' ->> 'VEDTAKFAKTAKODE' = ?
-            |  AND data -> 'after' ->> 'VEDTAK_ID' = ?
-
-            """.trimMargin()
+    private val finnVedtaksfaktaQuery = """
+        |SELECT data -> 'after' ->> 'VEDTAK_ID' AS id,
+        |       data -> 'after' ->> 'VEDTAKFAKTAKODE' AS verdi
+        |FROM vedtaksfakta
+        |WHERE data ->> 'op_type' = 'I'
+        |  AND data -> 'after' ->> 'VEDTAKFAKTAKODE' = ?
+        |  AND data -> 'after' ->> 'VEDTAK_ID' = ?
+        """.trimMargin()
 }
