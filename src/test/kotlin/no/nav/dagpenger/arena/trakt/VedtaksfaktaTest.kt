@@ -21,37 +21,8 @@ internal class VedtaksfaktaTest {
     @Test
     fun `Vedtaksfaktakrav er oppfylt`() {
         withMigratedDb {
-            VedtaksfaktaRepository().insert(JSON)
+            VedtaksfaktaRepository().insert(VedtaksFaktaJSON)
             assertTrue(vedtaksfakta.oppfyltFor(vedtak))
         }
     }
-
-
 }
-
-private val JSON = """{
-  "table": "SIAMO.VEDTAKFAKTA",
-  "op_type": "I",
-  "op_ts": "2021-11-18 11:37:16.455389",
-  "current_ts": "2021-11-18 12:54:59.322016",
-  "pos": "00000000000002519525",
-  "after": {
-    "VEDTAK_ID": 123,
-    "VEDTAKFAKTAKODE": "ENDRTILUNN",
-    "VEDTAKVERDI": null,
-    "REG_DATO": "2020-07-25 13:04:24",
-    "REG_USER": "AT4402",
-    "MOD_DATO": "2020-07-25 13:04:24",
-    "MOD_USER": "AT4402",
-    "PERSON_ID": null,
-    "PARTISJON": null
-  },
-  "system_read_count": 0,
-  "system_participating_services": [
-    {
-      "service": "dp-arena-trakt",
-      "instance": "dp-arena-trakt-7bd588b78d-nf5c9",
-      "time": "2021-11-24T09:36:54.56467414"
-    }
-  ]
-}""".trimMargin()
