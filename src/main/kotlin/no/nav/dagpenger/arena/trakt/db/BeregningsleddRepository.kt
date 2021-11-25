@@ -12,7 +12,9 @@ class BeregningsleddRepository {
         val beregningsledd = using(sessionOf(dataSource)) { session ->
             session.run(
                 queryOf(finnQuery, navn, relatertObjektType, relatertObjektId)
-                    .map { row -> row.string(1) }.asSingle
+                    .map { row ->
+                         row.string("id")
+                    }.asSingle
             )
         }
         return beregningsledd != null
@@ -33,8 +35,8 @@ class BeregningsleddRepository {
         |       data -> 'after' ->> 'VERDI'             AS verdi
         |FROM beregningsledd
         |WHERE data ->> 'op_type' = 'I'
-        |  AND data -> 'after' ->> 'BEREGNINGSLEDDKODE' = '?'
-        |  AND data -> 'after' ->> 'TABELLNAVNALIAS_KILDE' = '?'
-        |  AND data -> 'after' ->> 'OBJEKT_ID_KILDE' = '?'
+        |  AND data -> 'after' ->> 'BEREGNINGSLEDDKODE' = ?
+        |  AND data -> 'after' ->> 'TABELLNAVNALIAS_KILDE' = ?
+        |  AND data -> 'after' ->> 'OBJEKT_ID_KILDE' = ?
         """.trimMargin()
 }

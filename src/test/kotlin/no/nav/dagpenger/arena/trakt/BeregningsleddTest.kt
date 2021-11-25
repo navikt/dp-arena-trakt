@@ -3,24 +3,27 @@ package no.nav.dagpenger.arena.trakt
 import no.nav.dagpenger.arena.trakt.db.BeregningsleddRepository
 import no.nav.dagpenger.arena.trakt.helpers.Postgres.withMigratedDb
 import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
-internal class DatakravTest {
-    private val beregningsleddRepository = BeregningsleddRepository()
+internal class BeregningsleddTest {
 
+    private val beregningsleddRepository = BeregningsleddRepository()
     private val beregningsledd = Beregningsledd("DPTEL", beregningsleddRepository)
-    private val vedtak = Vedtak("872397432", beregningsledd)
+    private val vedtak = Vedtak("123", beregningsledd)
 
     @Test
-    fun `Er ikke oppfylt`() {
-        assertFalse(beregningsledd.oppfyltFor(vedtak))
+    fun `Beregningsleddkrav er ikke oppfylt`() {
+        withMigratedDb {
+            assertFalse(beregningsledd.oppfyltFor(vedtak))
+        }
     }
 
     @Test
-    fun `Er oppfylt`() {
+    fun `Beregningsleddkrav er oppfylt`() {
         withMigratedDb {
             BeregningsleddRepository().insert(JSON)
-            assertFalse(beregningsledd.oppfyltFor(vedtak))
+            assertTrue(beregningsledd.oppfyltFor(vedtak))
         }
     }
 }
@@ -38,7 +41,7 @@ private val JSON = """{
     "PERSON_ID": 4785892,
     "DATO_TIL": null,
     "TABELLNAVNALIAS_KILDE": "VEDTAK",
-    "OBJEKT_ID_KILDE": 872397432,
+    "OBJEKT_ID_KILDE": 123,
     "REG_USER": "JD4402",
     "REG_DATO": "2021-02-27 20:10:20",
     "MOD_USER": "JD4402",
