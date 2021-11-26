@@ -1,11 +1,27 @@
 package no.nav.dagpenger.arena.trakt.datakrav
 
 import no.nav.dagpenger.arena.trakt.IverksattVedtak
-import no.nav.dagpenger.arena.trakt.db.BeregningsleddRepository
+import org.intellij.lang.annotations.Language
 
-internal class Beregningsledd(private val navn: String, private val beregningsleddRepository: BeregningsleddRepository) : Datakrav() {
+internal class Beregningsledd(private val navn: String) : Datakrav() {
     override fun oppfyltFor(vedtak: IverksattVedtak): Boolean {
-        // realtertObjektType + vedtakid er kobling til vedtak
-        return beregningsleddRepository.finn(navn, "VEDTAK", vedtak.id)
+        return finnData(
+            mapOf(
+                "navn" to navn,
+                "objektType" to "VEDTAK",
+                "objektId" to vedtak.id
+            )
+        )
     }
+
+    @Language("PostgreSQL")
+    override val query = """
+        |SELECT data -> 'after' ->> 'BEREGNINGSLEDD_ID' AS id,
+        |       data -> 'after' ->> 'VERDI'             AS verdi
+        |FROM data
+        |WHERE data ->> 'op_type' = 'I'
+        |  AND data -> 'after' ->> 'BEREGNINGSLEDDKODE' = :navn
+        |  AND data -> 'after' ->> 'TABELLNAVNALIAS_KILDE' = :objektType
+        |  AND data -> 'after' ->> 'OBJEKT_ID_KILDE' = :objektId
+        """.trimMargin()
 }
