@@ -1,11 +1,15 @@
 package no.nav.dagpenger.arena.trakt.datakrav
 
-import no.nav.dagpenger.arena.trakt.IverksattVedtak
+import no.nav.dagpenger.arena.trakt.Hendelse
 import org.intellij.lang.annotations.Language
 
 internal class Vedtak : Datakrav() {
-    override fun oppfyltFor(vedtak: IverksattVedtak): Boolean {
-        return finnData(mapOf("vedtakId" to vedtak.id))
+    override fun oppfyltFor(vedtak: Hendelse): Boolean {
+        return finnData(mapOf("vedtakId" to vedtak.id)) {
+            { row ->
+                row.string("id")
+            }
+        }
     }
 
     @Language("PostgreSQL")

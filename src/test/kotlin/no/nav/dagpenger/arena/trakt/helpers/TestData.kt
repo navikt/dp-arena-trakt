@@ -1,7 +1,8 @@
-package no.nav.dagpenger.arena.trakt
+package no.nav.dagpenger.arena.trakt.helpers
 
 import org.intellij.lang.annotations.Language
 
+@Language("JSON")
 internal val VedtaksFaktaJSON = """{
   "table": "SIAMO.VEDTAKFAKTA",
   "op_type": "I",
@@ -11,7 +12,7 @@ internal val VedtaksFaktaJSON = """{
   "after": {
     "VEDTAK_ID": 123,
     "VEDTAKFAKTAKODE": "ENDRTILUNN",
-    "VEDTAKVERDI": null,
+    "VEDTAKVERDI": "foobar",
     "REG_DATO": "2020-07-25 13:04:24",
     "REG_USER": "AT4402",
     "MOD_DATO": "2020-07-25 13:04:24",
@@ -29,6 +30,7 @@ internal val VedtaksFaktaJSON = """{
   ]
 }""".trimMargin()
 
+@Language("JSON")
 internal val BeregningsleddJSON = """{
   "table": "SIAMO.BEREGNINGSLEDD",
   "op_type": "I",

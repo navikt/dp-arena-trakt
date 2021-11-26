@@ -1,18 +1,19 @@
 package no.nav.dagpenger.arena.trakt.datakrav
 
-import no.nav.dagpenger.arena.trakt.IverksattVedtak
+import no.nav.dagpenger.arena.trakt.Hendelse
 import org.intellij.lang.annotations.Language
 
 internal class Beregningsledd(private val navn: String) : Datakrav() {
-    override fun oppfyltFor(vedtak: IverksattVedtak): Boolean {
-        return finnData(
-            mapOf(
-                "navn" to navn,
-                "objektType" to "VEDTAK",
-                "objektId" to vedtak.id
-            )
-        )
+    override fun oppfyltFor(vedtak: Hendelse): Boolean {
+        return finnData(params(vedtak)) {
+            { row ->
+                row.string("id")
+            }
+        }
     }
+
+    private fun params(vedtak: Hendelse) =
+        mapOf("navn" to navn, "objektType" to "VEDTAK", "objektId" to vedtak.id)
 
     @Language("PostgreSQL")
     override val query = """
