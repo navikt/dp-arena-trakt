@@ -1,16 +1,16 @@
 package no.nav.dagpenger.arena.trakt.datakrav
 
+import kotliquery.Row
 import no.nav.dagpenger.arena.trakt.Hendelse
 import org.intellij.lang.annotations.Language
 
-internal class Vedtaksfakta(private val navn: String) : Datakrav() {
-    override fun oppfyltFor(vedtak: Hendelse): Boolean {
-        return finnData(mapOf("navn" to navn, "vedtakId" to vedtak.id)) {
-            { row ->
-                row.string("id")
-            }
-        }
-    }
+internal class Vedtaksfakta(navn: String, hendelse: Hendelse) : Datakrav<String>(navn, hendelse) {
+    override val params = mapOf(
+        "navn" to navn,
+        "vedtakId" to hendelse.id
+    )
+
+    override fun mapper(row: Row) = row.string("verdi")
 
     @Language("PostgreSQL")
     override val query = """

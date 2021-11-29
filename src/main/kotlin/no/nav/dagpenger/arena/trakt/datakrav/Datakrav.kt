@@ -7,15 +7,17 @@ import kotliquery.using
 import no.nav.dagpenger.arena.trakt.Hendelse
 import no.nav.dagpenger.arena.trakt.db.PostgresDataSourceBuilder
 
-internal abstract class Datakrav() {
-    abstract val query: String
+internal abstract class Datakrav<T>(private val id: String, internal val hendelse: Hendelse) {
+    internal abstract val params: Map<String, Any>
+    internal abstract val query: String
+    private val data by lazy { finnData() }
 
-    abstract fun oppfyltFor(vedtak: Hendelse): Boolean
+    fun oppfylt() = data !== null
 
-    internal fun finnData(params: Map<String, Any>, mapper: () -> (Row) -> String?): Boolean {
-        val vedtaksfakta = using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
-            session.run(queryOf(query, params).map(mapper()).asSingle)
+    internal abstract fun mapper(row: Row): T
+
+    private fun finnData() =
+        using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
+            session.run(queryOf(query, params).map(::mapper).asSingle)
         }
-        return vedtaksfakta != null
-    }
 }

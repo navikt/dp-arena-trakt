@@ -11,13 +11,13 @@ import org.junit.jupiter.api.Test
 
 internal class VedtakTest {
     private val repository = DataRepository()
-    private val vedtak = Vedtak()
-    private val hendelse = Hendelse(VedtakIverksatt, "123", vedtak)
+    private val hendelse = Hendelse(VedtakIverksatt, "123") {}
+    private val vedtak = Vedtak("123", hendelse)
 
     @Test
     fun `Vedtak finnes ikke enda`() {
         withMigratedDb {
-            assertFalse(vedtak.oppfyltFor(hendelse))
+            assertFalse(vedtak.oppfylt())
         }
     }
 
@@ -25,7 +25,7 @@ internal class VedtakTest {
     fun `Vedtak finnes`() {
         withMigratedDb {
             repository.lagre(VedtakJSON)
-            assertTrue(vedtak.oppfyltFor(hendelse))
+            assertTrue(vedtak.oppfylt())
         }
     }
 }
