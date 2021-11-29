@@ -1,24 +1,28 @@
 package no.nav.dagpenger.arena.trakt
 
-import no.nav.dagpenger.arena.trakt.datakrav.Beregningsledd
 import no.nav.dagpenger.arena.trakt.datakrav.Datakrav
-import no.nav.dagpenger.arena.trakt.datakrav.Vedtak
-import no.nav.dagpenger.arena.trakt.datakrav.Vedtaksfakta
+import no.nav.dagpenger.arena.trakt.serde.HendelseVisitor
 
 internal class Hendelse(
-    val type: Type,
-    val id: String,
-    val datakrav: KravBygger.() -> Unit
+    private val type: Type,
+    internal val id: String,
+    internal val kravbygger: KravBygger.() -> Unit
 ) {
-    private val krav = mutableListOf<Datakrav<*>>()
+    private val datakrav = mutableListOf<Datakrav<*>>()
 
     init {
         KravBygger(this).also {
-            datakrav(it)
+            kravbygger(it)
         }
     }
 
-    fun komplett() = krav.all { it.oppfylt() }
+    fun komplett() = datakrav.all { it.oppfylt() }
+
+    internal fun accept(visitor: HendelseVisitor) {
+        visitor.preVisit(this, type, id)
+        datakrav.forEach { it.accept(visitor) }
+        visitor.postVisit(this, type, id)
+    }
 
     enum class Type {
         VedtakIverksatt,
@@ -27,14 +31,9 @@ internal class Hendelse(
     }
 
     internal class KravBygger(val hendelse: Hendelse) {
-        inline fun <reified T : Datakrav<*>> krev(id: String) {
-            hendelse.krav.add(T::class.java.getConstructor().newInstance(id, hendelse))
+        fun <T> krev(datakrav: Datakrav<T>) {
+            datakrav.hendelse = hendelse
+            hendelse.datakrav.add(datakrav)
         }
     }
 }
-
-private val b = Hendelse(Hendelse.Type.BeregningUtført, "123") {
-    krev<Beregningsledd>("123")
-    krev<Vedtaksfakta>("123")
-    krev<Vedtak>("123")
-}.komplett()

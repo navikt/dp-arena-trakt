@@ -11,8 +11,8 @@ import org.junit.jupiter.api.Test
 
 internal class VedtakTest {
     private val repository = DataRepository()
-    private val hendelse = Hendelse(VedtakIverksatt, "123") {}
-    private val vedtak = Vedtak("123", hendelse)
+    private val vedtakHendelse = Hendelse(VedtakIverksatt, "123") {}
+    private val vedtak = Vedtak("123").apply { hendelse = vedtakHendelse }
 
     @Test
     fun `Vedtak finnes ikke enda`() {

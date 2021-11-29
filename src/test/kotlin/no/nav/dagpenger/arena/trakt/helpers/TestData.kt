@@ -3,7 +3,7 @@ package no.nav.dagpenger.arena.trakt.helpers
 import org.intellij.lang.annotations.Language
 
 @Language("JSON")
-internal val VedtaksFaktaJSON = """{
+internal fun vedtaksfaktaJSON(navn: String = "ENDRTILUNN") = """{
   "table": "SIAMO.VEDTAKFAKTA",
   "op_type": "I",
   "op_ts": "2021-11-18 11:37:16.455389",
@@ -11,7 +11,7 @@ internal val VedtaksFaktaJSON = """{
   "pos": "00000000000002519525",
   "after": {
     "VEDTAK_ID": 123,
-    "VEDTAKFAKTAKODE": "ENDRTILUNN",
+    "VEDTAKFAKTAKODE": "$navn",
     "VEDTAKVERDI": "foobar",
     "REG_DATO": "2020-07-25 13:04:24",
     "REG_USER": "AT4402",
@@ -31,7 +31,7 @@ internal val VedtaksFaktaJSON = """{
 }""".trimMargin()
 
 @Language("JSON")
-internal val BeregningsleddJSON = """{
+internal fun beregningsleddJSON(navn: String = "DPTEL") = """{
   "table": "SIAMO.BEREGNINGSLEDD",
   "op_type": "I",
   "op_ts": "2021-11-18 11:25:45.338291",
@@ -39,7 +39,7 @@ internal val BeregningsleddJSON = """{
   "pos": "00000000000003215801",
   "after": {
     "BEREGNINGSLEDD_ID": 232916770,
-    "BEREGNINGSLEDDKODE": "DPTEL",
+    "BEREGNINGSLEDDKODE": "$navn",
     "DATO_FRA": "2018-06-10 00:00:00",
     "PERSON_ID": 4785892,
     "DATO_TIL": null,
