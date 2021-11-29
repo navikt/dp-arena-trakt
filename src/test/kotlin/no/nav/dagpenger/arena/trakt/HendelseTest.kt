@@ -6,8 +6,8 @@ import no.nav.dagpenger.arena.trakt.datakrav.Vedtak
 import no.nav.dagpenger.arena.trakt.datakrav.Vedtaksfakta
 import no.nav.dagpenger.arena.trakt.db.DataRepository
 import no.nav.dagpenger.arena.trakt.helpers.Postgres
-import no.nav.dagpenger.arena.trakt.helpers.VedtakJSON
 import no.nav.dagpenger.arena.trakt.helpers.beregningsleddJSON
+import no.nav.dagpenger.arena.trakt.helpers.vedtakJSON
 import no.nav.dagpenger.arena.trakt.helpers.vedtaksfaktaJSON
 import no.nav.dagpenger.arena.trakt.serde.VedtakIverksattJsonBuilder
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -48,7 +48,7 @@ internal class HendelseTest {
 
             dataRepository.lagre(beregningsleddJSON("DPTEL"))
             dataRepository.lagre(vedtaksfaktaJSON("ENDRTILUNN"))
-            dataRepository.lagre(VedtakJSON)
+            dataRepository.lagre(vedtakJSON())
 
             assertTrue(vedtak.komplett())
         }
@@ -68,7 +68,7 @@ internal class HendelseTest {
 
             dataRepository.lagre(beregningsleddJSON("DPTEL"))
             dataRepository.lagre(vedtaksfaktaJSON("ENDRTILUNN"))
-            dataRepository.lagre(VedtakJSON)
+            dataRepository.lagre(vedtakJSON())
 
             VedtakIverksattJsonBuilder(vedtak).resultat().also { json ->
                 assertTrue(json.has("hendelse"))
@@ -79,4 +79,3 @@ internal class HendelseTest {
         }
     }
 }
-

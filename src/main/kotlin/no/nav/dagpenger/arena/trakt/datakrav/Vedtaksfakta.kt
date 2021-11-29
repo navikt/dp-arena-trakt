@@ -16,7 +16,7 @@ internal class Vedtaksfakta(private val navn: String) : Datakrav<String>(navn) {
         |SELECT data -> 'after' ->> 'VEDTAK_ID'       AS id,
         |       data -> 'after' ->> 'VEDTAKFAKTAKODE' AS verdi
         |FROM data
-        |WHERE data ->> 'table' = 'VEDTAKFAKTA'
+        |WHERE data ->> 'table' = 'SIAMO.VEDTAKFAKTA'
         |  AND data ->> 'op_type' = 'I'
         |  AND data -> 'after' ->> 'VEDTAKFAKTAKODE' = :navn
         |  AND data -> 'after' ->> 'VEDTAK_ID' = :vedtakId

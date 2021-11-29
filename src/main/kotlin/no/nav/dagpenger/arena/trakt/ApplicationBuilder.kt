@@ -1,8 +1,10 @@
 package no.nav.dagpenger.arena.trakt
 
 import mu.KotlinLogging
-import no.nav.dagpenger.arena.trakt.tjenester.BeregningsleddoppdateringService
-import no.nav.dagpenger.arena.trakt.tjenester.VedtakService
+import no.nav.dagpenger.arena.trakt.db.DataRepository
+import no.nav.dagpenger.arena.trakt.db.HendelseRepository
+import no.nav.dagpenger.arena.trakt.tjenester.DataMottakService
+import no.nav.dagpenger.arena.trakt.tjenester.VedtakHendelseService
 import no.nav.helse.rapids_rivers.RapidApplication
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.RapidsConnection.StatusListener
@@ -10,7 +12,6 @@ import no.nav.helse.rapids_rivers.RapidsConnection.StatusListener
 val log = KotlinLogging.logger {}
 
 internal class ApplicationBuilder(config: Map<String, String>) : StatusListener {
-
     private val rapidsConnection = RapidApplication.Builder(
         RapidApplication.RapidApplicationConfig.fromEnv(config)
     ).build { _, kafkaRapid -> kafkaRapid.seekToBeginning() }
@@ -23,8 +24,11 @@ internal class ApplicationBuilder(config: Map<String, String>) : StatusListener 
     fun stop() = rapidsConnection.stop()
 
     override fun onStartup(rapidsConnection: RapidsConnection) {
-        log.info("starter dp-arena-trakt")
-        BeregningsleddoppdateringService(rapidsConnection)
-        VedtakService(rapidsConnection)
+        val repository = DataRepository()
+        val hendelseRepository = HendelseRepository()
+
+        DataMottakService(rapidsConnection, repository, hendelseRepository)
+        // FIXME: BeregningsleddService(rapidsConnection,hendelseRepository)
+        VedtakHendelseService(rapidsConnection, hendelseRepository)
     }
 }

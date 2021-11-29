@@ -64,14 +64,14 @@ internal fun beregningsleddJSON(navn: String = "DPTEL") = """{
 }""".trimMargin()
 
 @Language("JSON")
-internal val VedtakJSON = """{
+internal fun vedtakJSON(vedtakId: Int = 123) = """{
   "table": "SIAMO.VEDTAK",
   "op_type": "I",
   "op_ts": "2021-11-18 11:36:18.004455",
   "current_ts": "2021-11-18 12:53:14.964000",
   "pos": "00000000000019642427",
   "after": {
-    "VEDTAK_ID": 123,
+    "VEDTAK_ID": $vedtakId,
     "SAK_ID": 13314473,
     "VEDTAKSTATUSKODE": "IVERK",
     "VEDTAKTYPEKODE": "O",

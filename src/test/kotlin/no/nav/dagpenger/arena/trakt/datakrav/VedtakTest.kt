@@ -4,7 +4,7 @@ import no.nav.dagpenger.arena.trakt.Hendelse
 import no.nav.dagpenger.arena.trakt.Hendelse.Type.VedtakIverksatt
 import no.nav.dagpenger.arena.trakt.db.DataRepository
 import no.nav.dagpenger.arena.trakt.helpers.Postgres.withMigratedDb
-import no.nav.dagpenger.arena.trakt.helpers.VedtakJSON
+import no.nav.dagpenger.arena.trakt.helpers.vedtakJSON
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -24,7 +24,7 @@ internal class VedtakTest {
     @Test
     fun `Vedtak finnes`() {
         withMigratedDb {
-            repository.lagre(VedtakJSON)
+            repository.lagre(vedtakJSON())
             assertTrue(vedtak.oppfylt())
         }
     }
