@@ -28,8 +28,8 @@ internal class ApplicationBuilder(config: Map<String, String>) : StatusListener 
     fun stop() = rapidsConnection.stop()
 
     override fun onStartup(rapidsConnection: RapidsConnection) {
+        clean()
         runMigration().also {
-            clean()
             val repository = DataRepository()
             val hendelseRepository = HendelseRepository(rapidsConnection)
 
