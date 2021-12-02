@@ -9,9 +9,10 @@ import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.River
 
+private val logg = KotlinLogging.logger {}
 private val sikkerlogg = KotlinLogging.logger("tjenestekall.vedtak")
 
-internal class VedtakHendelseService(
+internal class VedtakService(
     rapidsConnection: RapidsConnection,
     private val hendelseRepository: HendelseRepository
 ) : River.PacketListener {
@@ -32,13 +33,13 @@ internal class VedtakHendelseService(
             "tabell" to packet["table"].asText(),
             "vedtakId" to vedtakId,
         ) {
-            sikkerlogg.info { "Mottok lagret vedtak" }
             val vedtakHendelse = vedtak(vedtakId)
+            logg.info { "Mottok data om ${vedtakHendelse.hendelseId}" }
 
-            if (hendelseRepository.leggPåKø(vedtakHendelse).isEmpty()) {
-                sikkerlogg.info { "Har komplett datasett, publiserer hendelse" }
+            if (hendelseRepository.leggPåKø(vedtakHendelse)) {
+                logg.info { "Har komplett datasett, publiserer ${vedtakHendelse.hendelseId}" }
             } else {
-                sikkerlogg.info { "Det mangler fortsatt data, vi må vente litt til" }
+                logg.info { "Det mangler fortsatt data for ${vedtakHendelse.hendelseId}, vi må vente litt til" }
             }
         }
     }

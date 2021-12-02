@@ -7,7 +7,7 @@ import no.nav.dagpenger.arena.trakt.db.PostgresDataSourceBuilder.clean
 import no.nav.dagpenger.arena.trakt.db.PostgresDataSourceBuilder.runMigration
 import no.nav.dagpenger.arena.trakt.tjenester.BeregningsleddService
 import no.nav.dagpenger.arena.trakt.tjenester.DataMottakService
-import no.nav.dagpenger.arena.trakt.tjenester.VedtakHendelseService
+import no.nav.dagpenger.arena.trakt.tjenester.VedtakService
 import no.nav.dagpenger.arena.trakt.tjenester.VedtaksfaktaService
 import no.nav.helse.rapids_rivers.RapidApplication
 import no.nav.helse.rapids_rivers.RapidsConnection
@@ -36,7 +36,7 @@ internal class ApplicationBuilder(config: Map<String, String>) : StatusListener 
             DataMottakService(rapidsConnection, repository, hendelseRepository)
             BeregningsleddService(rapidsConnection, hendelseRepository)
             VedtaksfaktaService(rapidsConnection, hendelseRepository)
-            VedtakHendelseService(rapidsConnection, hendelseRepository)
+            VedtakService(rapidsConnection, hendelseRepository)
         }
     }
 }

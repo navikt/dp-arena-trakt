@@ -7,15 +7,13 @@ import no.nav.dagpenger.arena.trakt.datakrav.Vedtaksfakta
 import no.nav.dagpenger.arena.trakt.serde.HendelseVisitor
 
 internal class Hendelse private constructor(
-    val type: Type,
-    internal val id: String,
-    internal val kravbygger: KravBygger.() -> Unit
+    internal val hendelseId: HendelseId,
+    internal val kravbygger: KravBygger.() -> Unit,
 ) {
     private val datakrav = mutableListOf<Datakrav<*>>()
-    private val hendelseId = HendelseId(type, id)
 
     companion object {
-        fun vedtak(id: String) = Hendelse(Type.Vedtak, id) {
+        fun vedtak(id: String) = Hendelse(HendelseId(Type.Vedtak, id)) {
             krev(Beregningsledd("BL1"))
             krev(Vedtaksfakta("VF1"))
             krev(Vedtak(id))
@@ -31,9 +29,9 @@ internal class Hendelse private constructor(
     fun komplett() = datakrav.all { it.oppfylt() }
 
     internal fun accept(visitor: HendelseVisitor) {
-        visitor.preVisit(this, type, id)
+        visitor.preVisit(this, hendelseId.type, hendelseId.id)
         datakrav.forEach { it.accept(visitor) }
-        visitor.postVisit(this, type, id)
+        visitor.postVisit(this, hendelseId.type, hendelseId.id)
     }
 
     internal enum class Type {
@@ -45,7 +43,7 @@ internal class Hendelse private constructor(
 
     internal class KravBygger(val hendelse: Hendelse) {
         fun <T> krev(datakrav: Datakrav<T>) {
-            datakrav.hendelse = hendelse
+            datakrav.hendelse = hendelse.hendelseId
             hendelse.datakrav.add(datakrav)
         }
     }

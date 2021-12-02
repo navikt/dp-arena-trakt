@@ -18,17 +18,17 @@ internal class HendelseRepository private constructor(
         rapidsConnection = rapidsConnection
     )
 
-    fun leggPåKø(hendelse: Hendelse): List<Hendelse> {
-        if (ferdigeHendelser.contains(hendelse)) return emptyList()
+    fun leggPåKø(hendelse: Hendelse): Boolean {
+        if (ferdigeHendelser.contains(hendelse)) return true
 
         hendelser.add(hendelse)
 
-        return finnFerdigeHendelser()
+        return finnFerdigeHendelser().isNotEmpty()
     }
 
     fun finnFerdigeHendelser(): List<Hendelse> = hendelser.filter { it.komplett() }
         .onEach { ferdigHendelse ->
-            when (ferdigHendelse.type) {
+            when (ferdigHendelse.hendelseId.type) {
                 Hendelse.Type.BeregningUtført -> TODO()
                 Hendelse.Type.Vedtak -> VedtakHendelseJsonBuilder(ferdigHendelse).resultat()
             }.also {

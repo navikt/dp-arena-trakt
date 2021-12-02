@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test
 internal class BeregningsleddTest {
     private val repository = DataRepository()
     private val vedtak = Hendelse.vedtak("123")
-    private val beregningsledd = Beregningsledd("DPTEL").apply { hendelse = vedtak }
+    private val beregningsledd = Beregningsledd("DPTEL").apply { hendelse = vedtak.hendelseId }
 
     @Test
     fun `Beregningsleddkrav er ikke oppfylt`() {

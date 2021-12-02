@@ -8,7 +8,7 @@ import no.nav.dagpenger.arena.trakt.helpers.vedtakJSON
 import no.nav.dagpenger.arena.trakt.helpers.vedtaksfaktaJSON
 import no.nav.dagpenger.arena.trakt.tjenester.BeregningsleddService
 import no.nav.dagpenger.arena.trakt.tjenester.DataMottakService
-import no.nav.dagpenger.arena.trakt.tjenester.VedtakHendelseService
+import no.nav.dagpenger.arena.trakt.tjenester.VedtakService
 import no.nav.dagpenger.arena.trakt.tjenester.VedtaksfaktaService
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -21,7 +21,7 @@ internal class IntegrationTest {
     private val rapid = TestRapid().also {
         hendelseRepository = HendelseRepository(it)
         DataMottakService(it, dataRepository, hendelseRepository)
-        VedtakHendelseService(it, hendelseRepository)
+        VedtakService(it, hendelseRepository)
         BeregningsleddService(it, hendelseRepository)
         VedtaksfaktaService(it, hendelseRepository)
     }
@@ -97,6 +97,21 @@ internal class IntegrationTest {
 
             with(rapid.inspektør) {
                 assertEquals(2, size)
+            }
+        }
+    }
+
+    @Test
+    fun `Publiserer ingenting uten komplette datasett`() {
+        withMigratedDb {
+            rapid.sendTestMessage(beregningsleddJSON("BL1", 12345))
+            rapid.sendTestMessage(vedtakJSON(123))
+            rapid.sendTestMessage(vedtakJSON(12345))
+            rapid.sendTestMessage(vedtakJSON(555))
+            rapid.sendTestMessage(vedtaksfaktaJSON("VF1", 123))
+
+            with(rapid.inspektør) {
+                assertEquals(0, size)
             }
         }
     }
