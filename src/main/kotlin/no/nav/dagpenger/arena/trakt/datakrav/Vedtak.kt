@@ -10,13 +10,15 @@ internal class Vedtak(id: String) : Datakrav<VedtakData>(id) {
 
     override fun mapper(row: Row) = VedtakData(
         id = row.string("id"),
-        utfall = row.string("utfall")
+        utfall = row.string("utfall"),
+        vedtakstype = row.string("type")
     )
 
     @Language("PostgreSQL")
     override val query = """
         |SELECT data -> 'after' ->> 'VEDTAK_ID'        AS id,
-        |       data -> 'after' ->> 'VEDTAKSTATUSKODE' AS utfall
+        |       data -> 'after' ->> 'VEDTAKSTATUSKODE' AS utfall,
+        |       data -> 'after' ->> 'VEDTAKTYPEKODE' AS type 
         |FROM data
         |WHERE data ->> 'table' = 'SIAMO.VEDTAK'
         |  AND data ->> 'op_type' = 'I'
@@ -24,4 +26,4 @@ internal class Vedtak(id: String) : Datakrav<VedtakData>(id) {
         """.trimMargin()
 }
 
-internal data class VedtakData(val id: String, val utfall: String)
+internal data class VedtakData(val id: String, val utfall: String, val vedtakstype: String)

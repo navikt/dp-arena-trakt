@@ -1,14 +1,42 @@
 package no.nav.dagpenger.arena.trakt.db
 
+import mu.KotlinLogging
 import no.nav.dagpenger.arena.trakt.Hendelse
+import no.nav.dagpenger.arena.trakt.serde.VedtakHendelseJsonBuilder
+import no.nav.helse.rapids_rivers.RapidsConnection
 
-internal class HendelseRepository(
-    // TODO: Bør lagres i Database for å tåle restarts
-    private val hendelser: MutableList<Hendelse> = mutableListOf()
+private val sikkerlogg = KotlinLogging.logger("tjenestekall.hendelse")
+
+internal class HendelseRepository private constructor(
+    private val hendelser: MutableSet<Hendelse>,
+    private val ferdigeHendelser: MutableSet<Hendelse>,
+    private val rapidsConnection: RapidsConnection
 ) {
-    fun leggTilVent(hendelse: Hendelse) = hendelser.add(hendelse)
+    constructor(rapidsConnection: RapidsConnection) : this(
+        hendelser = mutableSetOf(),
+        ferdigeHendelser = mutableSetOf(),
+        rapidsConnection = rapidsConnection
+    )
 
-    fun finnFerdigeHendelser() = hendelser.filter { it.komplett() }.onEach(::fjern)
+    fun leggPåKø(hendelse: Hendelse): List<Hendelse> {
+        if (ferdigeHendelser.contains(hendelse)) return emptyList()
 
-    private fun fjern(hendelse: Hendelse) = hendelser.remove(hendelse)
+        hendelser.add(hendelse)
+
+        return finnFerdigeHendelser()
+    }
+
+    fun finnFerdigeHendelser(): List<Hendelse> = hendelser.filter { it.komplett() }
+        .onEach { ferdigHendelse ->
+            when (ferdigHendelse.type) {
+                Hendelse.Type.BeregningUtført -> TODO()
+                Hendelse.Type.Vedtak -> VedtakHendelseJsonBuilder(ferdigHendelse).resultat()
+            }.also {
+                rapidsConnection.publish(it.toString())
+                sikkerlogg.info { "Publiserte ferdig hendelse: ${it.toPrettyString()}" }
+            }
+        }.onEach {
+            ferdigeHendelser.add(it)
+            hendelser.remove(it)
+        }
 }

@@ -9,33 +9,32 @@ import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.River
 
-private val sikkerlogg = KotlinLogging.logger("tjenestekall.beregningsledd")
+private val sikkerlogg = KotlinLogging.logger("tjenestekall.vedtaksfakta")
 
-internal class BeregningsleddService(
+internal class VedtaksfaktaService(
     rapidsConnection: RapidsConnection,
     private val hendelseRepository: HendelseRepository
 ) : River.PacketListener {
     init {
         River(rapidsConnection).validate {
-            it.demandValue("table", "SIAMO.BEREGNINGSLEDD")
-            it.demandValue("after.TABELLNAVNALIAS_KILDE", "VEDTAK")
+            it.demandValue("table", "SIAMO.VEDTAKFAKTA")
             it.requireKey(
-                "after.BEREGNINGSLEDDKODE",
-                "after.OBJEKT_ID_KILDE"
+                "after.VEDTAK_ID",
+                "after.VEDTAKFAKTAKODE"
             )
         }.register(this)
     }
 
     override fun onPacket(packet: JsonMessage, context: MessageContext) {
-        val navn = packet["after.BEREGNINGSLEDDKODE"].asText()
-        val vedtakId = packet["after.OBJEKT_ID_KILDE"].asText()
+        val navn = packet["after.VEDTAKFAKTAKODE"].asText()
+        val vedtakId = packet["after.VEDTAK_ID"].asText()
 
         withLoggingContext(
             "tabell" to packet["table"].asText(),
             "vedtakId" to vedtakId,
             "navn" to navn
         ) {
-            sikkerlogg.info { "Mottok beregningsledd ($navn)" }
+            sikkerlogg.info { "Mottok vedtaksfakta ($navn)" }
             val vedtakHendelse = vedtak(vedtakId)
 
             if (hendelseRepository.leggPåKø(vedtakHendelse).isEmpty()) {

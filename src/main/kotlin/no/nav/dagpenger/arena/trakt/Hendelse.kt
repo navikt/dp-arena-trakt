@@ -6,22 +6,16 @@ import no.nav.dagpenger.arena.trakt.datakrav.Vedtak
 import no.nav.dagpenger.arena.trakt.datakrav.Vedtaksfakta
 import no.nav.dagpenger.arena.trakt.serde.HendelseVisitor
 
-// TODO: Private constructor
-internal class Hendelse(
+internal class Hendelse private constructor(
     val type: Type,
     internal val id: String,
     internal val kravbygger: KravBygger.() -> Unit
 ) {
     private val datakrav = mutableListOf<Datakrav<*>>()
+    private val hendelseId = HendelseId(type, id)
 
     companion object {
-        fun vedtakIverksatt(id: String) = Hendelse(Type.VedtakIverksatt, id) {
-            krev(Beregningsledd("BL1"))
-            krev(Vedtaksfakta("VF1"))
-            krev(Vedtak(id))
-        }
-
-        fun vedtakEndret(id: String) = Hendelse(Type.VedtakEndret, id) {
+        fun vedtak(id: String) = Hendelse(Type.Vedtak, id) {
             krev(Beregningsledd("BL1"))
             krev(Vedtaksfakta("VF1"))
             krev(Vedtak(id))
@@ -43,10 +37,11 @@ internal class Hendelse(
     }
 
     internal enum class Type {
-        VedtakIverksatt,
-        VedtakEndret,
-        BeregningUtført
+        BeregningUtført,
+        Vedtak
     }
+
+    internal data class HendelseId(val type: Type, val id: String)
 
     internal class KravBygger(val hendelse: Hendelse) {
         fun <T> krev(datakrav: Datakrav<T>) {
@@ -54,4 +49,7 @@ internal class Hendelse(
             hendelse.datakrav.add(datakrav)
         }
     }
+
+    override fun equals(other: Any?) = other is Hendelse && hendelseId == other.hendelseId
+    override fun hashCode() = hendelseId.hashCode()
 }

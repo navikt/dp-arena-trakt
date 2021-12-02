@@ -9,7 +9,8 @@ import no.nav.dagpenger.arena.trakt.datakrav.Vedtak
 import no.nav.dagpenger.arena.trakt.datakrav.VedtakData
 import no.nav.dagpenger.arena.trakt.datakrav.Vedtaksfakta
 
-internal class VedtakIverksattJsonBuilder(vedtak: Hendelse) : HendelseVisitor {
+internal class VedtakHendelseJsonBuilder(vedtak: Hendelse) : HendelseVisitor {
+    private lateinit var vedtakstype: Vedtakstype
     private val mapper = ObjectMapper()
     private val root: ObjectNode = mapper.createObjectNode()
     private val fakta = mapper.createArrayNode()
@@ -21,7 +22,6 @@ internal class VedtakIverksattJsonBuilder(vedtak: Hendelse) : HendelseVisitor {
     fun resultat() = root
 
     override fun preVisit(hendelse: Hendelse, type: Hendelse.Type, id: String) {
-        root.put("hendelse", type.toString())
         root.put("vedtakId", id)
 
         root.replace("fakta", fakta)
@@ -34,6 +34,12 @@ internal class VedtakIverksattJsonBuilder(vedtak: Hendelse) : HendelseVisitor {
             is Vedtak -> {
                 require(data is VedtakData)
                 leggTilFakta("utfall", data.utfall)
+
+                vedtakstype = when (data.vedtakstype) {
+                    "O" -> Vedtakstype.Opprettet
+                    "E" -> Vedtakstype.Endret
+                    else -> throw Error("Ukjent type")
+                }
             }
         }
     }
@@ -45,5 +51,14 @@ internal class VedtakIverksattJsonBuilder(vedtak: Hendelse) : HendelseVisitor {
 
             fakta.add(it)
         }
+    }
+
+    override fun postVisit(hendelse: Hendelse, type: Hendelse.Type, id: String) {
+        root.put("@event_type", vedtakstype.hendelsesNavn)
+    }
+
+    private enum class Vedtakstype(val hendelsesNavn: String) {
+        Opprettet("VedtakOpprettet"),
+        Endret("VedtakEndret")
     }
 }

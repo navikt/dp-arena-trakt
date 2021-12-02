@@ -3,8 +3,12 @@ package no.nav.dagpenger.arena.trakt
 import mu.KotlinLogging
 import no.nav.dagpenger.arena.trakt.db.DataRepository
 import no.nav.dagpenger.arena.trakt.db.HendelseRepository
+import no.nav.dagpenger.arena.trakt.db.PostgresDataSourceBuilder.clean
+import no.nav.dagpenger.arena.trakt.db.PostgresDataSourceBuilder.runMigration
+import no.nav.dagpenger.arena.trakt.tjenester.BeregningsleddService
 import no.nav.dagpenger.arena.trakt.tjenester.DataMottakService
 import no.nav.dagpenger.arena.trakt.tjenester.VedtakHendelseService
+import no.nav.dagpenger.arena.trakt.tjenester.VedtaksfaktaService
 import no.nav.helse.rapids_rivers.RapidApplication
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.RapidsConnection.StatusListener
@@ -24,11 +28,15 @@ internal class ApplicationBuilder(config: Map<String, String>) : StatusListener 
     fun stop() = rapidsConnection.stop()
 
     override fun onStartup(rapidsConnection: RapidsConnection) {
-        val repository = DataRepository()
-        val hendelseRepository = HendelseRepository()
+        runMigration().also {
+            clean()
+            val repository = DataRepository()
+            val hendelseRepository = HendelseRepository(rapidsConnection)
 
-        DataMottakService(rapidsConnection, repository, hendelseRepository)
-        // FIXME: BeregningsleddService(rapidsConnection,hendelseRepository)
-        VedtakHendelseService(rapidsConnection, hendelseRepository)
+            DataMottakService(rapidsConnection, repository, hendelseRepository)
+            BeregningsleddService(rapidsConnection, hendelseRepository)
+            VedtaksfaktaService(rapidsConnection, hendelseRepository)
+            VedtakHendelseService(rapidsConnection, hendelseRepository)
+        }
     }
 }

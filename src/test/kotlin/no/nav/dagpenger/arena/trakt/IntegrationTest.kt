@@ -6,8 +6,10 @@ import no.nav.dagpenger.arena.trakt.helpers.Postgres.withMigratedDb
 import no.nav.dagpenger.arena.trakt.helpers.beregningsleddJSON
 import no.nav.dagpenger.arena.trakt.helpers.vedtakJSON
 import no.nav.dagpenger.arena.trakt.helpers.vedtaksfaktaJSON
+import no.nav.dagpenger.arena.trakt.tjenester.BeregningsleddService
 import no.nav.dagpenger.arena.trakt.tjenester.DataMottakService
 import no.nav.dagpenger.arena.trakt.tjenester.VedtakHendelseService
+import no.nav.dagpenger.arena.trakt.tjenester.VedtaksfaktaService
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
@@ -15,10 +17,13 @@ import org.junit.jupiter.api.Test
 
 internal class IntegrationTest {
     private val dataRepository: DataRepository = DataRepository()
-    private val hendelseRepository = HendelseRepository()
+    private var hendelseRepository: HendelseRepository
     private val rapid = TestRapid().also {
+        hendelseRepository = HendelseRepository(it)
         DataMottakService(it, dataRepository, hendelseRepository)
         VedtakHendelseService(it, hendelseRepository)
+        BeregningsleddService(it, hendelseRepository)
+        VedtaksfaktaService(it, hendelseRepository)
     }
 
     @BeforeEach
@@ -79,16 +84,19 @@ internal class IntegrationTest {
     }
 
     @Test
-    fun `rekkefølge 5 med andre ting`() {
+    fun `rekkefølge 5 med andre flere vedtak`() {
         withMigratedDb {
             rapid.sendTestMessage(beregningsleddJSON("BL1"))
             rapid.sendTestMessage(beregningsleddJSON("BL2"))
+            rapid.sendTestMessage(beregningsleddJSON("BL1", 12345))
             rapid.sendTestMessage(vedtakJSON(123))
             rapid.sendTestMessage(vedtakJSON(12345))
+            rapid.sendTestMessage(vedtakJSON(555))
             rapid.sendTestMessage(vedtaksfaktaJSON("VF1"))
+            rapid.sendTestMessage(vedtaksfaktaJSON("VF1", 12345))
 
             with(rapid.inspektør) {
-                assertEquals(1, size)
+                assertEquals(2, size)
             }
         }
     }

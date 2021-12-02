@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test
 
 internal class BeregningsleddTest {
     private val repository = DataRepository()
-    private val vedtak = Hendelse(Hendelse.Type.VedtakIverksatt, "123") {}
+    private val vedtak = Hendelse.vedtak("123")
     private val beregningsledd = Beregningsledd("DPTEL").apply { hendelse = vedtak }
 
     @Test

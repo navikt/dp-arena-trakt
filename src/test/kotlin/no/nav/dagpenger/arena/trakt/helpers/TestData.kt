@@ -3,14 +3,14 @@ package no.nav.dagpenger.arena.trakt.helpers
 import org.intellij.lang.annotations.Language
 
 @Language("JSON")
-internal fun vedtaksfaktaJSON(navn: String = "ENDRTILUNN") = """{
+internal fun vedtaksfaktaJSON(navn: String = "ENDRTILUNN", vedtakId: Int = 123) = """{
   "table": "SIAMO.VEDTAKFAKTA",
   "op_type": "I",
   "op_ts": "2021-11-18 11:37:16.455389",
   "current_ts": "2021-11-18 12:54:59.322016",
   "pos": "00000000000002519525",
   "after": {
-    "VEDTAK_ID": 123,
+    "VEDTAK_ID": $vedtakId,
     "VEDTAKFAKTAKODE": "$navn",
     "VEDTAKVERDI": "foobar",
     "REG_DATO": "2020-07-25 13:04:24",
@@ -31,7 +31,7 @@ internal fun vedtaksfaktaJSON(navn: String = "ENDRTILUNN") = """{
 }""".trimMargin()
 
 @Language("JSON")
-internal fun beregningsleddJSON(navn: String = "DPTEL") = """{
+internal fun beregningsleddJSON(navn: String = "DPTEL", vedtakId: Int = 123) = """{
   "table": "SIAMO.BEREGNINGSLEDD",
   "op_type": "I",
   "op_ts": "2021-11-18 11:25:45.338291",
@@ -44,7 +44,7 @@ internal fun beregningsleddJSON(navn: String = "DPTEL") = """{
     "PERSON_ID": 4785892,
     "DATO_TIL": null,
     "TABELLNAVNALIAS_KILDE": "VEDTAK",
-    "OBJEKT_ID_KILDE": 123,
+    "OBJEKT_ID_KILDE": $vedtakId,
     "REG_USER": "JD4402",
     "REG_DATO": "2021-02-27 20:10:20",
     "MOD_USER": "JD4402",
