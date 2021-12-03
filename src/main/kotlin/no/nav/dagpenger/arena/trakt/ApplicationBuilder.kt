@@ -19,7 +19,7 @@ internal class ApplicationBuilder(config: Map<String, String>) : StatusListener 
     private val rapidsConnection = RapidApplication.Builder(
         RapidApplication.RapidApplicationConfig.fromEnv(config)
     ).build { _, kafkaRapid ->
-        kafkaRapid.seekToBeginning()
+        // kafkaRapid.seekToBeginning()
     }
 
     init {
@@ -30,7 +30,7 @@ internal class ApplicationBuilder(config: Map<String, String>) : StatusListener 
     fun stop() = rapidsConnection.stop()
 
     override fun onStartup(rapidsConnection: RapidsConnection) {
-        clean()
+        // clean()
         runMigration().also {
             val repository = DataRepository()
             val hendelseRepository = HendelseRepository(rapidsConnection)
