@@ -20,7 +20,7 @@ internal class Hendelse private constructor(
         }
         fun vedtak(id: String) = Hendelse(HendelseId(Type.Vedtak, id)) {
             krev(Beregningsledd("DPTEL"))
-            krev(Vedtaksfakta("ARBTIDREG"))
+            krev(Vedtaksfakta("FDATO"))
             krev(Vedtak(id))
         }
     }

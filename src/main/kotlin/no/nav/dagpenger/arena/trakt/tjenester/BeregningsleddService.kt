@@ -6,6 +6,7 @@ import no.nav.dagpenger.arena.trakt.Hendelse.Companion.vedtak
 import no.nav.dagpenger.arena.trakt.db.HendelseRepository
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
+import no.nav.helse.rapids_rivers.MessageProblems
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.River
 
@@ -25,6 +26,14 @@ internal class BeregningsleddService(
                 "after.OBJEKT_ID_KILDE"
             )
         }.register(this)
+    }
+
+    override fun onError(problems: MessageProblems, context: MessageContext) {
+        sikkerlogg.error { problems.toExtendedReport() }
+    }
+
+    override fun onSevere(error: MessageProblems.MessageException, context: MessageContext) {
+        sikkerlogg.error { error.toString() }
     }
 
     override fun onPacket(packet: JsonMessage, context: MessageContext) {

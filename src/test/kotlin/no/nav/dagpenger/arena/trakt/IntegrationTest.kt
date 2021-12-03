@@ -34,7 +34,7 @@ internal class IntegrationTest {
     @Test
     fun `rekkefølge 1`() {
         withMigratedDb {
-            rapid.sendTestMessage(vedtaksfaktaJSON("ARBTIDREG"))
+            rapid.sendTestMessage(vedtaksfaktaJSON("FDATO"))
             rapid.sendTestMessage(vedtakJSON(123))
             rapid.sendTestMessage(beregningsleddJSON("DPTEL"))
 
@@ -48,7 +48,7 @@ internal class IntegrationTest {
     fun `rekkefølge 2`() {
         withMigratedDb {
             rapid.sendTestMessage(vedtakJSON(123))
-            rapid.sendTestMessage(vedtaksfaktaJSON("ARBTIDREG"))
+            rapid.sendTestMessage(vedtaksfaktaJSON("FDATO"))
             rapid.sendTestMessage(beregningsleddJSON("DPTEL"))
 
             with(rapid.inspektør) {
@@ -60,7 +60,7 @@ internal class IntegrationTest {
     @Test
     fun `rekkefølge 3`() {
         withMigratedDb {
-            rapid.sendTestMessage(vedtaksfaktaJSON("ARBTIDREG"))
+            rapid.sendTestMessage(vedtaksfaktaJSON("FDATO"))
             rapid.sendTestMessage(beregningsleddJSON("DPTEL"))
             rapid.sendTestMessage(vedtakJSON(123))
 
@@ -75,7 +75,7 @@ internal class IntegrationTest {
         withMigratedDb {
             rapid.sendTestMessage(beregningsleddJSON("DPTEL"))
             rapid.sendTestMessage(vedtakJSON(123))
-            rapid.sendTestMessage(vedtaksfaktaJSON("ARBTIDREG"))
+            rapid.sendTestMessage(vedtaksfaktaJSON("FDATO"))
 
             with(rapid.inspektør) {
                 assertEquals(1, size)
@@ -92,8 +92,8 @@ internal class IntegrationTest {
             rapid.sendTestMessage(vedtakJSON(123))
             rapid.sendTestMessage(vedtakJSON(12345))
             rapid.sendTestMessage(vedtakJSON(555))
-            rapid.sendTestMessage(vedtaksfaktaJSON("ARBTIDREG"))
-            rapid.sendTestMessage(vedtaksfaktaJSON("ARBTIDREG", 12345))
+            rapid.sendTestMessage(vedtaksfaktaJSON("FDATO"))
+            rapid.sendTestMessage(vedtaksfaktaJSON("FDATO", 12345))
 
             with(rapid.inspektør) {
                 assertEquals(2, size)
@@ -108,7 +108,7 @@ internal class IntegrationTest {
             rapid.sendTestMessage(vedtakJSON(123))
             rapid.sendTestMessage(vedtakJSON(12345))
             rapid.sendTestMessage(vedtakJSON(555))
-            rapid.sendTestMessage(vedtaksfaktaJSON("ARBTIDREG", 123))
+            rapid.sendTestMessage(vedtaksfaktaJSON("FDATO", 123))
 
             with(rapid.inspektør) {
                 assertEquals(0, size)
