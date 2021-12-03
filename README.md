@@ -16,3 +16,7 @@ Spørsmål knyttet til koden eller prosjektet kan rettes mot:
 ## For NAV-ansatte
 
 Interne henvendelser kan sendes via Slack i kanalen #team-dagpenger-dev.
+
+## Etterlevelse
+### Dataminimering
+Vi markerer data vi trenger som "i bruk" og sletter alt annet etter innsamling

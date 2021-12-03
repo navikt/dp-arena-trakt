@@ -1,5 +1,8 @@
 package no.nav.dagpenger.arena.trakt.db
 
+import kotliquery.queryOf
+import kotliquery.sessionOf
+import kotliquery.using
 import no.nav.dagpenger.arena.trakt.Hendelse
 import no.nav.dagpenger.arena.trakt.helpers.Postgres.withMigratedDb
 import no.nav.dagpenger.arena.trakt.helpers.beregningsleddJSON
@@ -31,8 +34,18 @@ internal class HendelseRepositoryTest {
             assertTrue(hendelseRepository.leggPåKø(vedtak))
 
             assertEquals(1, testRapid.inspektør.size)
+            assertEquals(3, antallBrukteData())
         }
     }
+
+    private fun antallBrukteData() =
+        using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
+            session.run(
+                queryOf("SELECT COUNT(hendelseid) FROM arena_data")
+                    .map { it.int(1) }
+                    .asSingle
+            )
+        }
 
     @Test
     fun `leggPåKø skal returnere true om hendelsen ikke er sendt`() {

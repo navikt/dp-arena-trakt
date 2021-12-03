@@ -5,6 +5,7 @@ import no.nav.dagpenger.arena.trakt.datakrav.Datakrav
 import no.nav.dagpenger.arena.trakt.datakrav.Vedtak
 import no.nav.dagpenger.arena.trakt.datakrav.Vedtaksfakta
 import no.nav.dagpenger.arena.trakt.serde.HendelseVisitor
+import java.util.UUID
 
 internal class Hendelse private constructor(
     internal val hendelseId: HendelseId,
@@ -18,6 +19,7 @@ internal class Hendelse private constructor(
             krev(Vedtaksfakta("VF1"))
             krev(Vedtak(id))
         }
+
         fun vedtak(id: String) = Hendelse(HendelseId(Type.Vedtak, id)) {
             krev(Beregningsledd("DPTEL"))
             krev(Vedtaksfakta("FDATO"))
@@ -44,7 +46,7 @@ internal class Hendelse private constructor(
         Vedtak
     }
 
-    internal data class HendelseId(val type: Type, val id: String)
+    internal data class HendelseId(val type: Type, val id: String, val uuid: UUID = UUID.randomUUID())
 
     internal class KravBygger(val hendelse: Hendelse) {
         fun <T> krev(datakrav: Datakrav<T>) {

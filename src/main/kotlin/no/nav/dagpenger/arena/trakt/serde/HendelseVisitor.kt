@@ -9,5 +9,5 @@ internal interface HendelseVisitor : DatakravVisitor {
 }
 
 internal interface DatakravVisitor {
-    fun <T> visit(datakrav: Datakrav<T>, id: String, data: T?) {}
+    fun <T> visit(datakrav: Datakrav<T>, id: String, resultat: Datakrav.Resultat<T>?, oppfylt: Boolean) {}
 }

@@ -7,6 +7,7 @@ import kotliquery.using
 import no.nav.dagpenger.arena.trakt.Hendelse.HendelseId
 import no.nav.dagpenger.arena.trakt.db.PostgresDataSourceBuilder
 import no.nav.dagpenger.arena.trakt.serde.DatakravVisitor
+import java.math.BigInteger
 
 internal abstract class Datakrav<T>(private val navn: String) {
     internal lateinit var hendelse: HendelseId
@@ -17,14 +18,15 @@ internal abstract class Datakrav<T>(private val navn: String) {
 
     fun oppfylt() = data !== null
 
-    internal abstract fun mapper(row: Row): T
-
+    internal abstract fun mapper(row: Row): Resultat<T>
     private fun finnData() =
         using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
             session.run(queryOf(query, params()).map(::mapper).asSingle)
         }
 
     fun accept(visitor: DatakravVisitor) {
-        visitor.visit(this, navn, data)
+        visitor.visit(this, navn, data, oppfylt())
     }
+
+    internal data class Resultat<T>(val id: BigInteger, val data: T)
 }

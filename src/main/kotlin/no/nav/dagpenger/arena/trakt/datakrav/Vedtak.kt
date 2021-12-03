@@ -17,15 +17,19 @@ internal class Vedtak(id: String) : Datakrav<VedtakData>(id) {
         "where" to where
     )
 
-    override fun mapper(row: Row) = VedtakData(
-        id = row.string("id"),
-        utfall = row.string("utfall"),
-        vedtakstype = row.string("type")
+    override fun mapper(row: Row) = Resultat(
+        id = row.bigDecimal("id").toBigInteger(),
+        data = VedtakData(
+            id = row.string("id"),
+            utfall = row.string("utfall"),
+            vedtakstype = row.string("type")
+        )
     )
 
     @Language("PostgreSQL")
     override val query = """
-        |SELECT data -> 'after' ->> 'VEDTAK_ID'        AS id,
+        |SELECT id,
+        |       data -> 'after' ->> 'VEDTAK_ID'        AS vedtakId,
         |       data -> 'after' ->> 'VEDTAKSTATUSKODE' AS utfall,
         |       data -> 'after' ->> 'VEDTAKTYPEKODE' AS type 
         |FROM arena_data

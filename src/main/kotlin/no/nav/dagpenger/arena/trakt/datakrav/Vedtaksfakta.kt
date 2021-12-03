@@ -18,11 +18,11 @@ internal class Vedtaksfakta(private val navn: String) : Datakrav<String>(navn) {
         "where" to where
     )
 
-    override fun mapper(row: Row) = row.string("verdi")
+    override fun mapper(row: Row) = Resultat(row.bigDecimal("id").toBigInteger(), row.string("verdi"))
 
     @Language("PostgreSQL")
     override val query = """
-        |SELECT data -> 'after' ->> 'VEDTAK_ID'       AS id,
+        |SELECT id, 
         |       data -> 'after' ->> 'VEDTAKFAKTAKODE' AS verdi
         |FROM arena_data
         |WHERE data ->> 'table' = 'SIAMO.VEDTAKFAKTA'

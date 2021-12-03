@@ -32,7 +32,6 @@ internal class HendelseTest {
             dataRepository.lagre(beregningsleddJSON("BL1"))
             dataRepository.lagre(vedtaksfaktaJSON("VF1"))
             dataRepository.lagre(vedtakJSON(vedtaksid.toInt()))
-
             assertTrue(vedtak.komplett())
         }
     }
@@ -43,7 +42,7 @@ internal class HendelseTest {
             val vedtak = Hendelse.testHendelse((vedtaksid))
 
             dataRepository.lagre(beregningsleddJSON("BL1"))
-            dataRepository.lagre(vedtaksfaktaJSON("VF"))
+            dataRepository.lagre(vedtaksfaktaJSON("VF1"))
             dataRepository.lagre(vedtakJSON(vedtaksid.toInt()))
 
             VedtakHendelseJsonBuilder(vedtak).resultat().also { json ->

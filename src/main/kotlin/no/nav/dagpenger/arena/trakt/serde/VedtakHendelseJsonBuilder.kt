@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode
 import no.nav.dagpenger.arena.trakt.Hendelse
 import no.nav.dagpenger.arena.trakt.datakrav.Beregningsledd
 import no.nav.dagpenger.arena.trakt.datakrav.Datakrav
+import no.nav.dagpenger.arena.trakt.datakrav.Datakrav.Resultat
 import no.nav.dagpenger.arena.trakt.datakrav.Vedtak
 import no.nav.dagpenger.arena.trakt.datakrav.VedtakData
 import no.nav.dagpenger.arena.trakt.datakrav.Vedtaksfakta
@@ -27,15 +28,16 @@ internal class VedtakHendelseJsonBuilder(vedtak: Hendelse) : HendelseVisitor {
         root.replace("fakta", fakta)
     }
 
-    override fun <T> visit(datakrav: Datakrav<T>, id: String, data: T?) {
+    override fun <T> visit(datakrav: Datakrav<T>, id: String, resultat: Resultat<T>?, oppfylt: Boolean) {
+        if (resultat == null) throw IllegalStateException("Kan ikke lage hendelse med manglende data")
         when (datakrav) {
-            is Beregningsledd -> leggTilFakta(id, data.toString())
-            is Vedtaksfakta -> leggTilFakta(id, data.toString())
+            is Beregningsledd -> leggTilFakta(id, resultat.data.toString())
+            is Vedtaksfakta -> leggTilFakta(id, resultat.data.toString())
             is Vedtak -> {
-                require(data is VedtakData)
-                leggTilFakta("utfall", data.utfall)
+                require(resultat.data is VedtakData)
+                leggTilFakta("utfall", resultat.data.utfall)
 
-                vedtakstype = when (data.vedtakstype) {
+                vedtakstype = when (resultat.data.vedtakstype) {
                     "O" -> Vedtakstype.Opprettet
                     "E" -> Vedtakstype.Endret
                     else -> throw Error("Ukjent type")
