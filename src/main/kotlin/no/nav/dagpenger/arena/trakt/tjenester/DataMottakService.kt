@@ -9,6 +9,7 @@ import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.River
 
+private val logg = KotlinLogging.logger {}
 private val sikkerlogg = KotlinLogging.logger("tjenestekall.data-mottak")
 
 internal class DataMottakService(
@@ -26,7 +27,7 @@ internal class DataMottakService(
         withLoggingContext(
             "tabell" to packet["table"].asText(),
         ) {
-            sikkerlogg.info { "Mottok pakke fra Arena" }
+            logg.info { "Mottok data fra Arena" }
 
             dataRepository.lagre(packet.toJson())
 

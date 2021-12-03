@@ -37,7 +37,7 @@ internal class BeregningsleddService(
             "navn" to navn
         ) {
             val vedtakHendelse = vedtak(vedtakId)
-            logg.info { "Mottok data om ${vedtakHendelse.hendelseId}" }
+            logg.info { "Mottok beregningsledd med hendelseId: ${vedtakHendelse.hendelseId}" }
 
             if (hendelseRepository.leggPåKø(vedtakHendelse)) {
                 logg.info { "Har komplett datasett, publiserer ${vedtakHendelse.hendelseId}" }

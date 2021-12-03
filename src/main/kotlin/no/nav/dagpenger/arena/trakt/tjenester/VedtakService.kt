@@ -34,7 +34,7 @@ internal class VedtakService(
             "vedtakId" to vedtakId,
         ) {
             val vedtakHendelse = vedtak(vedtakId)
-            logg.info { "Mottok data om ${vedtakHendelse.hendelseId}" }
+            logg.info { "Mottok vedtak med hendelseId: ${vedtakHendelse.hendelseId}" }
 
             if (hendelseRepository.leggPåKø(vedtakHendelse)) {
                 logg.info { "Har komplett datasett, publiserer ${vedtakHendelse.hendelseId}" }
