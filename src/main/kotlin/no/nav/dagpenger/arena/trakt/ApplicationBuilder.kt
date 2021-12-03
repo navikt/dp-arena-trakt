@@ -18,7 +18,9 @@ val log = KotlinLogging.logger {}
 internal class ApplicationBuilder(config: Map<String, String>) : StatusListener {
     private val rapidsConnection = RapidApplication.Builder(
         RapidApplication.RapidApplicationConfig.fromEnv(config)
-    ).build { _, kafkaRapid -> kafkaRapid.seekToBeginning() }
+    ).build { _, kafkaRapid ->
+        kafkaRapid.seekToBeginning()
+    }
 
     init {
         rapidsConnection.register(this)

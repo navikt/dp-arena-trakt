@@ -9,7 +9,7 @@ internal class Vedtak(id: String) : Datakrav<VedtakData>(id) {
         get() = """
             |{
             |  "after": {
-            |    "VEDTAK_ID": ${hendelse.id}
+            |    "VEDTAK_ID": ${hendelse.objektId}
             |  }
             |}""".trimMargin()
 
@@ -18,7 +18,7 @@ internal class Vedtak(id: String) : Datakrav<VedtakData>(id) {
     )
 
     override fun mapper(row: Row) = Resultat(
-        id = row.bigDecimal("id").toBigInteger(),
+        id = row.long("id").toBigInteger(),
         data = VedtakData(
             id = row.string("id"),
             utfall = row.string("utfall"),

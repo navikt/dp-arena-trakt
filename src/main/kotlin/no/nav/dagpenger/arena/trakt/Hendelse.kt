@@ -36,9 +36,9 @@ internal class Hendelse private constructor(
     fun komplett() = datakrav.all { it.oppfylt() }
 
     internal fun accept(visitor: HendelseVisitor) {
-        visitor.preVisit(this, hendelseId.type, hendelseId.id)
+        visitor.preVisit(this, hendelseId.objekt, hendelseId.objektId)
         datakrav.forEach { it.accept(visitor) }
-        visitor.postVisit(this, hendelseId.type, hendelseId.id)
+        visitor.postVisit(this, hendelseId.objekt, hendelseId.objektId)
     }
 
     internal enum class Type {
@@ -46,7 +46,10 @@ internal class Hendelse private constructor(
         Vedtak
     }
 
-    internal data class HendelseId(val type: Type, val id: String, val uuid: UUID = UUID.randomUUID())
+    internal data class HendelseId(val objekt: Type, val objektId: String, val uuid: UUID = UUID.randomUUID()) {
+        override fun equals(other: Any?) = other is HendelseId && objekt == other.objekt && objektId == other.objektId
+        override fun hashCode() = Pair(objekt, objektId).hashCode()
+    }
 
     internal class KravBygger(val hendelse: Hendelse) {
         fun <T> krev(datakrav: Datakrav<T>) {

@@ -11,7 +11,7 @@ internal class Beregningsledd(private val navn: String) : Datakrav<String>(navn)
             |  "after": {
             |    "BEREGNINGSLEDDKODE": "$navn",
             |    "TABELLNAVNALIAS_KILDE": "VEDTAK",
-            |    "OBJEKT_ID_KILDE": ${hendelse.id}
+            |    "OBJEKT_ID_KILDE": ${hendelse.objektId}
             |  }
             |}""".trimMargin()
 
@@ -19,14 +19,14 @@ internal class Beregningsledd(private val navn: String) : Datakrav<String>(navn)
         "where" to where,
     )
 
-    override fun mapper(row: Row) = Resultat(row.bigDecimal("id").toBigInteger(), row.string("verdi"))
+    override fun mapper(row: Row) = Resultat(row.long("id").toBigInteger(), row.string("verdi"))
 
     @Language("PostgreSQL")
     override val query = """
         |SELECT id,
-        |       data -> 'after' ->> 'VERDI'             AS verdi
+        |       data -> 'after' ->> 'VERDI' AS verdi
         |FROM arena_data
-        |WHERE data ->> 'table' = 'SIAMO.BEREGNINGSLEDD' 
+        |WHERE data ->> 'table' = 'SIAMO.BEREGNINGSLEDD'
         |  AND data ->> 'op_type' = 'I'
         |  AND data @> :where::jsonb
         """.trimMargin()

@@ -40,8 +40,9 @@ internal class HendelseRepositoryTest {
 
     private fun antallBrukteData() =
         using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
+            //language=PostgreSQL
             session.run(
-                queryOf("SELECT COUNT(hendelseid) FROM arena_data")
+                queryOf("SELECT count(hendelse_id) FROM arena_data")
                     .map { it.int(1) }
                     .asSingle
             )

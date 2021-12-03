@@ -10,7 +10,7 @@ internal class Vedtaksfakta(private val navn: String) : Datakrav<String>(navn) {
             |{
             |  "after": {
             |    "VEDTAKFAKTAKODE": "$navn",
-            |    "VEDTAK_ID": ${hendelse.id}
+            |    "VEDTAK_ID": ${hendelse.objektId}
             |  }
             |}""".trimMargin()
 
@@ -18,7 +18,10 @@ internal class Vedtaksfakta(private val navn: String) : Datakrav<String>(navn) {
         "where" to where
     )
 
-    override fun mapper(row: Row) = Resultat(row.bigDecimal("id").toBigInteger(), row.string("verdi"))
+    override fun mapper(row: Row) = Resultat(
+        row.long("id").toBigInteger(),
+        row.string("verdi")
+    )
 
     @Language("PostgreSQL")
     override val query = """

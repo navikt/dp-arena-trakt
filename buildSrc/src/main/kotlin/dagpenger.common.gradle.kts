@@ -1,6 +1,5 @@
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm")
@@ -12,11 +11,9 @@ repositories {
 }
 
 dependencies {
-    implementation(platform(kotlin("bom")))
-    implementation(kotlin("stdlib-jdk8"))
-
     testImplementation(Junit5.api)
     testRuntimeOnly(Junit5.engine)
+    implementation(kotlin("test")) // This brings all the platform dependencies automatically
 }
 
 tasks.test {
@@ -29,6 +26,8 @@ tasks.test {
     }
 }
 
-tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = JavaVersion.VERSION_1_8.toString()
+kotlin {
+    jvmToolchain {
+        (this as JavaToolchainSpec).languageVersion.set(JavaLanguageVersion.of(17))
+    }
 }

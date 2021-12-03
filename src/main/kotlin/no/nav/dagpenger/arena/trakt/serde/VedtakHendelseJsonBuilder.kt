@@ -23,6 +23,7 @@ internal class VedtakHendelseJsonBuilder(vedtak: Hendelse) : HendelseVisitor {
     fun resultat() = root
 
     override fun preVisit(hendelse: Hendelse, type: Hendelse.Type, id: String) {
+        root.put("@event_id", hendelse.hendelseId.uuid.toString())
         root.put("vedtakId", id)
 
         root.replace("fakta", fakta)

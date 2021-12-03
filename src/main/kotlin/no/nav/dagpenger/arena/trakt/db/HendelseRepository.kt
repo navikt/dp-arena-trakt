@@ -35,7 +35,7 @@ internal class HendelseRepository private constructor(
 
     fun finnFerdigeHendelser(): List<Hendelse> = hendelser.filter { it.komplett() }
         .onEach { ferdigHendelse ->
-            when (ferdigHendelse.hendelseId.type) {
+            when (ferdigHendelse.hendelseId.objekt) {
                 Hendelse.Type.BeregningUtført -> TODO()
                 Hendelse.Type.Vedtak -> VedtakHendelseJsonBuilder(ferdigHendelse).resultat()
             }.also {
@@ -72,7 +72,7 @@ private class MarkerSomBruktVisitor(hendelse: Hendelse) : HendelseVisitor {
     override fun <T> visit(datakrav: Datakrav<T>, id: String, resultat: Datakrav.Resultat<T>?, oppfylt: Boolean) {
         resultat?.let {
             //language=PostgreSQL
-            queries.add(queryOf("UPDATE arena_data SET hendelseid=? WHERE id=?", hendelseId, resultat.id))
+            queries.add(queryOf("UPDATE arena_data SET hendelse_id=? WHERE id=?", hendelseId, resultat.id))
         }
     }
 }

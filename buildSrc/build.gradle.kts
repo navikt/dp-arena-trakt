@@ -1,6 +1,6 @@
 plugins {
     `kotlin-dsl`
-    kotlin("jvm") version "1.4.31"
+    kotlin("jvm") version "1.6.0"
 }
 
 repositories {
@@ -9,13 +9,5 @@ repositories {
 
 dependencies {
     implementation(kotlin("gradle-plugin"))
-    implementation("com.diffplug.spotless:spotless-plugin-gradle:5.11.0")
-}
-
-kotlinDslPluginOptions {
-    experimentalWarning.set(false)
-}
-
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-    kotlinOptions.jvmTarget = JavaVersion.VERSION_1_8.toString()
+    implementation("com.diffplug.spotless:spotless-plugin-gradle:6.0.1")
 }

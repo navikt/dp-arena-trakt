@@ -10,7 +10,6 @@ import no.nav.dagpenger.arena.trakt.helpers.Postgres.withMigratedDb
 import no.nav.dagpenger.arena.trakt.helpers.beregningsleddJSON
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
 internal class BeregningsleddTest {
@@ -33,7 +32,6 @@ internal class BeregningsleddTest {
         }
     }
 
-    @Disabled("Noe rart skjer med beregningsledd men funker på andre datakrav")
     @Test
     fun `Spørringen treffer indeks`() {
         withMigratedDb {
@@ -48,8 +46,8 @@ internal class BeregningsleddTest {
                     }.asList
                 )
             }
-
-            assertFalse(plan[0].contains("Seq Scan"))
+            println(plan)
+            assertFalse(plan[1].contains("Seq Scan"))
         }
     }
 }
