@@ -13,9 +13,14 @@ internal class Hendelse private constructor(
     private val datakrav = mutableListOf<Datakrav<*>>()
 
     companion object {
-        fun vedtak(id: String) = Hendelse(HendelseId(Type.Vedtak, id)) {
+        fun testHendelse(id: String) = Hendelse(HendelseId(Type.Vedtak, id)) {
             krev(Beregningsledd("BL1"))
             krev(Vedtaksfakta("VF1"))
+            krev(Vedtak(id))
+        }
+        fun vedtak(id: String) = Hendelse(HendelseId(Type.Vedtak, id)) {
+            krev(Beregningsledd("DPTEL"))
+            krev(Vedtaksfakta("ARBTIDREG"))
             krev(Vedtak(id))
         }
     }

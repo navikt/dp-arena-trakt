@@ -2,6 +2,7 @@ package no.nav.dagpenger.arena.trakt.tjenester
 
 import mu.KotlinLogging
 import mu.withLoggingContext
+import no.nav.dagpenger.arena.trakt.Hendelse.Companion.testHendelse
 import no.nav.dagpenger.arena.trakt.Hendelse.Companion.vedtak
 import no.nav.dagpenger.arena.trakt.db.HendelseRepository
 import no.nav.helse.rapids_rivers.JsonMessage

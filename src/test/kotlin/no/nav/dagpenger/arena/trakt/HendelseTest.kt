@@ -18,7 +18,7 @@ internal class HendelseTest {
     @Test
     fun `Hendelse skal ikke være komplett`() {
         Postgres.withMigratedDb {
-            val vedtak = Hendelse.vedtak(vedtaksid)
+            val vedtak = Hendelse.testHendelse(vedtaksid)
 
             assertFalse(vedtak.komplett())
         }
@@ -27,7 +27,7 @@ internal class HendelseTest {
     @Test
     fun `Hendelse skal være komplett`() {
         Postgres.withMigratedDb {
-            val vedtak = Hendelse.vedtak(vedtaksid)
+            val vedtak = Hendelse.testHendelse(vedtaksid)
 
             dataRepository.lagre(beregningsleddJSON("BL1"))
             dataRepository.lagre(vedtaksfaktaJSON("VF1"))
@@ -40,7 +40,7 @@ internal class HendelseTest {
     @Test
     fun `Hendelse skal være json`() {
         Postgres.withMigratedDb {
-            val vedtak = Hendelse.vedtak((vedtaksid))
+            val vedtak = Hendelse.testHendelse((vedtaksid))
 
             dataRepository.lagre(beregningsleddJSON("BL1"))
             dataRepository.lagre(vedtaksfaktaJSON("VF"))

@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test
 
 internal class VedtaksfaktaTest {
     private val repository = DataRepository()
-    private val vedtak = Hendelse.vedtak("123")
+    private val vedtak = Hendelse.testHendelse("123")
     private val vedtaksfakta = Vedtaksfakta("ENDRTILUNN").apply { hendelse = vedtak.hendelseId }
 
     @Test

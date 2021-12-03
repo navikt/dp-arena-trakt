@@ -20,7 +20,7 @@ internal class HendelseRepositoryTest {
     @Test
     fun `leggPåKø skal returnere true om hendelsen ble sendt eller allerede sendt`() {
         Postgres.withMigratedDb {
-            val vedtak = Hendelse.vedtak(vedtaksid)
+            val vedtak = Hendelse.testHendelse(vedtaksid)
 
             dataRepository.lagre(beregningsleddJSON("BL1"))
             dataRepository.lagre(vedtaksfaktaJSON("VF1"))
@@ -37,7 +37,7 @@ internal class HendelseRepositoryTest {
     @Test
     fun `leggPåKø skal returnere true om hendelsen ikke er sendt`() {
         Postgres.withMigratedDb {
-            val vedtak = Hendelse.vedtak(vedtaksid)
+            val vedtak = Hendelse.testHendelse(vedtaksid)
 
             assertFalse(hendelseRepository.leggPåKø(vedtak))
 
