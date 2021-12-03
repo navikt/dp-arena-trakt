@@ -1,7 +1,7 @@
 package no.nav.dagpenger.arena.trakt.db
 
 import no.nav.dagpenger.arena.trakt.Hendelse
-import no.nav.dagpenger.arena.trakt.helpers.Postgres
+import no.nav.dagpenger.arena.trakt.helpers.Postgres.withMigratedDb
 import no.nav.dagpenger.arena.trakt.helpers.beregningsleddJSON
 import no.nav.dagpenger.arena.trakt.helpers.vedtakJSON
 import no.nav.dagpenger.arena.trakt.helpers.vedtaksfaktaJSON
@@ -19,7 +19,7 @@ internal class HendelseRepositoryTest {
 
     @Test
     fun `leggPåKø skal returnere true om hendelsen ble sendt eller allerede sendt`() {
-        Postgres.withMigratedDb {
+        withMigratedDb {
             val vedtak = Hendelse.testHendelse(vedtaksid)
 
             dataRepository.lagre(beregningsleddJSON("BL1"))
@@ -36,7 +36,7 @@ internal class HendelseRepositoryTest {
 
     @Test
     fun `leggPåKø skal returnere true om hendelsen ikke er sendt`() {
-        Postgres.withMigratedDb {
+        withMigratedDb {
             val vedtak = Hendelse.testHendelse(vedtaksid)
 
             assertFalse(hendelseRepository.leggPåKø(vedtak))

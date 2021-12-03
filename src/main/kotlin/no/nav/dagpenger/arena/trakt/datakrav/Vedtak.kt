@@ -4,8 +4,17 @@ import kotliquery.Row
 import org.intellij.lang.annotations.Language
 
 internal class Vedtak(id: String) : Datakrav<VedtakData>(id) {
+    private val where
+        @Language("JSON")
+        get() = """
+            |{
+            |  "after": {
+            |    "VEDTAK_ID": ${hendelse.id}
+            |  }
+            |}""".trimMargin()
+
     override fun params() = mapOf(
-        "vedtakId" to hendelse.id
+        "where" to where
     )
 
     override fun mapper(row: Row) = VedtakData(
@@ -19,10 +28,10 @@ internal class Vedtak(id: String) : Datakrav<VedtakData>(id) {
         |SELECT data -> 'after' ->> 'VEDTAK_ID'        AS id,
         |       data -> 'after' ->> 'VEDTAKSTATUSKODE' AS utfall,
         |       data -> 'after' ->> 'VEDTAKTYPEKODE' AS type 
-        |FROM data
+        |FROM arena_data
         |WHERE data ->> 'table' = 'SIAMO.VEDTAK'
         |  AND data ->> 'op_type' = 'I'
-        |  AND data -> 'after' ->> 'VEDTAK_ID' = :vedtakId
+        |  AND data @> :where::jsonb
         """.trimMargin()
 }
 

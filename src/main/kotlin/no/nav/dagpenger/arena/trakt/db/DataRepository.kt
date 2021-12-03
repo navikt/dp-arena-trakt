@@ -7,7 +7,7 @@ import org.intellij.lang.annotations.Language
 
 class DataRepository {
     @Language("PostgreSQL")
-    private val query = """INSERT INTO data (data) VALUES(?::jsonb)"""
+    private val query = """INSERT INTO arena_data (data) VALUES(?::jsonb)"""
 
     fun lagre(json: String) {
         using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->

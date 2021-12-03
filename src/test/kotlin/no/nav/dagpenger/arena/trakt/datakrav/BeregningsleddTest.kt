@@ -1,5 +1,8 @@
 package no.nav.dagpenger.arena.trakt.datakrav
 
+import kotliquery.queryOf
+import kotliquery.sessionOf
+import kotliquery.using
 import no.nav.dagpenger.arena.trakt.Hendelse
 import no.nav.dagpenger.arena.trakt.db.DataRepository
 import no.nav.dagpenger.arena.trakt.db.PostgresDataSourceBuilder
@@ -29,5 +32,24 @@ internal class BeregningsleddTest {
         }
 
         PostgresDataSourceBuilder.dataSource
+    }
+
+    @Test
+    fun `Spørringen treffer indeks`() {
+        withMigratedDb {
+            val beregningsledd = Beregningsledd("a")
+            beregningsledd.hendelse = Hendelse.HendelseId(Hendelse.Type.Vedtak, "123")
+            val query = beregningsledd.query
+            val where = beregningsledd.params()
+            val plan = using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
+                session.run(
+                    queryOf("EXPLAIN ANALYZE $query", where).map {
+                        it.string(1)
+                    }.asList
+                )
+            }
+
+            assertFalse(plan[0].contains("Seq Scan"))
+        }
     }
 }

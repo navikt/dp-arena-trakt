@@ -4,10 +4,19 @@ import kotliquery.Row
 import org.intellij.lang.annotations.Language
 
 internal class Beregningsledd(private val navn: String) : Datakrav<String>(navn) {
+    private val where
+        @Language("JSON")
+        get() = """
+            |{
+            |  "after": {
+            |    "BEREGNINGSLEDDKODE": "$navn",
+            |    "TABELLNAVNALIAS_KILDE": "VEDTAK",
+            |    "OBJEKT_ID_KILDE": ${hendelse.id}
+            |  }
+            |}""".trimMargin()
+
     override fun params() = mapOf(
-        "navn" to navn,
-        "objektType" to "VEDTAK",
-        "objektId" to hendelse.id
+        "where" to where,
     )
 
     override fun mapper(row: Row) = row.string("verdi")
@@ -16,11 +25,9 @@ internal class Beregningsledd(private val navn: String) : Datakrav<String>(navn)
     override val query = """
         |SELECT data -> 'after' ->> 'BEREGNINGSLEDD_ID' AS id,
         |       data -> 'after' ->> 'VERDI'             AS verdi
-        |FROM data
+        |FROM arena_data
         |WHERE data ->> 'table' = 'SIAMO.BEREGNINGSLEDD' 
         |  AND data ->> 'op_type' = 'I'
-        |  AND data -> 'after' ->> 'BEREGNINGSLEDDKODE' = :navn
-        |  AND data -> 'after' ->> 'TABELLNAVNALIAS_KILDE' = :objektType
-        |  AND data -> 'after' ->> 'OBJEKT_ID_KILDE' = :objektId
+        |  AND data @> :where::jsonb
         """.trimMargin()
 }
