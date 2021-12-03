@@ -34,9 +34,9 @@ internal class IntegrationTest {
     @Test
     fun `rekkefølge 1`() {
         withMigratedDb {
-            rapid.sendTestMessage(vedtaksfaktaJSON("VF1"))
+            rapid.sendTestMessage(vedtaksfaktaJSON("ARBTIDREG"))
             rapid.sendTestMessage(vedtakJSON(123))
-            rapid.sendTestMessage(beregningsleddJSON("BL1"))
+            rapid.sendTestMessage(beregningsleddJSON("DPTEL"))
 
             with(rapid.inspektør) {
                 assertEquals(1, size)
@@ -48,8 +48,8 @@ internal class IntegrationTest {
     fun `rekkefølge 2`() {
         withMigratedDb {
             rapid.sendTestMessage(vedtakJSON(123))
-            rapid.sendTestMessage(vedtaksfaktaJSON("VF1"))
-            rapid.sendTestMessage(beregningsleddJSON("BL1"))
+            rapid.sendTestMessage(vedtaksfaktaJSON("ARBTIDREG"))
+            rapid.sendTestMessage(beregningsleddJSON("DPTEL"))
 
             with(rapid.inspektør) {
                 assertEquals(1, size)
@@ -60,8 +60,8 @@ internal class IntegrationTest {
     @Test
     fun `rekkefølge 3`() {
         withMigratedDb {
-            rapid.sendTestMessage(vedtaksfaktaJSON("VF1"))
-            rapid.sendTestMessage(beregningsleddJSON("BL1"))
+            rapid.sendTestMessage(vedtaksfaktaJSON("ARBTIDREG"))
+            rapid.sendTestMessage(beregningsleddJSON("DPTEL"))
             rapid.sendTestMessage(vedtakJSON(123))
 
             with(rapid.inspektør) {
@@ -73,9 +73,9 @@ internal class IntegrationTest {
     @Test
     fun `rekkefølge 4`() {
         withMigratedDb {
-            rapid.sendTestMessage(beregningsleddJSON("BL1"))
+            rapid.sendTestMessage(beregningsleddJSON("DPTEL"))
             rapid.sendTestMessage(vedtakJSON(123))
-            rapid.sendTestMessage(vedtaksfaktaJSON("VF1"))
+            rapid.sendTestMessage(vedtaksfaktaJSON("ARBTIDREG"))
 
             with(rapid.inspektør) {
                 assertEquals(1, size)
@@ -86,14 +86,14 @@ internal class IntegrationTest {
     @Test
     fun `rekkefølge 5 med andre flere vedtak`() {
         withMigratedDb {
-            rapid.sendTestMessage(beregningsleddJSON("BL1"))
+            rapid.sendTestMessage(beregningsleddJSON("DPTEL"))
             rapid.sendTestMessage(beregningsleddJSON("BL2"))
-            rapid.sendTestMessage(beregningsleddJSON("BL1", 12345))
+            rapid.sendTestMessage(beregningsleddJSON("DPTEL", 12345))
             rapid.sendTestMessage(vedtakJSON(123))
             rapid.sendTestMessage(vedtakJSON(12345))
             rapid.sendTestMessage(vedtakJSON(555))
-            rapid.sendTestMessage(vedtaksfaktaJSON("VF1"))
-            rapid.sendTestMessage(vedtaksfaktaJSON("VF1", 12345))
+            rapid.sendTestMessage(vedtaksfaktaJSON("ARBTIDREG"))
+            rapid.sendTestMessage(vedtaksfaktaJSON("ARBTIDREG", 12345))
 
             with(rapid.inspektør) {
                 assertEquals(2, size)
@@ -104,11 +104,11 @@ internal class IntegrationTest {
     @Test
     fun `Publiserer ingenting uten komplette datasett`() {
         withMigratedDb {
-            rapid.sendTestMessage(beregningsleddJSON("BL1", 12345))
+            rapid.sendTestMessage(beregningsleddJSON("DPTEL", 12345))
             rapid.sendTestMessage(vedtakJSON(123))
             rapid.sendTestMessage(vedtakJSON(12345))
             rapid.sendTestMessage(vedtakJSON(555))
-            rapid.sendTestMessage(vedtaksfaktaJSON("VF1", 123))
+            rapid.sendTestMessage(vedtaksfaktaJSON("ARBTIDREG", 123))
 
             with(rapid.inspektør) {
                 assertEquals(0, size)
