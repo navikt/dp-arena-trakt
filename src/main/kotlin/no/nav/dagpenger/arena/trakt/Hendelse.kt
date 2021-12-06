@@ -33,7 +33,7 @@ internal class Hendelse private constructor(
         }
     }
 
-    fun komplett() = datakrav.all { it.oppfylt() }
+    fun alleDatakravOppfylt() = datakrav.all { it.oppfylt() }
 
     internal fun accept(visitor: HendelseVisitor) {
         visitor.preVisit(this, hendelseId.objekt, hendelseId.objektId)

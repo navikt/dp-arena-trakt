@@ -3,7 +3,6 @@ package no.nav.dagpenger.arena.trakt
 import mu.KotlinLogging
 import no.nav.dagpenger.arena.trakt.db.DataRepository
 import no.nav.dagpenger.arena.trakt.db.HendelseRepository
-import no.nav.dagpenger.arena.trakt.db.PostgresDataSourceBuilder.clean
 import no.nav.dagpenger.arena.trakt.db.PostgresDataSourceBuilder.runMigration
 import no.nav.dagpenger.arena.trakt.tjenester.BeregningsleddService
 import no.nav.dagpenger.arena.trakt.tjenester.DataMottakService

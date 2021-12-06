@@ -20,7 +20,7 @@ internal class HendelseTest {
         Postgres.withMigratedDb {
             val vedtak = Hendelse.testHendelse(vedtaksid)
 
-            assertFalse(vedtak.komplett())
+            assertFalse(vedtak.alleDatakravOppfylt())
         }
     }
 
@@ -32,7 +32,7 @@ internal class HendelseTest {
             dataRepository.lagre(beregningsleddJSON("BL1"))
             dataRepository.lagre(vedtaksfaktaJSON("VF1"))
             dataRepository.lagre(vedtakJSON(vedtaksid.toInt()))
-            assertTrue(vedtak.komplett())
+            assertTrue(vedtak.alleDatakravOppfylt())
         }
     }
 

@@ -30,10 +30,10 @@ internal class HendelseRepository private constructor(
 
         hendelser.add(hendelse)
 
-        return finnFerdigeHendelser().isNotEmpty()
+        return finnOgPubliserFerdigeHendelser().isNotEmpty()
     }
 
-    fun finnFerdigeHendelser(): List<Hendelse> = hendelser.filter { it.komplett() }
+    private fun finnOgPubliserFerdigeHendelser() = hendelser.filter { it.alleDatakravOppfylt() }
         .onEach { ferdigHendelse ->
             when (ferdigHendelse.hendelseId.objekt) {
                 Hendelse.Type.BeregningUtført -> TODO()
@@ -59,7 +59,7 @@ private class MarkerSomBruktVisitor(hendelse: Hendelse) : HendelseVisitor {
     private val queries = mutableListOf<Query>()
 
     init {
-        require(hendelse.komplett())
+        require(hendelse.alleDatakravOppfylt())
         hendelse.accept(this)
     }
 
