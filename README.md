@@ -1,5 +1,8 @@
 # dp-arena-trakt
 
+Håndterer data fra arena databasen.
+Publiserer vedtakshendelser som konsumeres av [dp-vedtak](https://github.com/navikt/dp-vedtak).
+
 ## Komme i gang
 
 Gradle brukes som byggverktøy og er bundlet inn.
