@@ -31,7 +31,7 @@ internal class DataMottakService(
 
             dataRepository.lagre(packet.toJson())
 
-            hendelseRepository.finnFerdigeHendelser()
+            hendelseRepository.finnOgPubliserFerdigeHendelser()
         }
     }
 }

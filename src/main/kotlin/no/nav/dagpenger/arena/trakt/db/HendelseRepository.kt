@@ -33,7 +33,7 @@ internal class HendelseRepository private constructor(
         return finnOgPubliserFerdigeHendelser().isNotEmpty()
     }
 
-    private fun finnOgPubliserFerdigeHendelser() = hendelser.filter { it.alleDatakravOppfylt() }
+    internal fun finnOgPubliserFerdigeHendelser() = hendelser.filter { it.alleDatakravOppfylt() }
         .onEach { ferdigHendelse ->
             when (ferdigHendelse.hendelseId.objekt) {
                 Hendelse.Type.BeregningUtført -> TODO()
