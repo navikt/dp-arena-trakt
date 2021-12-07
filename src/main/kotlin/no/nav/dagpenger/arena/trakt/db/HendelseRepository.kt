@@ -1,6 +1,5 @@
 package no.nav.dagpenger.arena.trakt.db
 
-import kotlinx.coroutines.delay
 import kotliquery.Query
 import kotliquery.queryOf
 import kotliquery.sessionOf
@@ -13,6 +12,7 @@ import no.nav.dagpenger.arena.trakt.serde.HendelseVisitor
 import no.nav.dagpenger.arena.trakt.serde.VedtakHendelseJsonBuilder
 import no.nav.helse.rapids_rivers.RapidsConnection
 import java.util.UUID
+import kotlin.concurrent.fixedRateTimer
 
 private val logg = KotlinLogging.logger {}
 private val sikkerlogg = KotlinLogging.logger("tjenestekall.hendelse")
@@ -30,18 +30,14 @@ internal class HendelseRepository private constructor(
         rapidsConnection = rapidsConnection
     )
 
-    suspend fun start(pollMs: Long? = 1000) {
-        do {
-            if (harNyData) {
-                logg.info { "Poller etter nye hendelser" }
-                finnOgPubliserFerdigeHendelser().also {
-                    logg.info { "Ferdig å publisere ferdige hendelser. Fant ${it.size} hendelser som var ferdige." }
-                    harNyData = false
-                }
-            } else logg.info { "Har ikke ny data, sjekker ikke etter ferdige hendelser" }
-
-            if (pollMs !== null) delay(pollMs)
-        } while (pollMs !== null)
+    fun start(pollMs: Long = 1000) = fixedRateTimer("hendelsePoll", period = pollMs) {
+        if (harNyData) {
+            logg.info { "Poller etter nye hendelser" }
+            finnOgPubliserFerdigeHendelser().also {
+                logg.info { "Ferdig å publisere ferdige hendelser. Fant ${it.size} hendelser som var ferdige." }
+                harNyData = false
+            }
+        } else logg.info { "Har ikke ny data, sjekker ikke etter ferdige hendelser" }
     }
 
     fun leggPåKø(hendelse: Hendelse): Boolean {

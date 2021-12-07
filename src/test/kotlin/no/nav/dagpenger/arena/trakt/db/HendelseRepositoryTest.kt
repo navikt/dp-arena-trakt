@@ -1,6 +1,5 @@
 package no.nav.dagpenger.arena.trakt.db
 
-import kotlinx.coroutines.runBlocking
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
@@ -32,7 +31,9 @@ internal class HendelseRepositoryTest {
             dataRepository.lagre(vedtaksfaktaJSON("VF1"))
             dataRepository.lagre(vedtakJSON(vedtaksid.toInt()))
 
-            runBlocking { hendelseRepository.start(null) }
+            hendelseRepository.start(1)
+
+            Thread.sleep(100)
 
             assertEquals(1, testRapid.inspektør.size)
             assertEquals(3, antallBrukteData())
