@@ -20,11 +20,11 @@ spec:
     max: {{replicas_max}}
   resources:
     limits:
-      cpu: 5000m
-      memory: 1024Mi
-    requests:
-      cpu: 4000m
+      cpu: 200m
       memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 386Mi
   secureLogs:
     enabled: true
   kafka:
