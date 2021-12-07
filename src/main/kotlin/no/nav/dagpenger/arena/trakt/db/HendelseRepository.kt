@@ -1,5 +1,10 @@
 package no.nav.dagpenger.arena.trakt.db
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotliquery.Query
 import kotliquery.queryOf
 import kotliquery.sessionOf
@@ -12,7 +17,6 @@ import no.nav.dagpenger.arena.trakt.serde.HendelseVisitor
 import no.nav.dagpenger.arena.trakt.serde.VedtakHendelseJsonBuilder
 import no.nav.helse.rapids_rivers.RapidsConnection
 import java.util.UUID
-import kotlin.concurrent.fixedRateTimer
 
 private val logg = KotlinLogging.logger {}
 private val sikkerlogg = KotlinLogging.logger("tjenestekall.hendelse")
@@ -30,7 +34,7 @@ internal class HendelseRepository private constructor(
         rapidsConnection = rapidsConnection
     )
 
-    fun start(pollMs: Long = 1000) = fixedRateTimer("hendelsePoll", period = pollMs) {
+    fun startAsync(pollMs: Long = 1000) = CoroutineScope(Dispatchers.IO).launchPeriodicAsync(pollMs) {
         if (harNyData) {
             logg.info { "Poller etter nye hendelser" }
             finnOgPubliserFerdigeHendelser().also {
@@ -70,6 +74,20 @@ internal class HendelseRepository private constructor(
 
     override fun nyData() {
         harNyData = true
+    }
+
+    private fun CoroutineScope.launchPeriodicAsync(
+        repeatMillis: Long,
+        action: () -> Unit
+    ) = this.async {
+        if (repeatMillis > 0) {
+            while (isActive) {
+                action()
+                delay(repeatMillis)
+            }
+        } else {
+            action()
+        }
     }
 }
 
