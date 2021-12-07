@@ -21,12 +21,13 @@ spec:
   replicas:
     min: {{replicas_min}}
     max: {{replicas_max}}
+    cpuThresholdPercentage: 70
   resources:
     limits:
-      cpu: 600m
+      cpu: 300m
       memory: 512Mi
     requests:
-      cpu: 300m
+      cpu: 100m
       memory: 386Mi
   secureLogs:
     enabled: true
