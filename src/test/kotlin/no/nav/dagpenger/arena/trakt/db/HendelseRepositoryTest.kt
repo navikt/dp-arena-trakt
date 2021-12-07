@@ -1,5 +1,6 @@
 package no.nav.dagpenger.arena.trakt.db
 
+import kotlinx.coroutines.runBlocking
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
@@ -18,7 +19,25 @@ internal class HendelseRepositoryTest {
     private val testRapid = TestRapid()
     private val hendelseRepository = HendelseRepository(testRapid)
     private val vedtaksid = "123"
-    private val dataRepository = DataRepository()
+    private val dataRepository = DataRepository().also { it.addObserver(hendelseRepository) }
+
+    @Test
+    fun `Skal finne nye hendelser etter de lagres`() {
+        withMigratedDb {
+            val vedtak = Hendelse.testHendelse(vedtaksid)
+
+            assertFalse(hendelseRepository.leggPåKø(vedtak))
+
+            dataRepository.lagre(beregningsleddJSON("BL1"))
+            dataRepository.lagre(vedtaksfaktaJSON("VF1"))
+            dataRepository.lagre(vedtakJSON(vedtaksid.toInt()))
+
+            runBlocking { hendelseRepository.start(null) }
+
+            assertEquals(1, testRapid.inspektør.size)
+            assertEquals(3, antallBrukteData())
+        }
+    }
 
     @Test
     fun `leggPåKø skal returnere true om hendelsen ble sendt eller allerede sendt`() {
@@ -42,7 +61,7 @@ internal class HendelseRepositoryTest {
         using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
             //language=PostgreSQL
             session.run(
-                queryOf("SELECT count(hendelse_id) FROM arena_data")
+                queryOf("SELECT COUNT(hendelse_id) FROM arena_data")
                     .map { it.int(1) }
                     .asSingle
             )

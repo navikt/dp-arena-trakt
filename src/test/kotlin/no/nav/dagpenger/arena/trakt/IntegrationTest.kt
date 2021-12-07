@@ -20,7 +20,7 @@ internal class IntegrationTest {
     private var hendelseRepository: HendelseRepository
     private val rapid = TestRapid().also {
         hendelseRepository = HendelseRepository(it)
-        DataMottakService(it, dataRepository, hendelseRepository)
+        DataMottakService(it, dataRepository)
         VedtakService(it, hendelseRepository)
         BeregningsleddService(it, hendelseRepository)
         VedtaksfaktaService(it, hendelseRepository)

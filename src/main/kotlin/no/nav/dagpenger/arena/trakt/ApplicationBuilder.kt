@@ -1,5 +1,6 @@
 package no.nav.dagpenger.arena.trakt
 
+import kotlinx.coroutines.runBlocking
 import mu.KotlinLogging
 import no.nav.dagpenger.arena.trakt.db.DataRepository
 import no.nav.dagpenger.arena.trakt.db.HendelseRepository
@@ -31,13 +32,17 @@ internal class ApplicationBuilder(config: Map<String, String>) : StatusListener 
 
     override fun onStartup(rapidsConnection: RapidsConnection) {
         runMigration().also {
-            val repository = DataRepository()
-            val hendelseRepository = HendelseRepository(rapidsConnection)
+            runBlocking {
+                val hendelseRepository = HendelseRepository(rapidsConnection).also {
+                    it.start()
+                }
+                val repository = DataRepository().also { it.addObserver(hendelseRepository) }
 
-            DataMottakService(rapidsConnection, repository, hendelseRepository)
-            BeregningsleddService(rapidsConnection, hendelseRepository)
-            VedtaksfaktaService(rapidsConnection, hendelseRepository)
-            VedtakService(rapidsConnection, hendelseRepository)
+                DataMottakService(rapidsConnection, repository)
+                BeregningsleddService(rapidsConnection, hendelseRepository)
+                VedtaksfaktaService(rapidsConnection, hendelseRepository)
+                VedtakService(rapidsConnection, hendelseRepository)
+            }
         }
     }
 }

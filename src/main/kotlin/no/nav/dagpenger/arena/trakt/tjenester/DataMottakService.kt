@@ -3,7 +3,6 @@ package no.nav.dagpenger.arena.trakt.tjenester
 import mu.KotlinLogging
 import mu.withLoggingContext
 import no.nav.dagpenger.arena.trakt.db.DataRepository
-import no.nav.dagpenger.arena.trakt.db.HendelseRepository
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.RapidsConnection
@@ -14,8 +13,7 @@ private val sikkerlogg = KotlinLogging.logger("tjenestekall.data-mottak")
 
 internal class DataMottakService(
     rapidsConnection: RapidsConnection,
-    private val dataRepository: DataRepository,
-    private val hendelseRepository: HendelseRepository
+    private val dataRepository: DataRepository
 ) : River.PacketListener {
     init {
         River(rapidsConnection).validate {
@@ -30,8 +28,6 @@ internal class DataMottakService(
             logg.info { "Mottok data fra Arena" }
 
             dataRepository.lagre(packet.toJson())
-
-            hendelseRepository.finnOgPubliserFerdigeHendelser()
         }
     }
 }

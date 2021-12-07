@@ -6,13 +6,21 @@ import kotliquery.using
 import org.intellij.lang.annotations.Language
 import java.time.Period
 
-class DataRepository {
+internal class DataRepository private constructor(
+    private val observers: MutableList<DataObserver>
+) {
+    constructor() : this(mutableListOf())
+
+    fun addObserver(observer: DataObserver) = observers.add(observer)
+
     @Language("PostgreSQL")
     private val lagreQuery = """INSERT INTO arena_data (data) VALUES(?::jsonb)"""
 
     fun lagre(json: String) {
         using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
             session.run(queryOf(lagreQuery, json).asUpdate)
+        }.also {
+            observers.forEach { it.nyData() }
         }
     }
 
@@ -32,5 +40,9 @@ class DataRepository {
                 ).asUpdate
             )
         }
+    }
+
+    internal interface DataObserver {
+        fun nyData() {}
     }
 }
