@@ -23,10 +23,10 @@ spec:
     max: {{replicas_max}}
   resources:
     limits:
-      cpu: 200m
+      cpu: 600m
       memory: 512Mi
     requests:
-      cpu: 100m
+      cpu: 300m
       memory: 386Mi
   secureLogs:
     enabled: true
@@ -41,7 +41,7 @@ spec:
         highAvailability: false
         diskSize: {{db_size}}
         diskAutoresize: true
-        autoBackupTime: "03:00"
+        autoBackupHour: 3
         databases:
           - name: arena-data
             envVarPrefix: DB
