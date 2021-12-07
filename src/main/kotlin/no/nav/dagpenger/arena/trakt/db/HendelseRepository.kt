@@ -22,14 +22,14 @@ private val logg = KotlinLogging.logger {}
 private val sikkerlogg = KotlinLogging.logger("tjenestekall.hendelse")
 
 internal class HendelseRepository private constructor(
-    private val hendelser: MutableSet<Hendelse>,
+    private val ventendeHendelser: MutableSet<Hendelse>,
     private val ferdigeHendelser: MutableSet<Hendelse>,
     private val rapidsConnection: RapidsConnection
 ) : DataObserver {
     private var harNyData: Boolean = false
 
     constructor(rapidsConnection: RapidsConnection) : this(
-        hendelser = mutableSetOf(),
+        ventendeHendelser = mutableSetOf(),
         ferdigeHendelser = mutableSetOf(),
         rapidsConnection = rapidsConnection
     )
@@ -38,7 +38,7 @@ internal class HendelseRepository private constructor(
         if (harNyData) {
             logg.info { "Poller etter nye hendelser" }
             finnOgPubliserFerdigeHendelser().also {
-                logg.info { "Ferdig å publisere ferdige hendelser. Fant ${it.size} hendelser som var ferdige." }
+                logg.info { "Ferdig å publisere ferdige hendelser. Fant ${it.size} hendelser som var ferdige. Fortsetter å vente på ${ventendeHendelser.size}." }
                 harNyData = false
             }
         } else logg.info { "Har ikke ny data, sjekker ikke etter ferdige hendelser" }
@@ -47,12 +47,12 @@ internal class HendelseRepository private constructor(
     fun leggPåKø(hendelse: Hendelse): Boolean {
         if (ferdigeHendelser.contains(hendelse)) return true
 
-        hendelser.add(hendelse)
+        ventendeHendelser.add(hendelse)
 
         return finnOgPubliserFerdigeHendelser().isNotEmpty()
     }
 
-    private fun finnOgPubliserFerdigeHendelser() = hendelser.filter { it.alleDatakravOppfylt() }
+    private fun finnOgPubliserFerdigeHendelser() = ventendeHendelser.filter { it.alleDatakravOppfylt() }
         .onEach { ferdigHendelse ->
             when (ferdigHendelse.hendelseId.objekt) {
                 Hendelse.Type.BeregningUtført -> TODO()
@@ -63,7 +63,7 @@ internal class HendelseRepository private constructor(
             }
         }.onEach {
             ferdigeHendelser.add(it)
-            hendelser.remove(it)
+            ventendeHendelser.remove(it)
             markerDataSomBrukt(it)
         }
 

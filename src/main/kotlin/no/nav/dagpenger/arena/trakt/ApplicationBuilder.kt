@@ -29,7 +29,7 @@ internal class ApplicationBuilder(config: Map<String, String>) : StatusListener 
     }
 
     fun start() = rapidsConnection.start()
-    fun stop() = rapidsConnection.stop().also { ferdigeHendelserPolling.cancel() }
+    fun stop() = rapidsConnection.stop()
 
     override fun onStartup(rapidsConnection: RapidsConnection) {
         runMigration().also {
@@ -43,5 +43,9 @@ internal class ApplicationBuilder(config: Map<String, String>) : StatusListener 
             VedtaksfaktaService(rapidsConnection, hendelseRepository)
             VedtakService(rapidsConnection, hendelseRepository)
         }
+    }
+
+    override fun onShutdown(rapidsConnection: RapidsConnection) {
+        ferdigeHendelserPolling.cancel()
     }
 }
