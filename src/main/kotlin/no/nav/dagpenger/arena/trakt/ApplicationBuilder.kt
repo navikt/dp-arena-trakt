@@ -34,7 +34,7 @@ internal class ApplicationBuilder(config: Map<String, String>) : StatusListener 
     override fun onStartup(rapidsConnection: RapidsConnection) {
         runMigration().also {
             val hendelseRepository = HendelseRepository(rapidsConnection).also {
-                ferdigeHendelserPolling = it.startAsync()
+                ferdigeHendelserPolling = it.startAsync(30000L)
             }
             val repository = DataRepository().also { it.addObserver(hendelseRepository) }
 
