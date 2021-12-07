@@ -14,10 +14,10 @@ internal object Config {
         "beregningsledd",
         "vedtakfakta",
         "vedtak",
-        "kvotebruk",
-        "beregningslogg",
-        "meldekort",
-        "sak"
+        // "kvotebruk",
+        // "beregningslogg",
+        // "meldekort",
+        // "sak"
     ).joinToString(",") { lagArenaTopicNavn(it, miljø) }
 
     private val defaultProperties = ConfigurationMap(
