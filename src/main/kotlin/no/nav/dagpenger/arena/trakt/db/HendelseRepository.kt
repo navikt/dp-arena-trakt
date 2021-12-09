@@ -79,7 +79,7 @@ internal class HendelseRepository private constructor(
     private fun CoroutineScope.launchPeriodicAsync(
         repeatMillis: Long,
         action: () -> Unit
-    ) = async {
+    ) = this.async {
         if (repeatMillis > 0) {
             while (isActive) {
                 action()

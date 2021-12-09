@@ -3,41 +3,23 @@ package no.nav.dagpenger.arena.trakt.db
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
-import mu.KotlinLogging
 import org.intellij.lang.annotations.Language
 import java.time.Period
 
-private val logg = KotlinLogging.logger {}
-
 internal class DataRepository private constructor(
-    private val observers: MutableList<DataObserver>,
-    private val pendingInserts: MutableList<List<String>>,
-    private val batchSize: Int
+    private val observers: MutableList<DataObserver>
 ) {
-    internal constructor() : this(1)
-    constructor(batchSize: Int) : this(mutableListOf(), mutableListOf(), batchSize)
-
-    init {
-        require(batchSize in 1..1000) { "Batch size må være mellom 1 og 1000 inserts" }
-    }
+    constructor() : this(mutableListOf())
 
     fun addObserver(observer: DataObserver) = observers.add(observer)
 
     @Language("PostgreSQL")
     private val lagreQuery = """INSERT INTO arena_data (data) VALUES(?::jsonb)"""
 
-    fun lagre(json: String) = pendingInserts.add(listOf(json)).also {
-        if (pendingInserts.size >= batchSize) batchLagre()
-    }
-
-    fun flush() = batchLagre()
-
-    private fun batchLagre() {
+    fun lagre(json: String) {
         using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
-            session.batchPreparedStatement(lagreQuery, pendingInserts)
+            session.run(queryOf(lagreQuery, json).asUpdate)
         }.also {
-            pendingInserts.clear()
-            logg.info { "Lagret ${it.sum()} rader i batch}" }
             observers.forEach { it.nyData() }
         }
     }

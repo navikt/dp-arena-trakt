@@ -17,7 +17,6 @@ val log = KotlinLogging.logger {}
 
 internal class ApplicationBuilder(config: Map<String, String>) : StatusListener {
     private lateinit var ferdigeHendelserPolling: Job
-    private lateinit var dataRepository: DataRepository
     private val rapidsConnection = RapidApplication.Builder(
         RapidApplication.RapidApplicationConfig.fromEnv(config)
     ).build() /*{ _, kafkaRapid ->
@@ -37,9 +36,9 @@ internal class ApplicationBuilder(config: Map<String, String>) : StatusListener 
             val hendelseRepository = HendelseRepository(rapidsConnection).also {
                 ferdigeHendelserPolling = it.startAsync(30000L)
             }
-            dataRepository = DataRepository(200).also { it.addObserver(hendelseRepository) }
+            val repository = DataRepository().also { it.addObserver(hendelseRepository) }
 
-            DataMottakService(rapidsConnection, dataRepository)
+            DataMottakService(rapidsConnection, repository)
             BeregningsleddService(rapidsConnection, hendelseRepository)
             VedtaksfaktaService(rapidsConnection, hendelseRepository)
             VedtakService(rapidsConnection, hendelseRepository)
@@ -48,6 +47,5 @@ internal class ApplicationBuilder(config: Map<String, String>) : StatusListener 
 
     override fun onShutdown(rapidsConnection: RapidsConnection) {
         ferdigeHendelserPolling.cancel()
-        dataRepository.flush()
     }
 }
