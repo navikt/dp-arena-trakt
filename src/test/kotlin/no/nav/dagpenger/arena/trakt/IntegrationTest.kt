@@ -1,5 +1,6 @@
 package no.nav.dagpenger.arena.trakt
 
+import kotlinx.coroutines.runBlocking
 import no.nav.dagpenger.arena.trakt.db.DataRepository
 import no.nav.dagpenger.arena.trakt.db.HendelseRepository
 import no.nav.dagpenger.arena.trakt.helpers.Postgres.withMigratedDb
@@ -19,7 +20,7 @@ internal class IntegrationTest {
     private val dataRepository: DataRepository = DataRepository()
     private var hendelseRepository: HendelseRepository
     private val rapid = TestRapid().also {
-        hendelseRepository = HendelseRepository(it)
+        hendelseRepository = HendelseRepository(it).also { repository -> dataRepository.addObserver(repository) }
         DataMottakService(it, dataRepository)
         VedtakService(it, hendelseRepository)
         BeregningsleddService(it, hendelseRepository)
@@ -38,6 +39,8 @@ internal class IntegrationTest {
             rapid.sendTestMessage(vedtakJSON(123))
             rapid.sendTestMessage(beregningsleddJSON("DPTEL"))
 
+            lagreData()
+
             with(rapid.inspektør) {
                 assertEquals(1, size)
             }
@@ -50,6 +53,8 @@ internal class IntegrationTest {
             rapid.sendTestMessage(vedtakJSON(123))
             rapid.sendTestMessage(vedtaksfaktaJSON("FDATO"))
             rapid.sendTestMessage(beregningsleddJSON("DPTEL"))
+
+            lagreData()
 
             with(rapid.inspektør) {
                 assertEquals(1, size)
@@ -64,6 +69,8 @@ internal class IntegrationTest {
             rapid.sendTestMessage(beregningsleddJSON("DPTEL"))
             rapid.sendTestMessage(vedtakJSON(123))
 
+            lagreData()
+
             with(rapid.inspektør) {
                 assertEquals(1, size)
             }
@@ -76,6 +83,8 @@ internal class IntegrationTest {
             rapid.sendTestMessage(beregningsleddJSON("DPTEL"))
             rapid.sendTestMessage(vedtakJSON(123))
             rapid.sendTestMessage(vedtaksfaktaJSON("FDATO"))
+
+            lagreData()
 
             with(rapid.inspektør) {
                 assertEquals(1, size)
@@ -95,6 +104,8 @@ internal class IntegrationTest {
             rapid.sendTestMessage(vedtaksfaktaJSON("FDATO"))
             rapid.sendTestMessage(vedtaksfaktaJSON("FDATO", 12345))
 
+            lagreData()
+
             with(rapid.inspektør) {
                 assertEquals(2, size)
             }
@@ -110,9 +121,15 @@ internal class IntegrationTest {
             rapid.sendTestMessage(vedtakJSON(555))
             rapid.sendTestMessage(vedtaksfaktaJSON("FDATO", 123))
 
+            lagreData()
+
             with(rapid.inspektør) {
                 assertEquals(0, size)
             }
         }
+    }
+
+    private fun lagreData() {
+        runBlocking { hendelseRepository.startAsync(0).await() }
     }
 }
