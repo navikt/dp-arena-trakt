@@ -36,7 +36,7 @@ internal class HendelseRepository private constructor(
 
     fun startAsync(pollMs: Long = 1000) = CoroutineScope(Dispatchers.IO).launchPeriodicAsync(pollMs) {
         if (harNyData) {
-            logg.info { "Poller etter nye hendelser" }
+            logg.info { "Poller etter nye hendelser. Har ${ventendeHendelser.size} i kø." }
             finnOgPubliserFerdigeHendelser().also {
                 logg.info { "Ferdig å publisere ferdige hendelser. Fant ${it.size} hendelser som var ferdige. Fortsetter å vente på ${ventendeHendelser.size}." }
                 harNyData = false
