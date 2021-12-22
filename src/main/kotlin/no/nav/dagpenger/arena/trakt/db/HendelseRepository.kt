@@ -11,7 +11,10 @@ import kotliquery.sessionOf
 import kotliquery.using
 import mu.KotlinLogging
 import no.nav.dagpenger.arena.trakt.Hendelse
+import no.nav.dagpenger.arena.trakt.datakrav.Beregningsledd
 import no.nav.dagpenger.arena.trakt.datakrav.Datakrav
+import no.nav.dagpenger.arena.trakt.datakrav.Vedtak
+import no.nav.dagpenger.arena.trakt.datakrav.Vedtaksfakta
 import no.nav.dagpenger.arena.trakt.db.DataRepository.DataObserver
 import no.nav.dagpenger.arena.trakt.serde.HendelseVisitor
 import no.nav.dagpenger.arena.trakt.serde.VedtakHendelseJsonBuilder
@@ -33,6 +36,14 @@ internal class HendelseRepository private constructor(
         ferdigeHendelser = mutableSetOf(),
         rapidsConnection = rapidsConnection
     )
+
+    companion object {
+        fun vedtak(id: String) = Hendelse(Hendelse.HendelseId(Hendelse.Type.Vedtak, id)) {
+            krev(Beregningsledd("DPTEL"))
+            krev(Vedtaksfakta("FDATO"))
+            krev(Vedtak(id))
+        }
+    }
 
     fun startAsync(pollMs: Long = 1000) = CoroutineScope(Dispatchers.IO).launchPeriodicAsync(pollMs) {
         if (harNyData) {

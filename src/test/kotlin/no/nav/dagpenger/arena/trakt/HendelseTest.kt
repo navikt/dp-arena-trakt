@@ -3,6 +3,7 @@ package no.nav.dagpenger.arena.trakt
 import no.nav.dagpenger.arena.trakt.db.DataRepository
 import no.nav.dagpenger.arena.trakt.helpers.Postgres
 import no.nav.dagpenger.arena.trakt.helpers.beregningsleddJSON
+import no.nav.dagpenger.arena.trakt.helpers.testHendelse
 import no.nav.dagpenger.arena.trakt.helpers.vedtakJSON
 import no.nav.dagpenger.arena.trakt.helpers.vedtaksfaktaJSON
 import no.nav.dagpenger.arena.trakt.serde.VedtakHendelseJsonBuilder
@@ -18,7 +19,7 @@ internal class HendelseTest {
     @Test
     fun `Hendelse skal ikke være komplett`() {
         Postgres.withMigratedDb {
-            val vedtak = Hendelse.testHendelse(vedtaksid)
+            val vedtak = testHendelse(vedtaksid)
 
             assertFalse(vedtak.alleDatakravOppfylt())
         }
@@ -27,7 +28,7 @@ internal class HendelseTest {
     @Test
     fun `Hendelse skal være komplett`() {
         Postgres.withMigratedDb {
-            val vedtak = Hendelse.testHendelse(vedtaksid)
+            val vedtak = testHendelse(vedtaksid)
 
             dataRepository.lagre(beregningsleddJSON("BL1"))
             dataRepository.lagre(vedtaksfaktaJSON("VF1"))
@@ -39,7 +40,7 @@ internal class HendelseTest {
     @Test
     fun `Hendelse skal være json`() {
         Postgres.withMigratedDb {
-            val vedtak = Hendelse.testHendelse((vedtaksid))
+            val vedtak = testHendelse((vedtaksid))
 
             dataRepository.lagre(beregningsleddJSON("BL1"))
             dataRepository.lagre(vedtaksfaktaJSON("VF1"))

@@ -1,6 +1,16 @@
 package no.nav.dagpenger.arena.trakt.helpers
 
+import no.nav.dagpenger.arena.trakt.Hendelse
+import no.nav.dagpenger.arena.trakt.datakrav.Beregningsledd
+import no.nav.dagpenger.arena.trakt.datakrav.Vedtak
+import no.nav.dagpenger.arena.trakt.datakrav.Vedtaksfakta
 import org.intellij.lang.annotations.Language
+
+internal fun testHendelse(id: String) = Hendelse(Hendelse.HendelseId(Hendelse.Type.Vedtak, id)) {
+    krev(Beregningsledd("BL1"))
+    krev(Vedtaksfakta("VF1"))
+    krev(Vedtak(id))
+}
 
 @Language("JSON")
 internal fun vedtaksfaktaJSON(navn: String = "ENDRTILUNN", vedtakId: Int = 123) = """{

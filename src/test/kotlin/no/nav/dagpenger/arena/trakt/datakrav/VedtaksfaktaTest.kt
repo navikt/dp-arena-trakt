@@ -7,6 +7,7 @@ import no.nav.dagpenger.arena.trakt.Hendelse
 import no.nav.dagpenger.arena.trakt.db.DataRepository
 import no.nav.dagpenger.arena.trakt.db.PostgresDataSourceBuilder
 import no.nav.dagpenger.arena.trakt.helpers.Postgres.withMigratedDb
+import no.nav.dagpenger.arena.trakt.helpers.testHendelse
 import no.nav.dagpenger.arena.trakt.helpers.vedtaksfaktaJSON
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -14,7 +15,7 @@ import org.junit.jupiter.api.Test
 
 internal class VedtaksfaktaTest {
     private val repository = DataRepository()
-    private val vedtak = Hendelse.testHendelse("123")
+    private val vedtak = testHendelse("123")
     private val vedtaksfakta = Vedtaksfakta("ENDRTILUNN").apply { hendelse = vedtak.hendelseId }
 
     @Test

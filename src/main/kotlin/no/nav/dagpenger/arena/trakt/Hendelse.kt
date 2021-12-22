@@ -1,31 +1,14 @@
 package no.nav.dagpenger.arena.trakt
 
-import no.nav.dagpenger.arena.trakt.datakrav.Beregningsledd
 import no.nav.dagpenger.arena.trakt.datakrav.Datakrav
-import no.nav.dagpenger.arena.trakt.datakrav.Vedtak
-import no.nav.dagpenger.arena.trakt.datakrav.Vedtaksfakta
 import no.nav.dagpenger.arena.trakt.serde.HendelseVisitor
 import java.util.UUID
 
-internal class Hendelse private constructor(
+internal class Hendelse internal constructor(
     internal val hendelseId: HendelseId,
     internal val kravbygger: KravBygger.() -> Unit,
 ) {
     private val datakrav = mutableListOf<Datakrav<*>>()
-
-    companion object {
-        fun testHendelse(id: String) = Hendelse(HendelseId(Type.Vedtak, id)) {
-            krev(Beregningsledd("BL1"))
-            krev(Vedtaksfakta("VF1"))
-            krev(Vedtak(id))
-        }
-
-        fun vedtak(id: String) = Hendelse(HendelseId(Type.Vedtak, id)) {
-            krev(Beregningsledd("DPTEL"))
-            krev(Vedtaksfakta("FDATO"))
-            krev(Vedtak(id))
-        }
-    }
 
     init {
         KravBygger(this).also {

@@ -4,9 +4,9 @@ import kotlinx.coroutines.runBlocking
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
-import no.nav.dagpenger.arena.trakt.Hendelse
 import no.nav.dagpenger.arena.trakt.helpers.Postgres.withMigratedDb
 import no.nav.dagpenger.arena.trakt.helpers.beregningsleddJSON
+import no.nav.dagpenger.arena.trakt.helpers.testHendelse
 import no.nav.dagpenger.arena.trakt.helpers.vedtakJSON
 import no.nav.dagpenger.arena.trakt.helpers.vedtaksfaktaJSON
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
@@ -24,7 +24,7 @@ internal class HendelseRepositoryTest {
     @Test
     fun `Skal finne nye hendelser etter de lagres`() {
         withMigratedDb {
-            val vedtak = Hendelse.testHendelse(vedtaksid)
+            val vedtak = testHendelse(vedtaksid)
 
             assertFalse(hendelseRepository.leggPåKø(vedtak))
 
@@ -44,7 +44,7 @@ internal class HendelseRepositoryTest {
     @Test
     fun `leggPåKø skal returnere true om hendelsen ble sendt eller allerede sendt`() {
         withMigratedDb {
-            val vedtak = Hendelse.testHendelse(vedtaksid)
+            val vedtak = testHendelse(vedtaksid)
 
             dataRepository.lagre(beregningsleddJSON("BL1"))
             dataRepository.lagre(vedtaksfaktaJSON("VF1"))
@@ -72,7 +72,7 @@ internal class HendelseRepositoryTest {
     @Test
     fun `leggPåKø skal returnere true om hendelsen ikke er sendt`() {
         withMigratedDb {
-            val vedtak = Hendelse.testHendelse(vedtaksid)
+            val vedtak = testHendelse(vedtaksid)
 
             assertFalse(hendelseRepository.leggPåKø(vedtak))
 

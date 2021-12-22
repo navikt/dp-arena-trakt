@@ -2,8 +2,8 @@ package no.nav.dagpenger.arena.trakt.tjenester
 
 import mu.KotlinLogging
 import mu.withLoggingContext
-import no.nav.dagpenger.arena.trakt.Hendelse.Companion.vedtak
 import no.nav.dagpenger.arena.trakt.db.HendelseRepository
+import no.nav.dagpenger.arena.trakt.db.HendelseRepository.Companion.vedtak
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.MessageProblems

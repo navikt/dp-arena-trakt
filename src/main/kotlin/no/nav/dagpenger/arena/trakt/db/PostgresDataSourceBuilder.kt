@@ -36,7 +36,7 @@ internal object PostgresDataSourceBuilder {
         }
     }
 
-    fun clean() = Flyway.configure().dataSource(dataSource).load().clean()
+    fun clean() = Flyway.configure().connectRetries(5).dataSource(dataSource).load().clean()
 
     internal fun runMigration(initSql: String? = null) =
         Flyway.configure()
