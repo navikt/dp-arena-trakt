@@ -11,9 +11,7 @@ repositories {
 }
 
 dependencies {
-    testImplementation(Junit5.api)
-    testRuntimeOnly(Junit5.engine)
-    implementation(kotlin("test")) // This brings all the platform dependencies automatically
+    testImplementation(kotlin("test")) // This brings all the platform dependencies automatically
 }
 
 tasks.test {
