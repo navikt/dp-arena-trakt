@@ -4,10 +4,7 @@ import mu.KotlinLogging
 import no.nav.dagpenger.arena.trakt.db.DataRepository
 import no.nav.dagpenger.arena.trakt.db.HendelseRepository
 import no.nav.dagpenger.arena.trakt.db.PostgresDataSourceBuilder.runMigration
-import no.nav.dagpenger.arena.trakt.tjenester.BeregningsleddService
 import no.nav.dagpenger.arena.trakt.tjenester.DataMottakService
-import no.nav.dagpenger.arena.trakt.tjenester.VedtakService
-import no.nav.dagpenger.arena.trakt.tjenester.VedtaksfaktaService
 import no.nav.helse.rapids_rivers.RapidApplication
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.RapidsConnection.StatusListener
@@ -37,9 +34,9 @@ internal class ApplicationBuilder(config: Map<String, String>) : StatusListener 
             val repository = DataRepository() // .also { it.addObserver(hendelseRepository) }
 
             DataMottakService(rapidsConnection, repository)
-            BeregningsleddService(rapidsConnection, hendelseRepository)
-            VedtaksfaktaService(rapidsConnection, hendelseRepository)
-            VedtakService(rapidsConnection, hendelseRepository)
+            // BeregningsleddService(rapidsConnection, hendelseRepository)
+            // VedtaksfaktaService(rapidsConnection, hendelseRepository)
+            // VedtakService(rapidsConnection, hendelseRepository)
         }
     }
 
