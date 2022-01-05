@@ -7,9 +7,12 @@ import org.intellij.lang.annotations.Language
 import java.time.Period
 
 internal class DataRepository private constructor(
-    private val observers: MutableList<DataObserver>
+    private val observers: MutableList<DataObserver>,
+    private val blobs: MutableList<String>,
+    private val bolkSize: Int
 ) {
-    constructor() : this(mutableListOf())
+    constructor() : this(mutableListOf(), mutableListOf(), 1)
+    constructor(bolkSize: Int) : this(mutableListOf(), mutableListOf(), bolkSize)
 
     fun addObserver(observer: DataObserver) = observers.add(observer)
 
@@ -17,10 +20,16 @@ internal class DataRepository private constructor(
     private val lagreQuery = """INSERT INTO arena_data (data) VALUES(?::jsonb)"""
 
     fun lagre(json: String) {
-        using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
-            session.run(queryOf(lagreQuery, json).asUpdate)
-        }.also {
-            observers.forEach { it.nyData() }
+        blobs.add(json)
+
+        if (blobs.size >= bolkSize) {
+            using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
+                session.transaction { tx ->
+                    tx.run(queryOf(lagreQuery, json).asUpdate)
+                }
+            }.also {
+                observers.forEach { it.nyData() }
+            }
         }
     }
 
