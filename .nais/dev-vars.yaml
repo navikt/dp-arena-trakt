@@ -1,6 +1,6 @@
 app: dp-arena-trakt
 kafka_pool: nav-dev
-replicas_min: 2
-replicas_max: 2
+replicas_min: 3
+replicas_max: 3
 db_tier: db-custom-4-3840
 db_size: 20
