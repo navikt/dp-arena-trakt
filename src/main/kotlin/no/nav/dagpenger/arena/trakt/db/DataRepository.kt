@@ -4,6 +4,7 @@ import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
 import org.intellij.lang.annotations.Language
+import java.time.LocalDateTime
 import java.time.Period
 
 internal class DataRepository private constructor(
@@ -14,11 +15,25 @@ internal class DataRepository private constructor(
     fun addObserver(observer: DataObserver) = observers.add(observer)
 
     @Language("PostgreSQL")
-    private val lagreQuery = """INSERT INTO arena_data (data) VALUES(?::jsonb)"""
+    private val lagreQuery =
+        """INSERT INTO arena_data (tabell, pos, skjedde, replikert, data)
+        |VALUES (?, ?, ?, ?, ?::jsonb)
+        |ON CONFLICT DO NOTHING 
 
-    fun lagre(json: String) {
+""".trimMargin()
+
+    fun lagre(tabell: String, pos: String, skjedde: LocalDateTime, replikert: LocalDateTime, json: String) {
         using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
-            session.run(queryOf(lagreQuery, json).asUpdate)
+            session.run(
+                queryOf(
+                    lagreQuery,
+                    tabell,
+                    pos,
+                    skjedde,
+                    replikert,
+                    json
+                ).asUpdate
+            )
         }.also {
             observers.forEach { it.nyData() }
         }
@@ -26,7 +41,7 @@ internal class DataRepository private constructor(
 
     @Language("PostgreSQL")
     private val slettQuery =
-        """DELETE FROM arena_data WHERE opprettet < CURRENT_TIMESTAMP - INTERVAL '1 days' * ? AND hendelse_id IS NULL """
+        """DELETE FROM arena_data WHERE mottatt < CURRENT_TIMESTAMP - INTERVAL '1 days' * ? AND hendelse_id IS NULL """
 
     fun slettUbrukteData(eldreEnn: Period) {
         using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->

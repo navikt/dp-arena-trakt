@@ -3,6 +3,7 @@ package no.nav.dagpenger.arena.trakt
 import no.nav.dagpenger.arena.trakt.db.DataRepository
 import no.nav.dagpenger.arena.trakt.helpers.Postgres
 import no.nav.dagpenger.arena.trakt.helpers.beregningsleddJSON
+import no.nav.dagpenger.arena.trakt.helpers.lagre
 import no.nav.dagpenger.arena.trakt.helpers.testHendelse
 import no.nav.dagpenger.arena.trakt.helpers.vedtakJSON
 import no.nav.dagpenger.arena.trakt.helpers.vedtaksfaktaJSON

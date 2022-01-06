@@ -1,9 +1,12 @@
 package no.nav.dagpenger.arena.trakt.helpers
 
+import no.nav.dagpenger.arena.trakt.db.DataRepository
 import no.nav.dagpenger.arena.trakt.db.PostgresDataSourceBuilder
 import no.nav.dagpenger.arena.trakt.db.PostgresDataSourceBuilder.db
 import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.containers.PostgreSQLContainer.POSTGRESQL_PORT
+import java.time.LocalDateTime
+import java.util.UUID
 
 internal object Postgres {
     private val instance by lazy {
@@ -29,4 +32,8 @@ internal object Postgres {
             block()
         }
     }
+}
+
+internal fun DataRepository.lagre(json: String) {
+    lagre("t", UUID.randomUUID().toString(), LocalDateTime.now(), LocalDateTime.now(), json)
 }

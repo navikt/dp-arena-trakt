@@ -8,6 +8,7 @@ import no.nav.dagpenger.arena.trakt.db.DataRepository
 import no.nav.dagpenger.arena.trakt.db.PostgresDataSourceBuilder
 import no.nav.dagpenger.arena.trakt.helpers.Postgres.withMigratedDb
 import no.nav.dagpenger.arena.trakt.helpers.beregningsleddJSON
+import no.nav.dagpenger.arena.trakt.helpers.lagre
 import no.nav.dagpenger.arena.trakt.helpers.testHendelse
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -38,6 +39,8 @@ internal class BeregningsleddTest {
         withMigratedDb {
             val beregningsledd = Beregningsledd("a")
             beregningsledd.hendelse = Hendelse.HendelseId(Hendelse.Type.Vedtak, "123")
+            repository.lagre(beregningsleddJSON("a", 123))
+
             val query = beregningsledd.query
             val where = beregningsledd.params()
             val plan = using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
@@ -47,8 +50,8 @@ internal class BeregningsleddTest {
                     }.asList
                 )
             }
-            println(plan)
-            assertFalse(plan[1].contains("Seq Scan"))
+
+            assertTrue(plan[0].contains("Index Scan"))
         }
     }
 }

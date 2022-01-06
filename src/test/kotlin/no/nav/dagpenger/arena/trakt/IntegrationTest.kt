@@ -86,17 +86,17 @@ internal class IntegrationTest {
     @Test
     fun `rekkefølge 5 med andre flere vedtak`() {
         withMigratedDb {
-            rapid.sendTestMessage(beregningsleddJSON("DPTEL"))
-            rapid.sendTestMessage(beregningsleddJSON("BL2"))
+            rapid.sendTestMessage(beregningsleddJSON("DPTEL", 123))
+            rapid.sendTestMessage(beregningsleddJSON("BL2", 123))
             rapid.sendTestMessage(beregningsleddJSON("DPTEL", 12345))
             rapid.sendTestMessage(vedtakJSON(123))
             rapid.sendTestMessage(vedtakJSON(12345))
             rapid.sendTestMessage(vedtakJSON(555))
-            rapid.sendTestMessage(vedtaksfaktaJSON("FDATO"))
+            rapid.sendTestMessage(vedtaksfaktaJSON("FDATO", 123))
             rapid.sendTestMessage(vedtaksfaktaJSON("FDATO", 12345))
 
             with(rapid.inspektør) {
-                assertEquals(2, size)
+                assertEquals(1, size)
             }
         }
     }

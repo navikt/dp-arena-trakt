@@ -5,6 +5,7 @@ import kotliquery.sessionOf
 import kotliquery.using
 import no.nav.dagpenger.arena.trakt.helpers.Postgres.withMigratedDb
 import no.nav.dagpenger.arena.trakt.helpers.beregningsleddJSON
+import no.nav.dagpenger.arena.trakt.helpers.lagre
 import no.nav.dagpenger.arena.trakt.helpers.vedtaksfaktaJSON
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -65,7 +66,15 @@ internal class DataRepositoryTest {
 
     private fun lagreMedDato(json: String, dato: LocalDate) =
         using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
-            session.run(queryOf("INSERT INTO arena_data (data, opprettet) VALUES (?::jsonb, ?)", json, dato).asExecute)
+            session.run(
+                queryOf(
+                    //language=PostgreSQL
+                    """INSERT INTO arena_data (data, mottatt, tabell, pos, replikert, skjedde)
+                        |VALUES (?::jsonb, ?, 't', RANDOM(), NOW(), NOW())""".trimMargin(),
+                    json,
+                    dato
+                ).asExecute
+            )
         }
 
     private fun antallRader() =

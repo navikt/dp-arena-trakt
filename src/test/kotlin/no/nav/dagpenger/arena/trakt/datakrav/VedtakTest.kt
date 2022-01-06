@@ -7,6 +7,7 @@ import no.nav.dagpenger.arena.trakt.Hendelse
 import no.nav.dagpenger.arena.trakt.db.DataRepository
 import no.nav.dagpenger.arena.trakt.db.PostgresDataSourceBuilder
 import no.nav.dagpenger.arena.trakt.helpers.Postgres.withMigratedDb
+import no.nav.dagpenger.arena.trakt.helpers.lagre
 import no.nav.dagpenger.arena.trakt.helpers.testHendelse
 import no.nav.dagpenger.arena.trakt.helpers.vedtakJSON
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -48,7 +49,7 @@ internal class VedtakTest {
                 )
             }
 
-            assertFalse(plan[0].contains("Seq Scan"))
+            assertTrue(plan[0].contains("Index Scan"))
         }
     }
 }
