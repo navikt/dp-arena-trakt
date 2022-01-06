@@ -16,10 +16,10 @@ internal class ApplicationBuilder(config: Map<String, String>) : StatusListener 
     // private lateinit var ferdigeHendelserPolling: Job
     private val rapidsConnection = RapidApplication.Builder(
         RapidApplication.RapidApplicationConfig.fromEnv(config)
-    ).build() { _, kafkaRapid ->
+    ).build() /*{ _, kafkaRapid ->
         kafkaRapid.seekToBeginning()
         clean()
-    }
+    }*/
 
     init {
         rapidsConnection.register(this)
