@@ -18,9 +18,7 @@ internal class DataRepository private constructor(
     private val lagreQuery =
         """INSERT INTO arena_data (tabell, pos, skjedde, replikert, data)
         |VALUES (?, ?, ?, ?, ?::jsonb)
-        |ON CONFLICT DO NOTHING 
-
-""".trimMargin()
+        |ON CONFLICT DO NOTHING""".trimMargin()
 
     fun lagre(tabell: String, pos: String, skjedde: LocalDateTime, replikert: LocalDateTime, json: String) {
         using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
