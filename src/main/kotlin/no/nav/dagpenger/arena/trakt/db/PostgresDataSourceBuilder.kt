@@ -28,7 +28,7 @@ internal object PostgresDataSourceBuilder {
             addDataSourceProperty("databaseName", config[db.database])
             addDataSourceProperty("user", config[db.username])
             addDataSourceProperty("password", config[db.password])
-            maximumPoolSize = 10
+            maximumPoolSize = 20
             minimumIdle = 1
             idleTimeout = 10001
             connectionTimeout = 1000
