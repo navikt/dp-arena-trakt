@@ -1,7 +1,6 @@
 package no.nav.dagpenger.arena.trakt.tjenester
 
 import com.fasterxml.jackson.databind.JsonNode
-import jdk.internal.org.jline.utils.Colors.s
 import mu.KotlinLogging
 import mu.withLoggingContext
 import no.nav.dagpenger.arena.trakt.db.DataRepository
