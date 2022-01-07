@@ -58,5 +58,5 @@ spec:
         autoBackupHour: 3
         databases:
           - name: arena-data-test
-            envVarPrefix: DB
+            envVarPrefix: DBT
         cascadingDelete: true

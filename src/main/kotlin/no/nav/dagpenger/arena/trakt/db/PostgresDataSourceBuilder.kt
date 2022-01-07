@@ -12,7 +12,7 @@ import org.flywaydb.core.Flyway
 private val config = ConfigurationProperties.systemProperties() overriding EnvironmentVariables()
 
 internal object PostgresDataSourceBuilder {
-    internal object db : PropertyGroup() {
+    internal object dbt : PropertyGroup() {
         val host by stringType
         val port by stringType
         val database by stringType
@@ -23,11 +23,11 @@ internal object PostgresDataSourceBuilder {
     val dataSource by lazy {
         HikariDataSource().apply {
             dataSourceClassName = "org.postgresql.ds.PGSimpleDataSource"
-            addDataSourceProperty("serverName", config[db.host])
-            addDataSourceProperty("portNumber", config[db.port])
-            addDataSourceProperty("databaseName", config[db.database])
-            addDataSourceProperty("user", config[db.username])
-            addDataSourceProperty("password", config[db.password])
+            addDataSourceProperty("serverName", config[dbt.host])
+            addDataSourceProperty("portNumber", config[dbt.port])
+            addDataSourceProperty("databaseName", config[dbt.database])
+            addDataSourceProperty("user", config[dbt.username])
+            addDataSourceProperty("password", config[dbt.password])
             maximumPoolSize = 10
             minimumIdle = 1
             idleTimeout = 10001

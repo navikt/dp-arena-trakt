@@ -2,7 +2,7 @@ package no.nav.dagpenger.arena.trakt.helpers
 
 import no.nav.dagpenger.arena.trakt.db.DataRepository
 import no.nav.dagpenger.arena.trakt.db.PostgresDataSourceBuilder
-import no.nav.dagpenger.arena.trakt.db.PostgresDataSourceBuilder.db
+import no.nav.dagpenger.arena.trakt.db.PostgresDataSourceBuilder.dbt
 import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.containers.PostgreSQLContainer.POSTGRESQL_PORT
 import java.time.LocalDateTime
@@ -23,11 +23,11 @@ internal object Postgres {
     }
 
     private fun withCleanDb(block: () -> Unit) {
-        System.setProperty(db.host.name, instance.host)
-        System.setProperty(db.port.name, instance.getMappedPort(POSTGRESQL_PORT).toString())
-        System.setProperty(db.database.name, instance.databaseName)
-        System.setProperty(db.username.name, instance.username)
-        System.setProperty(db.password.name, instance.password)
+        System.setProperty(dbt.host.name, instance.host)
+        System.setProperty(dbt.port.name, instance.getMappedPort(POSTGRESQL_PORT).toString())
+        System.setProperty(dbt.database.name, instance.databaseName)
+        System.setProperty(dbt.username.name, instance.username)
+        System.setProperty(dbt.password.name, instance.password)
         PostgresDataSourceBuilder.clean().run {
             block()
         }
