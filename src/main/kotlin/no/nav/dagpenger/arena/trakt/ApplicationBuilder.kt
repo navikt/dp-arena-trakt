@@ -16,7 +16,7 @@ internal class ApplicationBuilder(config: Map<String, String>) : StatusListener 
     private val rapidsConnection = RapidApplication.Builder(
         RapidApplication.RapidApplicationConfig.fromEnv(config)
     ).build() { _, kafkaRapid ->
-        kafkaRapid.seekToBeginning()
+        // kafkaRapid.seekToBeginning()
         // clean()
     }
 
