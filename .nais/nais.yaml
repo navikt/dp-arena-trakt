@@ -24,10 +24,10 @@ spec:
     cpuThresholdPercentage: 70
   resources:
     limits:
-      cpu: 600m
+      cpu: 300m
       memory: 512Mi
     requests:
-      cpu: 300m
+      cpu: 100m
       memory: 256Mi
   secureLogs:
     enabled: true
