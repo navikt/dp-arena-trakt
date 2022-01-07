@@ -50,7 +50,7 @@ internal class DataMottakService(
         ) {
             logg.info { "Mottok data fra Arena" }
 
-            dataRepository.lagre(tabell, pos, skjedde, replikert, "{}")
+            // dataRepository.lagre(tabell, pos, skjedde, replikert, "{}")
         }
     }
 }
