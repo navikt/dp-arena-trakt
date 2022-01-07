@@ -35,18 +35,18 @@ spec:
     pool: {{kafka_pool}}
   gcp:
     sqlInstances:
-      - name: dp-arena-trakt
-        type: POSTGRES_12
-        tier: {{db_tier}}
-        diskType: SSD
-        highAvailability: false
-        diskSize: {{db_size}}
-        diskAutoresize: true
-        autoBackupHour: 3
-        databases:
-          - name: arena-data
-            envVarPrefix: DB_NOT_USE
-        cascadingDelete: false
+      #- name: dp-arena-trakt
+      #  type: POSTGRES_12
+      #  tier: {{db_tier}}
+      #  diskType: SSD
+      #  highAvailability: false
+      #  diskSize: {{db_size}}
+      #  diskAutoresize: true
+      #  autoBackupHour: 3
+      #  databases:
+      #    - name: arena-data
+      #      envVarPrefix: DB_NOT_USE
+      #  cascadingDelete: false
 
       - name: dp-arena-trakt-test
         type: POSTGRES_12
