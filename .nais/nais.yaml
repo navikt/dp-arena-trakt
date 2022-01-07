@@ -57,6 +57,6 @@ spec:
         diskAutoresize: true
         autoBackupHour: 3
         databases:
-          - name: arena-data
+          - name: arena-data-test
             envVarPrefix: DB
         cascadingDelete: true
