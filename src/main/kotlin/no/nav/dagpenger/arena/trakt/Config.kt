@@ -29,7 +29,7 @@ internal object Config {
             "DB_USERNAME" to "username",
             "HTTP_PORT" to "8080",
             "RAPID_APP_NAME" to "dp-arena-trakt",
-            "KAFKA_CONSUMER_GROUP_ID" to "dp-arena-trakt-v2",
+            "KAFKA_CONSUMER_GROUP_ID" to "dp-arena-trakt-v3",
             "KAFKA_RAPID_TOPIC" to "teamdagpenger.rapid.v1",
             "KAFKA_EXTRA_TOPIC" to arenaTopics(miljø = "q2"),
             "KAFKA_RESET_POLICY" to "earliest",
