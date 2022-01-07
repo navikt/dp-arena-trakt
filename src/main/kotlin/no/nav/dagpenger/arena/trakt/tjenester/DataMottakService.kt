@@ -1,6 +1,7 @@
 package no.nav.dagpenger.arena.trakt.tjenester
 
 import com.fasterxml.jackson.databind.JsonNode
+import jdk.internal.org.jline.utils.Colors.s
 import mu.KotlinLogging
 import mu.withLoggingContext
 import no.nav.dagpenger.arena.trakt.db.DataRepository
@@ -50,9 +51,7 @@ internal class DataMottakService(
         ) {
             logg.info { "Mottok data fra Arena" }
 
-            dataRepository.lagre(tabell, pos, skjedde, replikert, packet.toJson())
-            dataRepository.lagre(tabell + "1", pos, skjedde, replikert, packet.toJson())
-            dataRepository.lagre(tabell + "2", pos, skjedde, replikert, packet.toJson())
+            dataRepository.lagre(tabell, pos, skjedde, replikert, "{}")
         }
     }
 }
