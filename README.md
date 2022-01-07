@@ -9,6 +9,13 @@ Gradle brukes som byggverktøy og er bundlet inn.
 
 `./gradlew sA b`
 
+## Databasen
+
+For å observere diverse metrikker i databasen, så kan man gå inn her:
+[dp-arena-trakt i dev](https://console.cloud.google.com/sql/instances/dp-arena-trakt/overview?authuser=1&project=teamdagpenger-dev-885f)
+
+NB: Dette krever at man er innlogget med `gcloud auth login`
+
 ## Henvendelser
 
 Spørsmål knyttet til koden eller prosjektet kan rettes mot:
