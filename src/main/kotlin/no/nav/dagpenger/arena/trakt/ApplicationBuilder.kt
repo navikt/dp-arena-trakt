@@ -31,7 +31,7 @@ internal class ApplicationBuilder(config: Map<String, String>) : StatusListener 
         runMigration().also {
             val hendelseRepository =
                 HendelseRepository(rapidsConnection) // .also { ferdigeHendelserPolling = it.startAsync(30000L) }
-            val repository = DataRepository(2000) // .also { it.addObserver(hendelseRepository) }
+            val repository = DataRepository(1000) // .also { it.addObserver(hendelseRepository) }
 
             DataMottakService(rapidsConnection, repository)
             // BeregningsleddService(rapidsConnection, hendelseRepository)
