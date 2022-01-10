@@ -29,6 +29,7 @@ internal class DataRepository private constructor(
         if (params.size >= batchSize) {
             using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
                 session.batchPreparedStatement(lagreQuery, params)
+                params.clear()
                 /*session.run(
                     queryOf(
                         lagreQuery,
