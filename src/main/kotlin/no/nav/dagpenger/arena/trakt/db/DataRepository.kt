@@ -6,6 +6,7 @@ import kotliquery.using
 import org.intellij.lang.annotations.Language
 import java.time.LocalDateTime
 import java.time.Period
+import java.util.UUID
 
 internal class DataRepository private constructor(
     private val observers: MutableList<DataObserver>
@@ -16,8 +17,8 @@ internal class DataRepository private constructor(
 
     @Language("PostgreSQL")
     private val lagreQuery =
-        """INSERT INTO arena_data (tabell, pos, skjedde, replikert, data)
-        |VALUES (?, ?, ?, ?, ?::jsonb)
+        """INSERT INTO arena_data (id, tabell, pos, skjedde, replikert, data)
+        |VALUES (?, ?, ?, ?, ?, ?::jsonb)
         |ON CONFLICT DO NOTHING""".trimMargin()
 
     fun lagre(tabell: String, pos: String, skjedde: LocalDateTime, replikert: LocalDateTime, json: String) {
@@ -25,6 +26,7 @@ internal class DataRepository private constructor(
             session.run(
                 queryOf(
                     lagreQuery,
+                    UUID.randomUUID(),
                     tabell,
                     pos,
                     skjedde,

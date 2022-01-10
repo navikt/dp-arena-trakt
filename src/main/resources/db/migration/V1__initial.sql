@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS arena_data
 (
-    id          BIGSERIAL PRIMARY KEY,
+    id          uuid PRIMARY KEY,
     tabell      VARCHAR(250) NOT NULL,
     pos         VARCHAR(250) NOT NULL,
     mottatt     TIMESTAMP    NOT NULL DEFAULT NOW(),
