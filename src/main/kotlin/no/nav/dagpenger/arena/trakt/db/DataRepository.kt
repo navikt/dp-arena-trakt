@@ -8,10 +8,13 @@ import java.time.LocalDateTime
 import java.time.Period
 
 internal class DataRepository private constructor(
+    private val batchSize: Int,
     private val observers: MutableList<DataObserver>
 ) {
-    constructor() : this(mutableListOf())
+    constructor() : this(1, mutableListOf())
+    constructor(batchSize: Int) : this(batchSize, mutableListOf())
 
+    private val params: MutableList<List<Any>> = mutableListOf()
     fun addObserver(observer: DataObserver) = observers.add(observer)
 
     @Language("PostgreSQL")
@@ -21,19 +24,24 @@ internal class DataRepository private constructor(
         |ON CONFLICT DO NOTHING""".trimMargin()
 
     fun lagre(tabell: String, pos: String, skjedde: LocalDateTime, replikert: LocalDateTime, json: String) {
-        using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
-            session.run(
-                queryOf(
-                    lagreQuery,
-                    tabell,
-                    pos,
-                    skjedde,
-                    replikert,
-                    json
-                ).asUpdate
-            )
-        }.also {
-            observers.forEach { it.nyData() }
+        params.add(listOf(tabell, pos, skjedde, replikert, json))
+
+        if (params.size >= batchSize) {
+            using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
+                session.batchPreparedStatement(lagreQuery, params)
+                /*session.run(
+                    queryOf(
+                        lagreQuery,
+                        tabell,
+                        pos,
+                        skjedde,
+                        replikert,
+                        json
+                    ).asUpdate*/
+                // )
+            }.also {
+                observers.forEach { it.nyData() }
+            }
         }
     }
 
