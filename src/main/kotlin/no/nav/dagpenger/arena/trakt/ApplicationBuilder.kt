@@ -18,7 +18,7 @@ internal class ApplicationBuilder(config: Map<String, String>) : StatusListener 
         RapidApplication.RapidApplicationConfig.fromEnv(config)
     ).build() { _, kafkaRapid ->
         // kafkaRapid.seekToBeginning()
-        clean()
+        // clean()
     }
 
     init {
