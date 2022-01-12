@@ -18,24 +18,29 @@ NB: Dette krever at man er innlogget med `gcloud auth login`
 
 ## Kafka - Offsets og observerbarhet for golden gate topics fra arena.
 
+Prerequisites:
+- Installer [nais cli](https://doc.nais.io/cli/install/) - Vi trenger `nais aiven`
+- Installer Kafka: `brew install kafka` - Vi trenger scriptene som ligger i: `ls /usr/local/opt/kafka/bin/`
+- Kjør følgende kommando: `gcloud auth login && kubectx dev-gcp && kubens teamdagpenger` - Bytt ut dev med prod om nødvendig
 
-Vi trenger shellscripts for å resette offsets samt hente info. Dette får vi via `brew install kafka`
+Når dette er installert, så bruker vi `nais aiven create` kommandoen til å generere en tidsbasert aiven applikasjon for å sjekke/endre offsets i Aiven clusteret. 
+Mer utdypende forklaring her: [nais aiven](https://doc.nais.io/cli/commands/aiven/)
 
-Scriptene vi trenger kan man se her: `ls /usr/local/opt/kafka/bin/`
-
-De blir tilgjengeliggjort i path via `brew install kafka`, så man skal kunne kalle de slik: `kafka-consumer-groups`
-
-Gitt at man har satt opp alt dette (phew), så skal man kunne kjøre følgende kommando:
-
-NB: /var/folders... til aiven secret i kafka.properties er automatisk generert, så pathen må endres
+1. Kjør deretter: `nais aiven create dp-offset-admin teamdagpenger`
+2. Kjør kommandoen du fikk fra outputen over, f.eks: `nais aiven get teamdagpenger-dp-offset-admin-b6fce022 teamdagpenger`
+3. Outputen fra kommandoen over inneholder en path en mappe med konfigurasjonen vi trenger for å koble til Aiven. 
+   1. F.eks: `/var/folders/../aiven-secret-2875218110`
+   2. Hvis du kjører en `ls /var/folders/../aiven-secret-2875218110` så vil du blant annet se `kafka.properties` Det er denne vi skal bruke.
+4. Ta hele pathen til kafka.properties vi fant over, og endre `--command-config pathen i scriptet under`
 
 ```sh
-./kafka-consumer-groups \
+kafka-consumer-groups \
   --command-config /var/folders/16/fyf0fpps4mz1_5tx5f6t7bq40000gn/T/aiven-secret-2896025567/kafka.properties \
   --bootstrap-server nav-dev-kafka-nav-dev.aivencloud.com:26484 \
   --group dp-arena-trakt-v2 \
   --describe
 ```
+
 
 
 For mer dokumentasjon fra aiven, se: [viewing and resetting offsets](https://developer.aiven.io/docs/products/kafka/howto/viewing-resetting-offset.html)
