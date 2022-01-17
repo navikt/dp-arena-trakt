@@ -3,13 +3,13 @@ package no.nav.dagpenger.arena.trakt.datakrav
 import kotliquery.Row
 import org.intellij.lang.annotations.Language
 
-internal class Beregningsledd(private val navn: String) : Datakrav<String>(navn) {
+internal class Beregningsledd(private val kode: String) : Datakrav<String>(kode) {
     private val where
         @Language("JSON")
         get() = """
             |{
             |  "after": {
-            |    "BEREGNINGSLEDDKODE": "$navn",
+            |    "BEREGNINGSLEDDKODE": "$kode",
             |    "TABELLNAVNALIAS_KILDE": "VEDTAK",
             |    "OBJEKT_ID_KILDE": ${hendelse.objektId}
             |  }

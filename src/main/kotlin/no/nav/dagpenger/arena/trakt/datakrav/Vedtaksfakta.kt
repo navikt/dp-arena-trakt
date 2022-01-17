@@ -3,13 +3,13 @@ package no.nav.dagpenger.arena.trakt.datakrav
 import kotliquery.Row
 import org.intellij.lang.annotations.Language
 
-internal class Vedtaksfakta(private val navn: String) : Datakrav<String>(navn) {
+internal class Vedtaksfakta(private val kode: String) : Datakrav<String>(kode) {
     private val where
         @Language("JSON")
         get() = """
             |{
             |  "after": {
-            |    "VEDTAKFAKTAKODE": "$navn",
+            |    "VEDTAKFAKTAKODE": "$kode",
             |    "VEDTAK_ID": ${hendelse.objektId}
             |  }
             |}""".trimMargin()

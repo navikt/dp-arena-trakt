@@ -11,6 +11,8 @@ import kotliquery.sessionOf
 import kotliquery.using
 import mu.KotlinLogging
 import no.nav.dagpenger.arena.trakt.Hendelse
+import no.nav.dagpenger.arena.trakt.datakrav.ArenaKode.DAGPENGE_PERIODE_TELLER
+import no.nav.dagpenger.arena.trakt.datakrav.ArenaKode.GJELDER_FRA_DATO
 import no.nav.dagpenger.arena.trakt.datakrav.Beregningsledd
 import no.nav.dagpenger.arena.trakt.datakrav.Datakrav
 import no.nav.dagpenger.arena.trakt.datakrav.Vedtak
@@ -39,8 +41,8 @@ internal class HendelseRepository private constructor(
 
     companion object {
         fun vedtak(id: String) = Hendelse(Hendelse.HendelseId(Hendelse.Type.Vedtak, id)) {
-            krev(Beregningsledd("DPTEL"))
-            krev(Vedtaksfakta("FDATO"))
+            krev(Beregningsledd(DAGPENGE_PERIODE_TELLER.arenaKode))
+            krev(Vedtaksfakta(GJELDER_FRA_DATO.arenaKode))
             krev(Vedtak(id))
         }
     }

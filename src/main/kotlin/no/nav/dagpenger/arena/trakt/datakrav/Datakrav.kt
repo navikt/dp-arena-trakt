@@ -9,7 +9,7 @@ import no.nav.dagpenger.arena.trakt.db.PostgresDataSourceBuilder
 import no.nav.dagpenger.arena.trakt.serde.DatakravVisitor
 import java.math.BigInteger
 
-internal abstract class Datakrav<T>(private val navn: String) {
+internal abstract class Datakrav<T>(private val kode: String) {
     internal lateinit var hendelse: HendelseId
 
     internal abstract fun params(): Map<String, Any>
@@ -25,8 +25,13 @@ internal abstract class Datakrav<T>(private val navn: String) {
         }
 
     fun accept(visitor: DatakravVisitor) {
-        visitor.visit(this, navn, data, oppfylt())
+        visitor.visit(this, kode, data, oppfylt())
     }
 
     internal data class Resultat<T>(val id: BigInteger, val data: T)
+}
+
+internal enum class ArenaKode(val arenaKode: String) {
+    DAGPENGE_PERIODE_TELLER("DPTEL"),
+    GJELDER_FRA_DATO("FDATO")
 }
