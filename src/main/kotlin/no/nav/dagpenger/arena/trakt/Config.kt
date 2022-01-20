@@ -6,7 +6,6 @@ import com.natpryce.konfig.ConfigurationProperties
 import com.natpryce.konfig.EnvironmentVariables
 import com.natpryce.konfig.Key
 import com.natpryce.konfig.booleanType
-import com.natpryce.konfig.intType
 import com.natpryce.konfig.overriding
 
 internal object Config {

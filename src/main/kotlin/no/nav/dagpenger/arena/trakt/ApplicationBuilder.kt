@@ -40,9 +40,9 @@ internal class ApplicationBuilder(config: Map<String, String>) : StatusListener 
                 DataMottakService(rapidsConnection, repository)
             } else {
                 log.info { "** Starter dp-arena-trakt i vanlig modus **" }
-                //BeregningsleddService(rapidsConnection, hendelseRepository)
-                //VedtaksfaktaService(rapidsConnection, hendelseRepository)
-                //VedtakService(rapidsConnection, hendelseRepository)
+                BeregningsleddService(rapidsConnection, hendelseRepository)
+                VedtaksfaktaService(rapidsConnection, hendelseRepository)
+                VedtakService(rapidsConnection, hendelseRepository)
             }
         }
     }

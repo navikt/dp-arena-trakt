@@ -9,6 +9,9 @@ Gradle brukes som byggverktøy og er bundlet inn.
 
 `./gradlew sA b`
 
+## Batch innlesing
+Batch innlesing kan skrus på ved å sette variabelen `batch_insert: true` i [dev-vars.yaml](.nais/dev-vars.yaml) og [prod-vars.yaml](.nais/prod-vars.yaml) 
+
 ## Databasen
 
 For å observere diverse metrikker i databasen, så kan man gå inn her:
