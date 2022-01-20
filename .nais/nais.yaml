@@ -6,6 +6,9 @@ metadata:
   labels:
     team: teamdagpenger
 spec:
+  env:
+    - name: BATCH_INSERT
+      value: {{ batch_insert }}
   image: {{image}}
   port: 8080
   liveness:

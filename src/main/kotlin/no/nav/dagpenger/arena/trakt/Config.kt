@@ -5,6 +5,7 @@ import com.natpryce.konfig.ConfigurationMap
 import com.natpryce.konfig.ConfigurationProperties
 import com.natpryce.konfig.EnvironmentVariables
 import com.natpryce.konfig.Key
+import com.natpryce.konfig.booleanType
 import com.natpryce.konfig.intType
 import com.natpryce.konfig.overriding
 
@@ -33,6 +34,7 @@ internal object Config {
             "KAFKA_RAPID_TOPIC" to "teamdagpenger.rapid.v1",
             "KAFKA_EXTRA_TOPIC" to arenaTopics(miljø = "q2"),
             "KAFKA_RESET_POLICY" to "earliest",
+            "BATCH_INSERT" to "false"
         )
     )
     private val prodProperties = ConfigurationMap(
@@ -45,7 +47,8 @@ internal object Config {
             else -> systemAndEnvProperties overriding defaultProperties
         }
     }
-    val port = properties[Key("HTTP_PORT", intType)]
+    val batchInsert = properties[Key("BATCH_INSERT", booleanType)]
+
     val config: Map<String, String> = properties.list().reversed().fold(emptyMap()) { map, pair ->
         map + pair.second
     }
