@@ -33,7 +33,7 @@ spec:
     enabled: true
   env:
     - name: BATCH_INSERT
-      value: {{ batch_insert }}
+      value: {{batch_insert}}
   kafka:
     pool: {{kafka_pool}}
   gcp:
