@@ -37,7 +37,6 @@ internal class DataRepository private constructor(
         }
     }
 
-
     @Language("PostgreSQL")
     private val slettQuery =
         """DELETE FROM arena_data WHERE mottatt < CURRENT_TIMESTAMP - INTERVAL '1 days' * ? AND hendelse_id IS NULL """

@@ -1,18 +1,20 @@
 plugins {
     kotlin("jvm")
+    id("dagpenger.common")
+    id("dagpenger.rapid-and-rivers")
 }
 
 repositories {
     mavenCentral()
-    maven("https://jitpack.io")
+}
+
+application {
+    mainClass.set("no.nav.dagpenger.arena.trakt.AppKt")
 }
 
 dependencies {
-    implementation(kotlin("stdlib"))
-    implementation("com.github.navikt:rapids-and-rivers-cli:1.5142592")
-    implementation(Database.HikariCP)
+    implementation(kotlin("test"))
+    implementation(project(":infrastructure"))
     implementation(Database.Kotlinquery)
-    implementation(Database.Postgres)
-    implementation(Konfig.konfig)
     testImplementation(TestContainers.postgresql)
 }

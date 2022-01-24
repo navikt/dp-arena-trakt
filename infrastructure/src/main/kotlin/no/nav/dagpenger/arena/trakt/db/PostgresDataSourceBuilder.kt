@@ -1,3 +1,5 @@
+package no.nav.dagpenger.arena.trakt.db
+
 import com.natpryce.konfig.ConfigurationProperties
 import com.natpryce.konfig.EnvironmentVariables
 import com.natpryce.konfig.PropertyGroup
@@ -5,11 +7,13 @@ import com.natpryce.konfig.getValue
 import com.natpryce.konfig.overriding
 import com.natpryce.konfig.stringType
 import com.zaxxer.hikari.HikariDataSource
+import org.flywaydb.core.Flyway
+import javax.sql.DataSource
 
 private val config = ConfigurationProperties.systemProperties() overriding EnvironmentVariables()
 
-internal object PostgresDataSourceBuilder {
-    internal object db : PropertyGroup() {
+object PostgresDataSourceBuilder {
+    object db : PropertyGroup() {
         val host by stringType
         val port by stringType
         val database by stringType
@@ -17,7 +21,7 @@ internal object PostgresDataSourceBuilder {
         val password by stringType
     }
 
-    val dataSource by lazy {
+    val dataSource: DataSource by lazy {
         HikariDataSource().apply {
             dataSourceClassName = "org.postgresql.ds.PGSimpleDataSource"
             addDataSourceProperty("serverName", config[db.host])
@@ -32,4 +36,13 @@ internal object PostgresDataSourceBuilder {
             maxLifetime = 30001
         }
     }
+
+    fun clean() = Flyway.configure().connectRetries(5).dataSource(dataSource).load().clean()
+
+    fun runMigration(initSql: String? = null) =
+        Flyway.configure()
+            .dataSource(dataSource)
+            .initSql(initSql)
+            .load()
+            .migrate()
 }
