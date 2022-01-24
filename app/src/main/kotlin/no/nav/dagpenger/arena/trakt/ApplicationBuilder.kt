@@ -33,17 +33,11 @@ internal class ApplicationBuilder(config: Map<String, String>) : StatusListener 
     override fun onStartup(rapidsConnection: RapidsConnection) {
         runMigration().also {
             val hendelseRepository = HendelseRepository(rapidsConnection) // .also { ferdigeHendelserPolling = it.startAsync(30000L) }
-            val repository = DataRepository(1000) // .also { it.addObserver(hendelseRepository) }
-
-            if (batchInsert) {
-                log.info { "** Starter dp-arena-trakt i batchmodus **" }
+            val repository = DataRepository() // .also { it.addObserver(hendelseRepository) }
                 DataMottakService(rapidsConnection, repository)
-            } else {
-                log.info { "** Starter dp-arena-trakt i vanlig modus **" }
                 BeregningsleddService(rapidsConnection, hendelseRepository)
                 VedtaksfaktaService(rapidsConnection, hendelseRepository)
                 VedtakService(rapidsConnection, hendelseRepository)
-            }
         }
     }
 
