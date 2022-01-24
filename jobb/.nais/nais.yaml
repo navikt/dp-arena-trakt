@@ -1,0 +1,26 @@
+apiVersion: nais.io/v1alpha1
+kind: Naisjob
+metadata:
+  name: dp-arena-trakt-job
+  namespace: teamdagpenger
+  labels:
+    team: teamdagpenger
+spec:
+  image: {{image}}
+  port: 8080
+  parallellism: 9
+    cpuThresholdPercentage: 70
+  resources:
+    limits:
+      cpu: 300m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 256Mi
+  secureLogs:
+    enabled: true
+  kafka:
+    pool: {{kafka_pool}}
+  envFrom:
+    -secret: google-sql-dp-arena-trakt-
+

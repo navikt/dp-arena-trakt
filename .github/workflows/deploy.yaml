@@ -30,7 +30,7 @@ jobs:
             ${{ runner.os }}-gradle-
 
       - name: Build with Gradle
-        run: ./gradlew build --info
+        run: ./gradlew :app:build --info
 
       - name: Set up Docker Buildx
         id: buildx
@@ -46,7 +46,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v2
         with:
-          context: .
+          context: app/
           builder: ${{ steps.buildx.outputs.name }}
           tags: ${{ env.IMAGE }},${{ env.LATEST_IMAGE }}
           push: true
@@ -58,7 +58,7 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
           name: nais-yaml
-          path: .nais
+          path: app/.nais
 
   deploy-dev:
     name: Deploy to dev
