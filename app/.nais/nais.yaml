@@ -22,6 +22,8 @@ spec:
     min: {{replicas_min}}
     max: {{replicas_max}}
     cpuThresholdPercentage: 70
+  strategy:
+    type: Recreate
   resources:
     limits:
       cpu: 300m
