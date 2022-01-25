@@ -1,0 +1,6 @@
+# Ignore everything
+**
+
+# Except installDist targets
+!app/build/install
+!jobb/build/install
