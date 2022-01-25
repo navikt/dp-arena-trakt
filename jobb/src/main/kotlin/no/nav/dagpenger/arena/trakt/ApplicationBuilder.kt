@@ -13,7 +13,8 @@ internal class ApplicationBuilder(config: Map<String, String>) : StatusListener 
     private val rapidsConnection = RapidApplication.Builder(
         RapidApplication.RapidApplicationConfig.fromEnv(config)
     ).build { _, kafkaRapid ->
-        kafkaRapid.seekToBeginning()
+        log.info { "App starting with $config" }
+        if (config["offset"] == "earliest") kafkaRapid.seekToBeginning()
         // clean()
     }
 
