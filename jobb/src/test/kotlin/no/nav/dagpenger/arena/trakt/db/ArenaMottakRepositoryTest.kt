@@ -9,7 +9,9 @@ import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 
 internal class ArenaMottakRepositoryTest {
-    private val dataRepository = ArenaMottakRepository(3)
+    private val dataRepository by lazy {
+        ArenaMottakRepository(3)
+    }
 
     @Test
     fun `Kan lagre JSON blobber som kommer fra Arena`() {

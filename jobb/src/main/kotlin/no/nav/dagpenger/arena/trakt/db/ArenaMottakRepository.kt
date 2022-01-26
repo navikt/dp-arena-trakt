@@ -1,6 +1,5 @@
 package no.nav.dagpenger.arena.trakt.db
 
-import com.zaxxer.hikari.HikariDataSource
 import kotliquery.sessionOf
 import kotliquery.using
 import no.nav.dagpenger.arena.trakt.log
@@ -10,21 +9,18 @@ import java.util.Collections
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
+import javax.sql.DataSource
 
-internal class ArenaMottakRepository constructor(
+internal class ArenaMottakRepository private constructor(
     private val batchSize: Int,
+    private val dataSource: DataSource
 ) {
-    constructor() : this(200)
+    constructor(batchSize: Int) : this(batchSize, PostgresDataSourceBuilder.dataSource)
+    constructor(dataSource: DataSource) : this(200, dataSource)
 
     private val shutdown = CountDownLatch(1)
     private val running = AtomicBoolean(true)
     private val rows = Collections.synchronizedList(mutableListOf<List<Any>>())
-    private val dataSource by lazy {
-        (PostgresDataSourceBuilder.dataSource as HikariDataSource).apply {
-            addDataSourceProperty("socketFactory", "com.google.cloud.sql.postgres.SocketFactory")
-            addDataSourceProperty("cloudSqlInstance", "dp-arena-trakt-v1")
-        }
-    }
 
     fun leggTil(tabell: String, pos: String, skjedde: LocalDateTime, replikert: LocalDateTime, json: String) {
         if (!running.get()) throw IllegalStateException("Shutting down, not accepting new writes")
