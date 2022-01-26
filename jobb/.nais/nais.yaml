@@ -20,6 +20,10 @@ spec:
     enabled: true
   kafka:
     pool: {{kafka_pool}}
-  envFrom:
-    - secret: google-sql-dp-arena-trakt
+  gcp:
+    permissions:
+      - resource:
+          apiVersion: resourcemanager.cnrm.cloud.google.com/v1beta1
+          kind: Project
+        role: roles/cloudsql.client
 
