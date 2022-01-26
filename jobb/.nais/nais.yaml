@@ -19,6 +19,8 @@ spec:
     enabled: true
   kafka:
     pool: {{kafka_pool}}
+  envFrom:
+    - secret: google-sql-dp-arena-trakt-arena-data-job-51e3c035
   gcp:
     permissions:
       - resource:
