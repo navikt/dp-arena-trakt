@@ -35,7 +35,7 @@ internal class ArenaMottakRepository constructor(
     }
 
     private fun lagre() {
-        using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
+        using(sessionOf(dataSource)) { session ->
             session.batchPreparedStatement(lagreQuery, rows).also {
                 if (!running.get()) shutdown.countDown()
             }
