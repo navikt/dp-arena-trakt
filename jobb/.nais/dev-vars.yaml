@@ -1,2 +1,2 @@
 kafka_pool: nav-dev
-parallellism: 1
+parallelism: 1
