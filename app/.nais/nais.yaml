@@ -49,5 +49,5 @@ spec:
           - name: arena-data
             envVarPrefix: DB
             users:
-              - name: dp-arena-trakt-job
+              - name: job
         cascadingDelete: false
