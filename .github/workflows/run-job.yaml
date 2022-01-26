@@ -10,15 +10,24 @@ on:
         type: choice
         options:
           - earliest
-          - latest
+      environment:
+        description: 'Hvilket miljø skal det kjøres i?'
+        required: true
+        default: 'q2'
+        type: choice
+        options:
+          - q1
+          - q2
+          - p
 
 env:
   IMAGE: ghcr.io/${{ github.repository }}/dp-arena-trakt:${{ github.sha }}
 
 jobs:
-  build:
+  run-dev:
     name: Build and publish Docker image
     runs-on: ubuntu-latest
+    if: github.event.inputs.environment != 'p'
     steps:
       - uses: actions/checkout@v2
       - uses: nais/deploy/actions/deploy@v1
@@ -27,25 +36,20 @@ jobs:
           CLUSTER: dev-gcp
           RESOURCE: jobb/.nais/nais.yaml
           VARS: jobb/.nais/dev-vars.yaml
-          VAR: offset=${{ github.event.inputs.offsetStrategy }}
+          VAR: offset=${{ github.event.inputs.offsetStrategy }},environment=${{ github.event.inputs.environment }}
           PRINT_PAYLOAD: true
 
-#  deploy-prod:
-#    name: Deploy to Production
-#    needs: [build]
-#    if: github.ref == 'refs/heads/main'
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Fetch NAIS yaml
-#        uses: actions/download-artifact@v1
-#        with:
-#          name: nais-yaml
-#          path: nais
-#
-#      - uses: nais/deploy/actions/deploy@v1
-#        env:
-#          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
-#          CLUSTER: prod-gcp
-#          RESOURCE: nais/nais.yaml
-#          VARS: nais/prod-vars.yaml
-#          PRINT_PAYLOAD: true
+  run-prod:
+    name: Build and publish Docker image
+    runs-on: ubuntu-latest
+    if: github.event.inputs.environment == 'p'
+    steps:
+      - uses: actions/checkout@v2
+      - uses: nais/deploy/actions/deploy@v1
+        env:
+          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
+          CLUSTER: dev-gcp
+          RESOURCE: jobb/.nais/nais.yaml
+          VARS: jobb/.nais/dev-vars.yaml
+          VAR: offset=${{ github.event.inputs.offsetStrategy }},environment=${{ github.event.inputs.environment }}
+          PRINT_PAYLOAD: true
