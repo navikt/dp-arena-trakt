@@ -16,6 +16,5 @@ dependencies {
     implementation(kotlin("test"))
     implementation(project(":infrastructure"))
     implementation(Database.Kotlinquery)
-    implementation(Database.HikariCP)
     testImplementation(TestContainers.postgresql)
 }

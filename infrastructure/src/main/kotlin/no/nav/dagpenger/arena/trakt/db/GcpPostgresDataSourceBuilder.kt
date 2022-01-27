@@ -1,0 +1,36 @@
+package no.nav.dagpenger.arena.trakt.db
+
+import com.natpryce.konfig.ConfigurationProperties
+import com.natpryce.konfig.EnvironmentVariables
+import com.natpryce.konfig.PropertyGroup
+import com.natpryce.konfig.getValue
+import com.natpryce.konfig.overriding
+import com.natpryce.konfig.stringType
+import com.zaxxer.hikari.HikariDataSource
+import javax.sql.DataSource
+
+private val config = ConfigurationProperties.systemProperties() overriding EnvironmentVariables()
+
+object GcpPostgresDataSourceBuilder {
+    object db : PropertyGroup() {
+        val database by stringType
+        val username by stringType
+        val password by stringType
+    }
+
+    val dataSource: DataSource by lazy {
+        HikariDataSource().apply {
+            dataSourceClassName = "org.postgresql.ds.PGSimpleDataSource"
+            addDataSourceProperty("databaseName", config[db.database])
+            addDataSourceProperty("user", config[db.username])
+            addDataSourceProperty("password", config[db.password])
+            addDataSourceProperty("socketFactory", "com.google.cloud.sql.postgres.SocketFactory")
+            addDataSourceProperty("cloudSqlInstance", "dp-arena-trakt-v1")
+            maximumPoolSize = 20
+            minimumIdle = 1
+            idleTimeout = 10001
+            connectionTimeout = 1000
+            maxLifetime = 30001
+        }
+    }
+}
