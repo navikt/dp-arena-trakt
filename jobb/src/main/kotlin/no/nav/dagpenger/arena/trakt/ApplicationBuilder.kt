@@ -14,8 +14,11 @@ val log = KotlinLogging.logger {}
 internal class ApplicationBuilder(config: Map<String, String>) : StatusListener {
     private val dataSource by lazy {
         (PostgresDataSourceBuilder.dataSource as HikariDataSource).apply {
+            dataSourceProperties.remove("serverName")
+            dataSourceProperties.remove("portNumber")
             addDataSourceProperty("socketFactory", "com.google.cloud.sql.postgres.SocketFactory")
             addDataSourceProperty("cloudSqlInstance", "dp-arena-trakt-v1")
+            println(dataSourceProperties)
         }
     }
     private val arenaMottakRepository = ArenaMottakRepository(dataSource)
