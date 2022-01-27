@@ -17,6 +17,7 @@ object GcpPostgresDataSourceBuilder {
             val database by stringType
             val username by stringType
             val password by stringType
+            val instance by stringType
         }
     }
 
@@ -26,7 +27,7 @@ object GcpPostgresDataSourceBuilder {
             addDataSourceProperty("user", config[db.job.username])
             addDataSourceProperty("password", config[db.job.password])
             addDataSourceProperty("socketFactory", "com.google.cloud.sql.postgres.SocketFactory")
-            addDataSourceProperty("cloudSqlInstance", "dp-arena-trakt-v1")
+            addDataSourceProperty("cloudSqlInstance", config[db.job.instance])
             maximumPoolSize = 20
             minimumIdle = 1
             idleTimeout = 10001

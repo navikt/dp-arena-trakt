@@ -26,6 +26,8 @@ spec:
   env:
     - name: OFFSET
       value: {{offset}}
+    - name: DB_JOB_INSTANCE
+      value: {{db.instance}}
   gcp:
     permissions:
       - resource:

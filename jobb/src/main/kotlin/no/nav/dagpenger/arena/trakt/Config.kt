@@ -19,8 +19,7 @@ internal object Config {
     ).joinToString(",") { lagArenaTopicNavn(it, miljø) }
 
     private val defaultProperties = ConfigurationMap(
-        "DB_DATABASE" to "arena-data",
-        "DB_HOST" to "127.0.0.1",
+        "DB_INSTANCE" to "",
         "DB_PASSWORD" to "password",
         "DB_PORT" to "5432",
         "DB_USERNAME" to "dp-arena-trakt-job",
