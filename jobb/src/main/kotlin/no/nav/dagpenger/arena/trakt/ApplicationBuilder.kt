@@ -15,7 +15,7 @@ internal class ApplicationBuilder(config: Map<String, String>) : StatusListener 
     private val rapidsConnection = RapidApplication.Builder(
         RapidApplication.RapidApplicationConfig.fromEnv(config)
     ).build { _, kafkaRapid ->
-        if (config["offset"] == "earliest") kafkaRapid.seekToBeginning()
+        if (config["OFFSET"] == "earliest") kafkaRapid.seekToBeginning()
         // clean()
     }
     private val arenaMottakRepository by lazy {
