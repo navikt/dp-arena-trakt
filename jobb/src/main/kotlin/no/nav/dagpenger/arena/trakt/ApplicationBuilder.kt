@@ -12,18 +12,14 @@ import no.nav.helse.rapids_rivers.RapidsConnection.StatusListener
 val log = KotlinLogging.logger {}
 
 internal class ApplicationBuilder(config: Map<String, String>) : StatusListener {
-    private val arenaMottakRepository = try {
-        ArenaMottakRepository(GcpPostgresDataSourceBuilder.dataSource)
-    } catch (e: Exception) {
-        println(config)
-        println(System.getenv())
-        throw e
-    }
     private val rapidsConnection = RapidApplication.Builder(
         RapidApplication.RapidApplicationConfig.fromEnv(config)
     ).build { _, kafkaRapid ->
         if (config["offset"] == "earliest") kafkaRapid.seekToBeginning()
         // clean()
+    }
+    private val arenaMottakRepository by lazy {
+        ArenaMottakRepository(GcpPostgresDataSourceBuilder.dataSource)
     }
 
     init {
