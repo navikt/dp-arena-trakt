@@ -8,6 +8,8 @@ metadata:
 spec:
   image: {{image}}
   parallelism: {{parallelism}}
+  command:
+    - jobb
   resources:
     limits:
       cpu: 300m
