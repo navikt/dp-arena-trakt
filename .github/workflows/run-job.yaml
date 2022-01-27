@@ -10,6 +10,7 @@ on:
         type: choice
         options:
           - earliest
+          - fortsett
       environment:
         description: 'Hvilket miljø skal det kjøres i?'
         required: true

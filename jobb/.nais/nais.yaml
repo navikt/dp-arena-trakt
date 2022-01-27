@@ -23,6 +23,9 @@ spec:
     pool: {{kafka_pool}}
   envFrom:
     - secret: google-sql-dp-arena-trakt-arena-data-job-51e3c035
+  env:
+    - name: OFFSET
+      value: {{offset}}
   gcp:
     permissions:
       - resource:
