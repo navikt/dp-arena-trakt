@@ -22,8 +22,7 @@ object GcpPostgresDataSourceBuilder {
 
     val dataSource: DataSource by lazy {
         HikariDataSource().apply {
-            dataSourceClassName = "org.postgresql.ds.PGSimpleDataSource"
-            addDataSourceProperty("databaseName", config[db.job.database])
+            jdbcUrl = String.format("jdbc:postgresql:///%s", config[db.job.database])
             addDataSourceProperty("user", config[db.job.username])
             addDataSourceProperty("password", config[db.job.password])
             addDataSourceProperty("socketFactory", "com.google.cloud.sql.postgres.SocketFactory")
