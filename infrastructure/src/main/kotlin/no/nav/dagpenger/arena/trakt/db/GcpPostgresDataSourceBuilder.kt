@@ -13,17 +13,19 @@ private val config = ConfigurationProperties.systemProperties() overriding Envir
 
 object GcpPostgresDataSourceBuilder {
     object db : PropertyGroup() {
-        val database by stringType
-        val username by stringType
-        val password by stringType
+        object job : PropertyGroup() {
+            val database by stringType
+            val username by stringType
+            val password by stringType
+        }
     }
 
     val dataSource: DataSource by lazy {
         HikariDataSource().apply {
             dataSourceClassName = "org.postgresql.ds.PGSimpleDataSource"
-            addDataSourceProperty("databaseName", config[db.database])
-            addDataSourceProperty("user", config[db.username])
-            addDataSourceProperty("password", config[db.password])
+            addDataSourceProperty("databaseName", config[db.job.database])
+            addDataSourceProperty("user", config[db.job.username])
+            addDataSourceProperty("password", config[db.job.password])
             addDataSourceProperty("socketFactory", "com.google.cloud.sql.postgres.SocketFactory")
             addDataSourceProperty("cloudSqlInstance", "dp-arena-trakt-v1")
             maximumPoolSize = 20
