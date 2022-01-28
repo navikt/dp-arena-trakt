@@ -18,9 +18,7 @@ internal class ApplicationBuilder(config: Map<String, String>) : StatusListener 
         if (config["OFFSET"] == "earliest") kafkaRapid.seekToBeginning()
         // clean()
     }
-    private val arenaMottakRepository by lazy {
-        ArenaMottakRepository(GcpPostgresDataSourceBuilder.dataSource)
-    }
+    private val arenaMottakRepository = ArenaMottakRepository(GcpPostgresDataSourceBuilder.dataSource)
 
     init {
         rapidsConnection.register(this)
