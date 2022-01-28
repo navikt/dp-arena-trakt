@@ -17,6 +17,7 @@ $$
             (SELECT 1 FROM pg_user WHERE usename = 'job')
         THEN
             GRANT INSERT ON arena_data TO job;
+            GRANT USAGE, SELECT ON SEQUENCE arena_data_id_seq TO job;
         END IF;
     END
 $$;
