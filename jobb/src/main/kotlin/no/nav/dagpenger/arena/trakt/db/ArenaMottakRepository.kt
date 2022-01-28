@@ -35,8 +35,8 @@ internal class ArenaMottakRepository private constructor(
 
     private fun lagre() {
         using(sessionOf(dataSource)) { session ->
-            session.batchPreparedStatement(lagreQuery, rows).also {
-                logg.info { "Lagret batch med batchSize=$batchSize, lagret=${it.size}" }
+            session.batchPreparedStatement(lagreQuery, rows).also { rader ->
+                logg.info { "Lagret batch med batchSize=$batchSize, lagret=${rader.filter { it == 1 }.size}" }
                 if (!running.get()) shutdown.countDown()
             }
             rows.clear()
