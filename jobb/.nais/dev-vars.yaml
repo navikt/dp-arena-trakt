@@ -1,4 +1,4 @@
 kafka_pool: nav-dev
-parallelism: 1
+parallelism: 9
 db:
   instance: "teamdagpenger-dev-885f:europe-north1:dp-arena-trakt-v1"
