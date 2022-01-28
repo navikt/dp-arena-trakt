@@ -1,7 +1,6 @@
 package no.nav.dagpenger.arena.trakt
 
 import mu.KotlinLogging
-import no.nav.dagpenger.arena.trakt.Config.config
 import no.nav.dagpenger.arena.trakt.db.ArenaMottakRepository
 import no.nav.dagpenger.arena.trakt.db.GcpPostgresDataSourceBuilder
 import no.nav.dagpenger.arena.trakt.tjenester.DataMottakService

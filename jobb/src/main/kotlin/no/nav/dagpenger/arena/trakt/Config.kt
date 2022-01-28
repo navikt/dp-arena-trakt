@@ -24,14 +24,13 @@ internal object Config {
         "DB_PORT" to "5432",
         "DB_USERNAME" to "dp-arena-trakt-job",
         "HTTP_PORT" to "8080",
-        "RAPID_APP_NAME" to "dp-arena-trakt",
-        "KAFKA_CONSUMER_GROUP_ID" to "dp-arena-trakt-v7",
+        "RAPID_APP_NAME" to "dp-arena-trakt-job",
+        "KAFKA_CONSUMER_GROUP_ID" to "dp-arena-trakt-job-v1",
         "KAFKA_RAPID_TOPIC" to "teamdagpenger.rapid.v1",
         "KAFKA_EXTRA_TOPIC" to arenaTopics(miljø = "q2"),
         "KAFKA_RESET_POLICY" to "earliest",
     )
     private val prodProperties = ConfigurationMap(
-        "KAFKA_CONSUMER_GROUP_ID" to "dp-arena-trakt-v1",
         "KAFKA_EXTRA_TOPIC" to arenaTopics(miljø = "p"),
     )
     private val properties: Configuration by lazy {

@@ -32,10 +32,6 @@ internal class DataMottakService(
         private var formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss[.SSSSSS]")
         private fun JsonNode.asArenaDato() =
             asText().let { LocalDateTime.parse(it, formatter) }
-
-        private fun JsonNode.asOptionalArenaDato() =
-            takeIf(JsonNode::isTextual)?.asText()?.takeIf(String::isNotEmpty)
-                ?.let { LocalDateTime.parse(it, formatter) }
     }
 
     override fun onPacket(packet: JsonMessage, context: MessageContext) {

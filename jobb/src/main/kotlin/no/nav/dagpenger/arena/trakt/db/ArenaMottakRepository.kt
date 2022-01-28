@@ -2,6 +2,7 @@ package no.nav.dagpenger.arena.trakt.db
 
 import kotliquery.sessionOf
 import kotliquery.using
+import mu.KotlinLogging
 import no.nav.dagpenger.arena.trakt.log
 import org.intellij.lang.annotations.Language
 import java.time.LocalDateTime
@@ -10,6 +11,8 @@ import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.sql.DataSource
+
+private val logg = KotlinLogging.logger {}
 
 internal class ArenaMottakRepository private constructor(
     private val batchSize: Int,
@@ -33,6 +36,7 @@ internal class ArenaMottakRepository private constructor(
     private fun lagre() {
         using(sessionOf(dataSource)) { session ->
             session.batchPreparedStatement(lagreQuery, rows).also {
+                logg.info { "Lagret batch med batchSize=$batchSize, lagret=${it.size}" }
                 if (!running.get()) shutdown.countDown()
             }
             rows.clear()
