@@ -9,6 +9,7 @@ dependencies {
     implementation(project(":infrastructure"))
     implementation(Database.Kotlinquery)
     testImplementation(TestContainers.postgresql)
+    testImplementation(Junit5.api)
 }
 
 application {
