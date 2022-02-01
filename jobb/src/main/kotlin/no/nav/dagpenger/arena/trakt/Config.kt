@@ -15,7 +15,7 @@ internal object Config {
         // "kvotebruk",
         // "beregningslogg",
         // "meldekort",
-        // "sak"
+        "sak"
     ).joinToString(",") { lagArenaTopicNavn(it, miljø) }
 
     private val defaultProperties = ConfigurationMap(
@@ -27,7 +27,7 @@ internal object Config {
         "RAPID_APP_NAME" to "dp-arena-trakt-job",
         "KAFKA_CONSUMER_GROUP_ID" to "dp-arena-trakt-job-v1",
         "KAFKA_RAPID_TOPIC" to "teamdagpenger.rapid.v1",
-        "KAFKA_EXTRA_TOPIC" to arenaTopics(miljø = "q2"),
+        "KAFKA_EXTRA_TOPIC" to arenaTopics(miljø = "q1"),
         "KAFKA_RESET_POLICY" to "earliest",
     )
     private val prodProperties = ConfigurationMap(

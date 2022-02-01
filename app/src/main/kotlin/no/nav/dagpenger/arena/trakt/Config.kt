@@ -4,8 +4,6 @@ import com.natpryce.konfig.Configuration
 import com.natpryce.konfig.ConfigurationMap
 import com.natpryce.konfig.ConfigurationProperties
 import com.natpryce.konfig.EnvironmentVariables
-import com.natpryce.konfig.Key
-import com.natpryce.konfig.booleanType
 import com.natpryce.konfig.overriding
 
 internal object Config {
@@ -17,7 +15,7 @@ internal object Config {
         // "kvotebruk",
         // "beregningslogg",
         // "meldekort",
-        // "sak"
+        "sak"
     ).joinToString(",") { lagArenaTopicNavn(it, miljø) }
 
     private val defaultProperties = ConfigurationMap(
@@ -31,7 +29,7 @@ internal object Config {
             "RAPID_APP_NAME" to "dp-arena-trakt",
             "KAFKA_CONSUMER_GROUP_ID" to "dp-arena-trakt-v7",
             "KAFKA_RAPID_TOPIC" to "teamdagpenger.rapid.v1",
-            "KAFKA_EXTRA_TOPIC" to arenaTopics(miljø = "q2"),
+            "KAFKA_EXTRA_TOPIC" to arenaTopics(miljø = "q1"),
             "KAFKA_RESET_POLICY" to "earliest",
             "BATCH_INSERT" to "false"
         )
@@ -46,7 +44,6 @@ internal object Config {
             else -> systemAndEnvProperties overriding defaultProperties
         }
     }
-    val batchInsert = properties[Key("BATCH_INSERT", booleanType)]
 
     val config: Map<String, String> = properties.list().reversed().fold(emptyMap()) { map, pair ->
         map + pair.second
