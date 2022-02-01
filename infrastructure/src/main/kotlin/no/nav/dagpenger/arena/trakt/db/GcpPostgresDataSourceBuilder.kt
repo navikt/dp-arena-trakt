@@ -37,6 +37,6 @@ object GcpPostgresDataSourceBuilder {
         }
     }
 
-    fun clean() = Flyway.configure().connectRetries(5).dataSource(PostgresDataSourceBuilder.dataSource).load().clean()
+    fun clean() = Flyway.configure().connectRetries(5).dataSource(dataSource).load().clean()
 
 }
