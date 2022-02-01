@@ -14,7 +14,7 @@ on:
       environment:
         description: 'Hvilket miljø skal det kjøres i?'
         required: true
-        default: 'q2'
+        default: 'q1'
         type: choice
         options:
           - q1

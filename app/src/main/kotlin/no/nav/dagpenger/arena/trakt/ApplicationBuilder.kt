@@ -5,7 +5,6 @@ import no.nav.dagpenger.arena.trakt.db.DataRepository
 import no.nav.dagpenger.arena.trakt.db.HendelseRepository
 import no.nav.dagpenger.arena.trakt.db.PostgresDataSourceBuilder.runMigration
 import no.nav.dagpenger.arena.trakt.tjenester.BeregningsleddService
-import no.nav.dagpenger.arena.trakt.tjenester.DataMottakService
 import no.nav.dagpenger.arena.trakt.tjenester.VedtakService
 import no.nav.dagpenger.arena.trakt.tjenester.VedtaksfaktaService
 import no.nav.helse.rapids_rivers.RapidApplication
@@ -33,7 +32,7 @@ internal class ApplicationBuilder(config: Map<String, String>) : StatusListener 
         runMigration().also {
             val hendelseRepository = HendelseRepository(rapidsConnection) // .also { ferdigeHendelserPolling = it.startAsync(30000L) }
             val repository = DataRepository() // .also { it.addObserver(hendelseRepository) }
-            DataMottakService(rapidsConnection, repository)
+            // DataMottakService(rapidsConnection, repository)
             BeregningsleddService(rapidsConnection, hendelseRepository)
             VedtaksfaktaService(rapidsConnection, hendelseRepository)
             VedtakService(rapidsConnection, hendelseRepository)
