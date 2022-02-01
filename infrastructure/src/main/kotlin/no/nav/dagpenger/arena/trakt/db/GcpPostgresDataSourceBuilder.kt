@@ -7,6 +7,7 @@ import com.natpryce.konfig.getValue
 import com.natpryce.konfig.overriding
 import com.natpryce.konfig.stringType
 import com.zaxxer.hikari.HikariDataSource
+import org.flywaydb.core.Flyway
 import javax.sql.DataSource
 
 private val config = ConfigurationProperties.systemProperties() overriding EnvironmentVariables()
@@ -35,4 +36,7 @@ object GcpPostgresDataSourceBuilder {
             maxLifetime = 30001
         }
     }
+
+    fun clean() = Flyway.configure().connectRetries(5).dataSource(PostgresDataSourceBuilder.dataSource).load().clean()
+
 }

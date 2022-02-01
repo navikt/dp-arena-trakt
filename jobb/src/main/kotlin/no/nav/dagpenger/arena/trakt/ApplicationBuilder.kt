@@ -3,7 +3,7 @@ package no.nav.dagpenger.arena.trakt
 import mu.KotlinLogging
 import no.nav.dagpenger.arena.trakt.db.ArenaMottakRepository
 import no.nav.dagpenger.arena.trakt.db.GcpPostgresDataSourceBuilder
-import no.nav.dagpenger.arena.trakt.db.PostgresDataSourceBuilder.clean
+import no.nav.dagpenger.arena.trakt.db.GcpPostgresDataSourceBuilder.clean
 import no.nav.dagpenger.arena.trakt.tjenester.DataMottakService
 import no.nav.helse.rapids_rivers.RapidApplication
 import no.nav.helse.rapids_rivers.RapidsConnection
