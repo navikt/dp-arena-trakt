@@ -13,6 +13,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 import javax.sql.DataSource
 
 private val logg = KotlinLogging.logger {}
+private val sikkerLogg = KotlinLogging.logger("tjenestekall.ArenaMottakRepository")
 
 internal class ArenaMottakRepository private constructor(
     private val batchSize: Int,
@@ -26,11 +27,17 @@ internal class ArenaMottakRepository private constructor(
     private val rows = Collections.synchronizedList(mutableListOf<List<Any>>())
 
     fun leggTil(tabell: String, pos: String, skjedde: LocalDateTime, replikert: LocalDateTime, json: String) {
-        if (!running.get()) throw IllegalStateException("Shutting down, not accepting new writes")
 
-        rows.add(listOf(tabell, pos, skjedde, replikert, json))
+        try {
+            if (!running.get()) throw IllegalStateException("Shutting down, not accepting new writes")
 
-        if (rows.size >= batchSize) lagre()
+            rows.add(listOf(tabell, pos, skjedde, replikert, json))
+
+            if (rows.size >= batchSize) lagre()
+        } catch (e: Exception) {
+            log.error { "Feil under innlasting av data. Se sikkerlogg for mer info." }
+            sikkerLogg.error(e) { "Feil under innlasting av data." }
+        }
     }
 
     private fun lagre() {
