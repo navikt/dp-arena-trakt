@@ -18,4 +18,4 @@ CREATE UNIQUE INDEX IF NOT EXISTS ui_duplikat ON arena_data (tabell, pos);
 
 CREATE INDEX IF NOT EXISTS i_behandlet ON arena_data (behandlet);
 
-CREATE INDEX IF NOT EXISTS i_brukte_data ON arena_data (hendelse_id, mottatt)
+CREATE INDEX IF NOT EXISTS i_brukte_data ON arena_data (hendelse_id, mottatt);
