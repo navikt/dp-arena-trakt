@@ -18,4 +18,5 @@ dependencies {
     implementation("com.google.cloud.sql:postgres-socket-factory:1.4.2")
     implementation(Database.Kotlinquery)
     testImplementation(TestContainers.postgresql)
+    testImplementation(Junit5.api)
 }
