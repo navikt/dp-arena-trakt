@@ -7,7 +7,7 @@ import no.nav.dagpenger.arena.trakt.datakrav.Vedtaksfakta
 import no.nav.dagpenger.arena.trakt.db.DataRepository
 import org.intellij.lang.annotations.Language
 import java.time.LocalDateTime
-import java.util.UUID
+import java.util.*
 
 internal fun testHendelse(id: String) = Hendelse(Hendelse.HendelseId(Hendelse.Type.Vedtak, id)) {
     krev(Beregningsledd("BL1"))
@@ -81,7 +81,7 @@ internal fun beregningsleddJSON(navn: String = "DPTEL", vedtakId: Int = 123) = "
 }""".trimMargin()
 
 @Language("JSON")
-internal fun vedtakJSON(vedtakId: Int = 123) = """{
+internal fun vedtakJSON(vedtakId: Int = 123, sakId: Int = 12345) = """{
   "table": "SIAMO.VEDTAK",
   "op_type": "I",
   "op_ts": "2021-11-18 11:36:18.004455",
@@ -89,7 +89,7 @@ internal fun vedtakJSON(vedtakId: Int = 123) = """{
   "pos": "00000000000019642427",
   "after": {
     "VEDTAK_ID": $vedtakId,
-    "SAK_ID": 13314473,
+    "SAK_ID": $sakId,
     "VEDTAKSTATUSKODE": "IVERK",
     "VEDTAKTYPEKODE": "O",
     "REG_DATO": "2019-09-27 04:04:26",
@@ -136,6 +136,27 @@ internal fun vedtakJSON(vedtakId: Int = 123) = """{
       "service": "dp-arena-trakt",
       "instance": "dp-arena-trakt-84b5487744-zmc97",
       "time": "2021-11-25T15:40:57.301038008"
+    }
+  ]
+}""".trimMargin()
+
+@Language("JSON")
+internal fun sakJSON(sakId: Int = 12345, saksKode: String = "AAP") = """{
+  "table": "SIAMO.SAK",
+  "op_type": "I",
+  "op_ts": "2021-11-18 11:25:45.338291",
+  "current_ts": "2021-11-18 11:57:59.252008",
+  "pos": "00000000000003215801",
+  "after": {
+  "SAK_ID": $sakId,
+  "SAKSKODE": "$saksKode"
+  },
+  "system_read_count": 0,
+  "system_participating_services": [
+    {
+      "service": "dp-arena-trakt",
+      "instance": "dp-arena-trakt-7bd588b78d-nf5c9",
+      "time": "2021-11-24T09:36:53.467315483"
     }
   ]
 }""".trimMargin()

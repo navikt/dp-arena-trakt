@@ -6,6 +6,8 @@ import kotliquery.using
 import no.nav.dagpenger.arena.trakt.helpers.Postgres.withMigratedDb
 import no.nav.dagpenger.arena.trakt.helpers.beregningsleddJSON
 import no.nav.dagpenger.arena.trakt.helpers.lagre
+import no.nav.dagpenger.arena.trakt.helpers.sakJSON
+import no.nav.dagpenger.arena.trakt.helpers.vedtakJSON
 import no.nav.dagpenger.arena.trakt.helpers.vedtaksfaktaJSON
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -28,39 +30,22 @@ internal class DataRepositoryTest {
     }
 
     @Test
-    fun `Kan slette JSON blobber som ikke har blitt brukt etter X tid`() {
+    fun `Sletter data riktig`(){
         withMigratedDb {
-            lagreMedDato(beregningsleddJSON("BL1"), LocalDate.now())
-            lagreMedDato(vedtaksfaktaJSON("VF1"), LocalDate.now().minusDays(1))
-            lagreMedDato(vedtaksfaktaJSON("VF1"), LocalDate.now().minusDays(10))
-            lagreMedDato(vedtaksfaktaJSON("VF1"), LocalDate.now().minusDays(15))
+            dataRepository.lagre(beregningsleddJSON(vedtakId = 123, navn = "BL1"))
+            dataRepository.lagre(vedtaksfaktaJSON(vedtakId = 123, navn = "VF1"))
+            dataRepository.lagre(vedtakJSON(123,6789))
+            dataRepository.lagre(sakJSON(sakId = 456, saksKode = "DAGP"))
+            dataRepository.lagre(vedtakJSON(127,456))
+            dataRepository.rydd()
+            assertEquals(5,antallRader())
+            dataRepository.lagre(sakJSON(6789))
+            dataRepository.rydd()
+            dataRepository.rydd()
+            assertEquals(2,antallRader())
 
-            assertEquals(4, antallRader())
 
-            dataRepository.slettUbrukteData(eldreEnn = Period.ofDays(10))
-            assertEquals(3, antallRader())
 
-            dataRepository.slettUbrukteData(eldreEnn = Period.ZERO)
-            assertEquals(1, antallRader(), "Skal ikke slette rader opprettet i dag")
-        }
-    }
-
-    @Test
-    fun `Sletting bruker index`() {
-        withMigratedDb {
-            val query = DataRepository::class.java.getDeclaredField("slettQuery").also {
-                it.trySetAccessible()
-            }.get(dataRepository)
-            val plan = using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
-                session.run(
-                    queryOf("EXPLAIN ANALYZE $query", 5).map {
-                        it.string(1)
-                    }.asList
-                )
-            }
-
-            assertFalse(plan[1].contains("Seq Scan"))
-            assertTrue(plan[1].contains("Index Scan"))
         }
     }
 
@@ -79,6 +64,6 @@ internal class DataRepositoryTest {
 
     private fun antallRader() =
         using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
-            session.run(queryOf("SELECT COUNT(id) FROM arena_data").map { it.int(1) }.asSingle)
+            session.run(queryOf("SELECT COUNT(id) FROM arena_data WHERE data is not null").map { it.int(1) }.asSingle)
         }
 }

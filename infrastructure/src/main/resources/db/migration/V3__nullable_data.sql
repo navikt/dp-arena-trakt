@@ -1,0 +1,2 @@
+ALTER TABLE arena_data ALTER COLUMN data DROP NOT NULL;
+ALTER TABLE vedtak DROP CONSTRAINT IF EXISTS vedtak_sak_id_fkey
