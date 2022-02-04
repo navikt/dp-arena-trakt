@@ -86,7 +86,6 @@ internal class DataRepository private constructor(
             )
         }
 
-
     private fun lagreSak(sakId: Int, saksKode: String) {
         val erDagpenger = saksKode == "DAGP"
         using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->

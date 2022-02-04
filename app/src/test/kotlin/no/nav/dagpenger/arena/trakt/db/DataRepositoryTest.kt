@@ -10,11 +10,8 @@ import no.nav.dagpenger.arena.trakt.helpers.sakJSON
 import no.nav.dagpenger.arena.trakt.helpers.vedtakJSON
 import no.nav.dagpenger.arena.trakt.helpers.vedtaksfaktaJSON
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
-import java.time.Period
 
 internal class DataRepositoryTest {
     private val dataRepository = DataRepository()
@@ -30,22 +27,19 @@ internal class DataRepositoryTest {
     }
 
     @Test
-    fun `Sletter data riktig`(){
+    fun `Sletter data riktig`() {
         withMigratedDb {
             dataRepository.lagre(beregningsleddJSON(vedtakId = 123, navn = "BL1"))
             dataRepository.lagre(vedtaksfaktaJSON(vedtakId = 123, navn = "VF1"))
-            dataRepository.lagre(vedtakJSON(123,6789))
+            dataRepository.lagre(vedtakJSON(123, 6789))
             dataRepository.lagre(sakJSON(sakId = 456, saksKode = "DAGP"))
-            dataRepository.lagre(vedtakJSON(127,456))
+            dataRepository.lagre(vedtakJSON(127, 456))
             dataRepository.rydd()
-            assertEquals(5,antallRader())
+            assertEquals(5, antallRader())
             dataRepository.lagre(sakJSON(6789))
             dataRepository.rydd()
             dataRepository.rydd()
-            assertEquals(2,antallRader())
-
-
-
+            assertEquals(2, antallRader())
         }
     }
 

@@ -7,7 +7,7 @@ import no.nav.dagpenger.arena.trakt.datakrav.Vedtaksfakta
 import no.nav.dagpenger.arena.trakt.db.DataRepository
 import org.intellij.lang.annotations.Language
 import java.time.LocalDateTime
-import java.util.*
+import java.util.UUID
 
 internal fun testHendelse(id: String) = Hendelse(Hendelse.HendelseId(Hendelse.Type.Vedtak, id)) {
     krev(Beregningsledd("BL1"))
