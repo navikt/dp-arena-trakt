@@ -39,7 +39,7 @@ internal class BeregningsleddTest {
         withMigratedDb {
             val beregningsledd = Beregningsledd("a")
             beregningsledd.hendelse = Hendelse.HendelseId(Hendelse.Type.Vedtak, "123")
-            repository.lagre(beregningsleddJSON("a", 123))
+            repository.lagre(beregningsleddJSON(123, "a"))
 
             val query = beregningsledd.query
             val where = beregningsledd.params()

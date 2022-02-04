@@ -20,7 +20,7 @@ internal fun DataRepository.lagre(json: String) {
 }
 
 @Language("JSON")
-internal fun vedtaksfaktaJSON(navn: String = "ENDRTILUNN", vedtakId: Int = 123) = """{
+internal fun vedtaksfaktaJSON(vedtakId: Int = 123, kode: String = "ENDRTILUNN") = """{
   "table": "SIAMO.VEDTAKFAKTA",
   "op_type": "I",
   "op_ts": "2021-11-18 11:37:16.455389",
@@ -28,7 +28,7 @@ internal fun vedtaksfaktaJSON(navn: String = "ENDRTILUNN", vedtakId: Int = 123) 
   "pos": "00000000000002519525",
   "after": {
     "VEDTAK_ID": $vedtakId,
-    "VEDTAKFAKTAKODE": "$navn",
+    "VEDTAKFAKTAKODE": "$kode",
     "VEDTAKVERDI": "foobar",
     "REG_DATO": "2020-07-25 13:04:24",
     "REG_USER": "AT4402",
@@ -48,7 +48,7 @@ internal fun vedtaksfaktaJSON(navn: String = "ENDRTILUNN", vedtakId: Int = 123) 
 }""".trimMargin()
 
 @Language("JSON")
-internal fun beregningsleddJSON(navn: String = "DPTEL", vedtakId: Int = 123) = """{
+internal fun beregningsleddJSON(vedtakId: Int = 123, kode: String = "DPTEL") = """{
   "table": "SIAMO.BEREGNINGSLEDD",
   "op_type": "I",
   "op_ts": "2021-11-18 11:25:45.338291",
@@ -56,7 +56,7 @@ internal fun beregningsleddJSON(navn: String = "DPTEL", vedtakId: Int = 123) = "
   "pos": "00000000000003215801",
   "after": {
     "BEREGNINGSLEDD_ID": 232916770,
-    "BEREGNINGSLEDDKODE": "$navn",
+    "BEREGNINGSLEDDKODE": "$kode",
     "DATO_FRA": "2018-06-10 00:00:00",
     "PERSON_ID": 4785892,
     "DATO_TIL": null,

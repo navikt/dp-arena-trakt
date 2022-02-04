@@ -31,8 +31,8 @@ internal class HendelseTest {
         Postgres.withMigratedDb {
             val vedtak = testHendelse(vedtaksid)
 
-            dataRepository.lagre(beregningsleddJSON("BL1"))
-            dataRepository.lagre(vedtaksfaktaJSON("VF1"))
+            dataRepository.lagre(beregningsleddJSON(kode = "BL1"))
+            dataRepository.lagre(vedtaksfaktaJSON(kode = "VF1"))
             dataRepository.lagre(vedtakJSON(vedtaksid.toInt()))
             assertTrue(vedtak.alleDatakravOppfylt())
         }
@@ -43,8 +43,8 @@ internal class HendelseTest {
         Postgres.withMigratedDb {
             val vedtak = testHendelse((vedtaksid))
 
-            dataRepository.lagre(beregningsleddJSON("BL1"))
-            dataRepository.lagre(vedtaksfaktaJSON("VF1"))
+            dataRepository.lagre(beregningsleddJSON(kode = "BL1"))
+            dataRepository.lagre(vedtaksfaktaJSON(kode = "VF1"))
             dataRepository.lagre(vedtakJSON(vedtaksid.toInt()))
 
             VedtakHendelseJsonBuilder(vedtak).resultat().also { json ->

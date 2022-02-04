@@ -29,8 +29,8 @@ internal class HendelseRepositoryTest {
 
             assertFalse(hendelseRepository.leggPåKø(vedtak))
 
-            dataRepository.lagre(beregningsleddJSON("BL1"))
-            dataRepository.lagre(vedtaksfaktaJSON("VF1"))
+            dataRepository.lagre(beregningsleddJSON(kode = "BL1"))
+            dataRepository.lagre(vedtaksfaktaJSON(kode = "VF1"))
             dataRepository.lagre(vedtakJSON(vedtaksid.toInt()))
 
             runBlocking {
@@ -47,8 +47,8 @@ internal class HendelseRepositoryTest {
         withMigratedDb {
             val vedtak = testHendelse(vedtaksid)
 
-            dataRepository.lagre(beregningsleddJSON("BL1"))
-            dataRepository.lagre(vedtaksfaktaJSON("VF1"))
+            dataRepository.lagre(beregningsleddJSON(kode = "BL1"))
+            dataRepository.lagre(vedtaksfaktaJSON(kode = "VF1"))
             dataRepository.lagre(vedtakJSON(vedtaksid.toInt()))
 
             assertTrue(hendelseRepository.leggPåKø(vedtak))

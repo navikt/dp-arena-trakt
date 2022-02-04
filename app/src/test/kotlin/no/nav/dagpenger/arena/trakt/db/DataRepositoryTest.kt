@@ -19,27 +19,33 @@ internal class DataRepositoryTest {
     @Test
     fun `Kan lagre JSON blobber som kommer fra Arena`() {
         withMigratedDb {
-            dataRepository.lagre(beregningsleddJSON("BL1"))
-            dataRepository.lagre(vedtaksfaktaJSON("VF1"))
+            dataRepository.lagre(beregningsleddJSON(kode = "BL1"))
+            dataRepository.lagre(vedtaksfaktaJSON(kode = "VF1"))
 
-            assertEquals(2, antallRader())
+            assertEquals(2, antallRaderMedData())
         }
     }
 
     @Test
-    fun `Sletter data riktig`() {
+    fun `Ikke dagpenge relaterte data skal slettes`() {
         withMigratedDb {
-            dataRepository.lagre(beregningsleddJSON(vedtakId = 123, navn = "BL1"))
-            dataRepository.lagre(vedtaksfaktaJSON(vedtakId = 123, navn = "VF1"))
-            dataRepository.lagre(vedtakJSON(123, 6789))
-            dataRepository.lagre(sakJSON(sakId = 456, saksKode = "DAGP"))
-            dataRepository.lagre(vedtakJSON(127, 456))
+            val ikkeDpVedtak = 123
+            val ikkeDpSak = 6789
+            val dpVedtak = 127
+            val dpSak = 456
+
+            dataRepository.lagre(beregningsleddJSON(ikkeDpVedtak, kode = "IKKE_DP"))
+            dataRepository.lagre(vedtaksfaktaJSON(ikkeDpVedtak, kode = "IKKE_DP"))
+            dataRepository.lagre(vedtakJSON(ikkeDpVedtak, ikkeDpSak))
+            dataRepository.lagre(vedtakJSON(dpVedtak, dpSak))
+            dataRepository.lagre(sakJSON(dpSak, saksKode = "DAGP"))
+
             dataRepository.rydd()
-            assertEquals(5, antallRader())
-            dataRepository.lagre(sakJSON(6789))
+            assertEquals(5, antallRaderMedData())
+            dataRepository.lagre(sakJSON(ikkeDpSak))
             dataRepository.rydd()
             dataRepository.rydd()
-            assertEquals(2, antallRader())
+            assertEquals(2, antallRaderMedData())
         }
     }
 
@@ -56,7 +62,7 @@ internal class DataRepositoryTest {
             )
         }
 
-    private fun antallRader() =
+    private fun antallRaderMedData() =
         using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
             session.run(queryOf("SELECT COUNT(id) FROM arena_data WHERE data is not null").map { it.int(1) }.asSingle)
         }
