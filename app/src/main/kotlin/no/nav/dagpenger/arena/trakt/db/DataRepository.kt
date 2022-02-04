@@ -1,6 +1,7 @@
 package no.nav.dagpenger.arena.trakt.db
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import kotliquery.Session
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
@@ -38,18 +39,21 @@ internal class DataRepository private constructor(
         }
     }
 
-    internal fun rydd() {
+    internal fun slettDataSomIkkeOmhandlerDagpenger() {
         using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
-            val iderTilSletting: List<List<Int>> = session.run(
-                queryOf("SELECT id, data FROM arena_data WHERE behandlet is NULL ORDER BY id ASC").map {
-                    if (erDagpenger(it.string("data")) == false) listOf(it.int("id")) else null
-                }.asList
-            )
-            session.batchPreparedStatement(
-                "UPDATE arena_data SET data=null, behandlet=now() WHERE id=?", iderTilSletting
-            )
+            val iderTilSletting = hentRaderSomSkalSlettes(session)
+            slettDataSomIkkeOmhandlerDagpenger(session, iderTilSletting)
         }
     }
+
+    private fun hentRaderSomSkalSlettes(session: Session) = session.run(
+        queryOf("SELECT id, data FROM arena_data WHERE behandlet is NULL ORDER BY id ASC").map {
+            if (erDagpenger(it.string("data")) == false) listOf(it.int("id")) else null
+        }.asList
+    )
+
+    private fun slettDataSomIkkeOmhandlerDagpenger(session: Session, iderTilSletting: List<List<Int>>) =
+        session.batchPreparedStatement("UPDATE arena_data SET data=null, behandlet=now() WHERE id=?", iderTilSletting)
 }
 
 private fun erDagpenger(data: String): Boolean? {

@@ -40,11 +40,12 @@ internal class DataRepositoryTest {
             dataRepository.lagre(vedtakJSON(dpVedtak, dpSak))
             dataRepository.lagre(sakJSON(dpSak, saksKode = "DAGP"))
 
-            dataRepository.rydd()
+            dataRepository.slettDataSomIkkeOmhandlerDagpenger()
+
             assertEquals(5, antallRaderMedData())
             dataRepository.lagre(sakJSON(ikkeDpSak))
-            dataRepository.rydd()
-            dataRepository.rydd()
+            dataRepository.slettDataSomIkkeOmhandlerDagpenger()
+            dataRepository.slettDataSomIkkeOmhandlerDagpenger()
             assertEquals(2, antallRaderMedData())
         }
     }
