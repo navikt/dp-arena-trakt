@@ -11,9 +11,39 @@ import no.nav.dagpenger.arena.trakt.helpers.vedtakJSON
 import no.nav.dagpenger.arena.trakt.helpers.vedtaksfaktaJSON
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import java.util.Timer
+import java.util.TimerTask
+import kotlin.concurrent.schedule
 
 internal class DataRepositoryTest {
     private val dataRepository = DataRepository()
+
+    @Test
+    fun `Scheduler sletter data som ikke omhandler dagpenger`() {
+        val tidFørSletterutineBegynner = 0L
+        val periodeMellomSlettinger = 10L
+
+        val sletteRutine: TimerTask = Timer("Sletterutine").schedule(
+            delay = tidFørSletterutineBegynner,
+            period = periodeMellomSlettinger
+        ) {
+            dataRepository.slettDataSomIkkeOmhandlerDagpenger()
+        }
+
+        withMigratedDb {
+            val ikkeDpVedtak = 123
+            val ikkeDpSak = 6789
+
+            dataRepository.lagre(beregningsleddJSON(ikkeDpVedtak, kode = "IKKE_DP"))
+            dataRepository.lagre(vedtaksfaktaJSON(ikkeDpVedtak, kode = "IKKE_DP"))
+            dataRepository.lagre(vedtakJSON(ikkeDpVedtak, ikkeDpSak))
+            dataRepository.lagre(sakJSON(ikkeDpSak))
+
+            sletteRutine.run()
+            sletteRutine.run()
+            assertEquals(0, antallRaderMedData())
+        }
+    }
 
     @Test
     fun `Kan lagre JSON blobber som kommer fra Arena`() {
@@ -29,7 +59,8 @@ internal class DataRepositoryTest {
     fun `DpSak lagres, vurderes deretter til sletting, DpSak blir ikke slettet`() {
         withMigratedDb {
             val dpSak = 456
-            dataRepository.lagre(sakJSON(dpSak, saksKode = "DAGP"))
+            val primærnøkkel = dataRepository.lagre(sakJSON(dpSak, saksKode = "DAGP"))
+            dataRepository.slettRadSomIkkeOmhandlerDagpenger(primærnøkkel)
             assertEquals(1, antallRaderMedData())
         }
     }

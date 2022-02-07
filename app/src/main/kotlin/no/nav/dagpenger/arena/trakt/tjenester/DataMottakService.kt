@@ -50,8 +50,8 @@ internal class DataMottakService(
         ) {
             logg.info { "Mottok data fra Arena" }
 
-            val radId = dataRepository.lagre(tabell, pos, skjedde, replikert, packet.toJson())
-            dataRepository.slettRadSomIkkeOmhandlerDagpenger(radId)
+            val primærnøkkel = dataRepository.lagre(tabell, pos, skjedde, replikert, packet.toJson())
+            dataRepository.slettRadSomIkkeOmhandlerDagpenger(primærnøkkel)
         }
     }
 }
