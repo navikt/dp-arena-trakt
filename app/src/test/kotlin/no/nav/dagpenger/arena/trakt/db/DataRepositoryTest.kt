@@ -11,24 +11,14 @@ import no.nav.dagpenger.arena.trakt.helpers.vedtakJSON
 import no.nav.dagpenger.arena.trakt.helpers.vedtaksfaktaJSON
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import java.util.Timer
-import java.util.TimerTask
-import kotlin.concurrent.schedule
 
 internal class DataRepositoryTest {
     private val dataRepository = DataRepository()
 
     @Test
     fun `Scheduler sletter data som ikke omhandler dagpenger`() {
-        val tidFørSletterutineBegynner = 0L
-        val periodeMellomSlettinger = 10L
 
-        val sletteRutine: TimerTask = Timer("Sletterutine").schedule(
-            delay = tidFørSletterutineBegynner,
-            period = periodeMellomSlettinger
-        ) {
-            dataRepository.slettDataSomIkkeOmhandlerDagpenger()
-        }
+        val sletterutine = Sletterutine(dataRepository)
 
         withMigratedDb {
             val ikkeDpVedtak = 123
@@ -38,9 +28,9 @@ internal class DataRepositoryTest {
             dataRepository.lagre(vedtaksfaktaJSON(ikkeDpVedtak, kode = "IKKE_DP"))
             dataRepository.lagre(vedtakJSON(ikkeDpVedtak, ikkeDpSak))
             dataRepository.lagre(sakJSON(ikkeDpSak))
+            sletterutine.start()
+            sletterutine.start()
 
-            sletteRutine.run()
-            sletteRutine.run()
             assertEquals(0, antallRaderMedData())
         }
     }
