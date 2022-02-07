@@ -10,10 +10,27 @@ import no.nav.dagpenger.arena.trakt.helpers.sakJSON
 import no.nav.dagpenger.arena.trakt.helpers.vedtakJSON
 import no.nav.dagpenger.arena.trakt.helpers.vedtaksfaktaJSON
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
+import java.time.LocalDateTime
+import java.util.UUID
 
 internal class DataRepositoryTest {
     private val dataRepository = DataRepository()
+
+    @Test
+    fun `Duplikat data ignoreres`() {
+        val pos = UUID.randomUUID().toString()
+        val skjedde = LocalDateTime.now()
+
+        withMigratedDb {
+            val primærNøkkel = dataRepository.lagre("SIAMO.VEDTAK", pos, LocalDateTime.now(), skjedde, vedtakJSON())
+            assertEquals(1, primærNøkkel)
+            val id = dataRepository.lagre("SIAMO.VEDTAK", pos, LocalDateTime.now(), skjedde, vedtakJSON())
+            assertNull(id)
+            assertEquals(1, antallRaderMedData())
+        }
+    }
 
     @Test
     fun `Kan lagre JSON blobber som kommer fra Arena`() {

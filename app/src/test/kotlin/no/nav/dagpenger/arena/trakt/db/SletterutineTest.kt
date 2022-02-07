@@ -22,7 +22,7 @@ class SletterutineTest {
             val ikkeDpVedtak = 123
             val ikkeDpSak = 6789
             val msMellomSlettinger = 100L
-            Sletterutine(dataRepository, msFørSletterutineBegynner = 0L , msMellomSlettinger).start()
+            Sletterutine(dataRepository, msFørSletterutineBegynner = 0L, msMellomSlettinger).start()
 
             dataRepository.lagre(beregningsleddJSON(ikkeDpVedtak, kode = "IKKE_DP"))
             dataRepository.lagre(vedtaksfaktaJSON(ikkeDpVedtak, kode = "IKKE_DP"))
