@@ -16,26 +16,6 @@ internal class DataRepositoryTest {
     private val dataRepository = DataRepository()
 
     @Test
-    fun `Scheduler sletter data som ikke omhandler dagpenger`() {
-
-        val sletterutine = Sletterutine(dataRepository)
-
-        withMigratedDb {
-            val ikkeDpVedtak = 123
-            val ikkeDpSak = 6789
-
-            dataRepository.lagre(beregningsleddJSON(ikkeDpVedtak, kode = "IKKE_DP"))
-            dataRepository.lagre(vedtaksfaktaJSON(ikkeDpVedtak, kode = "IKKE_DP"))
-            dataRepository.lagre(vedtakJSON(ikkeDpVedtak, ikkeDpSak))
-            dataRepository.lagre(sakJSON(ikkeDpSak))
-            sletterutine.start()
-            sletterutine.start()
-
-            assertEquals(0, antallRaderMedData())
-        }
-    }
-
-    @Test
     fun `Kan lagre JSON blobber som kommer fra Arena`() {
         withMigratedDb {
             dataRepository.lagre(beregningsleddJSON(kode = "BL1"))
