@@ -5,8 +5,8 @@ import java.util.TimerTask
 
 internal class Sletterutine internal constructor(
     private val dataRepository: DataRepository,
-    private val tidFørSletterutineBegynner: Long = 1000L,
-    private val periodeMellomSlettinger: Long = 1000L
+    private val msFørSletterutineBegynner: Long = 1000L,
+    private val msMellomSlettinger: Long = 1000L
 ) {
 
     private class SletteTask(val dataRepository: DataRepository) : TimerTask() {
@@ -18,8 +18,8 @@ internal class Sletterutine internal constructor(
     internal fun start() {
         Timer().schedule(
             SletteTask(dataRepository),
-            tidFørSletterutineBegynner,
-            periodeMellomSlettinger
+            msFørSletterutineBegynner,
+            msMellomSlettinger
         )
     }
 }

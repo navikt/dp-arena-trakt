@@ -21,13 +21,14 @@ class SletterutineTest {
         withMigratedDb {
             val ikkeDpVedtak = 123
             val ikkeDpSak = 6789
-            Sletterutine(dataRepository, periodeMellomSlettinger = 10L).start()
+            val msMellomSlettinger = 100L
+            Sletterutine(dataRepository, msFørSletterutineBegynner = 0L , msMellomSlettinger).start()
 
             dataRepository.lagre(beregningsleddJSON(ikkeDpVedtak, kode = "IKKE_DP"))
             dataRepository.lagre(vedtaksfaktaJSON(ikkeDpVedtak, kode = "IKKE_DP"))
             dataRepository.lagre(vedtakJSON(ikkeDpVedtak, ikkeDpSak))
             dataRepository.lagre(sakJSON(ikkeDpSak))
-            Thread.sleep(1500)
+            Thread.sleep(msMellomSlettinger * 10)
 
             assertEquals(0, antallRaderMedData())
         }
