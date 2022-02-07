@@ -11,7 +11,6 @@ import no.nav.dagpenger.arena.trakt.helpers.vedtakJSON
 import no.nav.dagpenger.arena.trakt.helpers.vedtaksfaktaJSON
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import java.time.LocalDate
 
 internal class DataRepositoryTest {
     private val dataRepository = DataRepository()
@@ -23,6 +22,33 @@ internal class DataRepositoryTest {
             dataRepository.lagre(vedtaksfaktaJSON(kode = "VF1"))
 
             assertEquals(2, antallRaderMedData())
+        }
+    }
+
+    @Test
+    fun `DpSak lagres, vurderes deretter til sletting, DpSak blir ikke slettet`() {
+        withMigratedDb {
+            val dpSak = 456
+            dataRepository.lagre(sakJSON(dpSak, saksKode = "DAGP"))
+            assertEquals(1, antallRaderMedData())
+        }
+    }
+
+    @Test
+    fun `Ikke DpSak lagres, vurderes deretter til sletting, blir slettet`() {
+        withMigratedDb {
+            val aapSak = 456
+            val primærnøkkel = dataRepository.lagre(sakJSON(aapSak, saksKode = "AAP"))
+            dataRepository.slettRadSomIkkeOmhandlerDagpenger(primærnøkkel)
+            assertEquals(0, antallRaderMedData())
+        }
+    }
+
+    @Test
+    fun `Lagre returnerer primærnøkkelen til nylig inserted element`() {
+        withMigratedDb {
+            val generertPrimærnøkkel = dataRepository.lagre(sakJSON(456, "DAGP"))
+            assertEquals(1, generertPrimærnøkkel)
         }
     }
 
@@ -49,19 +75,6 @@ internal class DataRepositoryTest {
             assertEquals(2, antallRaderMedData())
         }
     }
-
-    private fun lagreMedDato(json: String, dato: LocalDate) =
-        using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
-            session.run(
-                queryOf(
-                    //language=PostgreSQL
-                    """INSERT INTO arena_data (data, mottatt, tabell, pos, replikert, skjedde)
-                        |VALUES (?::jsonb, ?, 't', RANDOM(), NOW(), NOW())""".trimMargin(),
-                    json,
-                    dato
-                ).asExecute
-            )
-        }
 
     private fun antallRaderMedData() =
         using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->

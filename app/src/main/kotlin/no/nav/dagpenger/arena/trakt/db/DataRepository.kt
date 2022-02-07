@@ -19,9 +19,10 @@ internal class DataRepository private constructor(
     private val lagreQuery =
         """INSERT INTO arena_data (tabell, pos, skjedde, replikert, data)
         |VALUES (?, ?, ?, ?, ?::jsonb)
-        |ON CONFLICT DO NOTHING""".trimMargin()
+        |ON CONFLICT DO NOTHING
+        |RETURNING id""".trimMargin()
 
-    fun lagre(tabell: String, pos: String, skjedde: LocalDateTime, replikert: LocalDateTime, json: String) {
+    fun lagre(tabell: String, pos: String, skjedde: LocalDateTime, replikert: LocalDateTime, json: String): Int? =
         using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
             session.run(
                 queryOf(
@@ -31,13 +32,9 @@ internal class DataRepository private constructor(
                     skjedde,
                     replikert,
                     json
-                ).asUpdate
+                ).map { it.int("id") }.asSingle
             )
-        }.also {
-            // vurderSletting()
-            observers.forEach { it.nyData() }
-        }
-    }
+        }.also { observers.forEach { it.nyData() } } // TODO: Det er kun ny data dersom it != null?
 
     internal fun slettDataSomIkkeOmhandlerDagpenger() {
         using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
@@ -54,9 +51,29 @@ internal class DataRepository private constructor(
 
     private fun slettDataSomIkkeOmhandlerDagpenger(session: Session, iderTilSletting: List<List<Int>>) =
         session.batchPreparedStatement("UPDATE arena_data SET data=null, behandlet=now() WHERE id=?", iderTilSletting)
+
+    internal fun slettRadSomIkkeOmhandlerDagpenger(primærnøkkel: Int?) {
+        using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
+            val data = hentData(session, primærnøkkel)
+
+            if (erDagpenger(data) == false) {
+                session.run(
+                    queryOf("UPDATE arena_data SET data=null, behandlet=now() WHERE id=?", primærnøkkel).asExecute
+                )
+            }
+        }
+    }
+
+    private fun hentData(session: Session, primaryKey: Int?): String? = session.run(
+        queryOf("SELECT data FROM arena_data WHERE id=?", primaryKey).map {
+            it.string("data")
+        }.asSingle
+    )
 }
 
-private fun erDagpenger(data: String): Boolean? {
+private fun erDagpenger(data: String?): Boolean? {
+    if (data == null) return null
+
     val json = ObjectMapper().readTree(data)
     val tabell = json["table"].asText()
     if (tabell == "SIAMO.SAK") {
