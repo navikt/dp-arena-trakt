@@ -1,7 +1,10 @@
 package no.nav.dagpenger.arena.trakt.db
 
+import mu.KotlinLogging
 import java.util.Timer
 import java.util.TimerTask
+
+private val logg = KotlinLogging.logger {}
 
 internal class Sletterutine internal constructor(
     private val dataRepository: DataRepository,
@@ -11,7 +14,8 @@ internal class Sletterutine internal constructor(
 
     private class SletteTask(val dataRepository: DataRepository) : TimerTask() {
         override fun run() {
-            dataRepository.slettDataSomIkkeOmhandlerDagpenger()
+            val raderSlettet = dataRepository.slettDataSomIkkeOmhandlerDagpenger()
+            logg.info { "Rader slettet: ${raderSlettet.sum()}" }
         }
     }
 

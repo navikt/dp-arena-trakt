@@ -19,6 +19,23 @@ internal class DataRepositoryTest {
     private val dataRepository = DataRepository()
 
     @Test
+    fun `Kan lagre JSON blobber som kommer fra Arena`() {
+        withMigratedDb {
+            dataRepository.lagre(beregningsleddJSON(kode = "BL1"))
+            dataRepository.lagre(vedtaksfaktaJSON(kode = "VF1"))
+            assertEquals(2, antallRaderMedData())
+        }
+    }
+
+    @Test
+    fun `Lagre returnerer primærnøkkelen til nylig inserted element`() {
+        withMigratedDb {
+            val generertPrimærnøkkel = dataRepository.lagre(sakJSON(456, "DAGP"))
+            assertEquals(1, generertPrimærnøkkel)
+        }
+    }
+
+    @Test
     fun `Duplikat data ignoreres`() {
         val pos = UUID.randomUUID().toString()
         val skjedde = LocalDateTime.now()
@@ -26,19 +43,9 @@ internal class DataRepositoryTest {
         withMigratedDb {
             val primærNøkkel = dataRepository.lagre("SIAMO.VEDTAK", pos, LocalDateTime.now(), skjedde, vedtakJSON())
             assertEquals(1, primærNøkkel)
-            val id = dataRepository.lagre("SIAMO.VEDTAK", pos, LocalDateTime.now(), skjedde, vedtakJSON())
-            assertNull(id)
+            val ignorert = dataRepository.lagre("SIAMO.VEDTAK", pos, LocalDateTime.now(), skjedde, vedtakJSON())
+            assertNull(ignorert)
             assertEquals(1, antallRaderMedData())
-        }
-    }
-
-    @Test
-    fun `Kan lagre JSON blobber som kommer fra Arena`() {
-        withMigratedDb {
-            dataRepository.lagre(beregningsleddJSON(kode = "BL1"))
-            dataRepository.lagre(vedtaksfaktaJSON(kode = "VF1"))
-
-            assertEquals(2, antallRaderMedData())
         }
     }
 
@@ -59,14 +66,6 @@ internal class DataRepositoryTest {
             val primærnøkkel = dataRepository.lagre(sakJSON(aapSak, saksKode = "AAP"))
             dataRepository.slettRadSomIkkeOmhandlerDagpenger(primærnøkkel)
             assertEquals(0, antallRaderMedData())
-        }
-    }
-
-    @Test
-    fun `Lagre returnerer primærnøkkelen til nylig inserted element`() {
-        withMigratedDb {
-            val generertPrimærnøkkel = dataRepository.lagre(sakJSON(456, "DAGP"))
-            assertEquals(1, generertPrimærnøkkel)
         }
     }
 

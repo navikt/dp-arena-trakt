@@ -5,11 +5,8 @@ import kotliquery.Session
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
-import mu.KotlinLogging
 import org.intellij.lang.annotations.Language
 import java.time.LocalDateTime
-
-private val logg = KotlinLogging.logger {}
 
 internal class DataRepository private constructor(
     private val observers: MutableList<DataObserver>
@@ -39,13 +36,11 @@ internal class DataRepository private constructor(
             )
         }.also { observers.forEach { it.nyData() } } // TODO: Det er kun ny data dersom it != null?
 
-    internal fun slettDataSomIkkeOmhandlerDagpenger() {
-        logg.info { "Sletterutine kjører" }
-        using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
+    internal fun slettDataSomIkkeOmhandlerDagpenger(): List<Int> {
+        return using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
             val iderTilSletting = hentRaderSomSkalSlettes(session)
             slettDataSomIkkeOmhandlerDagpenger(session, iderTilSletting)
         }
-        logg.info { "Sletterutine ferdig" }
     }
 
     private fun hentRaderSomSkalSlettes(session: Session) = session.run(
