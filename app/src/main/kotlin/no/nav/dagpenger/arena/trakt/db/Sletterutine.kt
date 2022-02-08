@@ -15,6 +15,7 @@ internal class Sletterutine internal constructor(
     private class SletteTask(val dataRepository: DataRepository) : TimerTask() {
         override fun run() {
             val batchStørrelse = 100000
+            logg.info { "Sletterutine starter" }
             val raderSlettet = dataRepository.batchSlettDataSomIkkeOmhandlerDagpenger(batchStørrelse)
             logg.info { "Rader slettet: ${raderSlettet.sum()}" }
         }
