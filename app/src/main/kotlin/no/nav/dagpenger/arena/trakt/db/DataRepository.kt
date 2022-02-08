@@ -1,5 +1,6 @@
 package no.nav.dagpenger.arena.trakt.db
 
+import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import kotliquery.Session
 import kotliquery.queryOf
@@ -13,6 +14,10 @@ internal class DataRepository private constructor(
 ) {
     constructor() : this(mutableListOf())
 
+    companion object {
+        private val objectMapper = ObjectMapper()
+    }
+
     fun addObserver(observer: DataObserver) = observers.add(observer)
 
     @Language("PostgreSQL")
@@ -20,10 +25,11 @@ internal class DataRepository private constructor(
         """INSERT INTO arena_data (tabell, pos, skjedde, replikert, data)
         |VALUES (?, ?, ?, ?, ?::jsonb)
         |ON CONFLICT DO NOTHING
-        |RETURNING id""".trimMargin()
+        |""".trimMargin()
 
-    fun lagre(tabell: String, pos: String, skjedde: LocalDateTime, replikert: LocalDateTime, json: String): Int? =
-        using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
+    fun lagre(tabell: String, pos: String, skjedde: LocalDateTime, replikert: LocalDateTime, json: String) =
+        using(sessionOf(PostgresDataSourceBuilder.dataSource, returnGeneratedKey = true)) { session ->
+            opprettRotObjekter(json)
             session.run(
                 queryOf(
                     lagreQuery,
@@ -32,99 +38,97 @@ internal class DataRepository private constructor(
                     skjedde,
                     replikert,
                     json
-                ).map { it.int("id") }.asSingle
+                ).asUpdateAndReturnGeneratedKey
             )
-        }.also { observers.forEach { it.nyData() } } // TODO: Det er kun ny data dersom it != null?
-
-    internal fun batchSlettDataSomIkkeOmhandlerDagpenger(batchStørrelse: Int): List<Int> {
-        return using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
-            val iderTilSletting = hentRaderSomSkalSlettes(session, batchStørrelse)
-            slettDataSomIkkeOmhandlerDagpenger(session, iderTilSletting)
+        }.also {
+            when (erDagpenger(json)) {
+                false -> slettRad(it)
+                true -> observers.forEach { observer -> observer.nyData() }
+                // null -> TODO("Kan ikke avgjøre om dette er dagpenger, må vente på mer data")
+            }
         }
-    }
 
+    internal fun batchSlettDataSomIkkeOmhandlerDagpenger(batchStørrelse: Int) =
+        using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
+            val iderTilSletting = hentRaderSomSkalSlettes(session, batchStørrelse)
+            slettRader(session, iderTilSletting)
+        }
+
+    @Language("PostgreSQL")
     private fun hentRaderSomSkalSlettes(session: Session, batchStørrelse: Int) = session.run(
-        queryOf("SELECT id, data FROM arena_data WHERE behandlet is NULL ORDER BY id ASC LIMIT ?", batchStørrelse).map {
+        queryOf(
+            "SELECT id, data FROM arena_data WHERE data IS NOT NULL AND behandlet IS NULL ORDER BY id ASC LIMIT ?",
+            batchStørrelse
+        ).map {
             if (erDagpenger(it.string("data")) == false) listOf(it.int("id")) else null
         }.asList
     )
 
-    private fun slettDataSomIkkeOmhandlerDagpenger(session: Session, iderTilSletting: List<List<Int>>) =
-        session.batchPreparedStatement("UPDATE arena_data SET data=null, behandlet=now() WHERE id=?", iderTilSletting)
+    @Language("PostgreSQL")
+    private fun slettRader(session: Session, iderTilSletting: List<List<Int>>) =
+        session.batchPreparedStatement("UPDATE arena_data SET data=NULL, behandlet=NOW() WHERE id=?", iderTilSletting)
 
-    internal fun slettRadSomIkkeOmhandlerDagpenger(primærnøkkel: Int?) {
+    @Language("PostgreSQL")
+    private fun slettRad(primærnøkkel: Long?) =
         using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
-            val data = hentData(session, primærnøkkel)
+            session.run(queryOf("UPDATE arena_data SET data=NULL, behandlet=NOW() WHERE id=?", primærnøkkel).asExecute)
+        }
 
-            if (erDagpenger(data) == false) {
-                session.run(
-                    queryOf("UPDATE arena_data SET data=null, behandlet=now() WHERE id=?", primærnøkkel).asExecute
-                )
-            }
+    private fun erDagpenger(data: String): Boolean? {
+        val json = objectMapper.readTree(data)
+        opprettRotObjekter(json)
+
+        return when (json["table"].asText()) {
+            "SIAMO.SAK" -> json["after"]["SAKSKODE"].asText() == "DAGP"
+            "SIAMO.VEDTAK" -> erDpVedtak(json["after"]["VEDTAK_ID"].asInt())
+            "SIAMO.VEDTAKFAKTA" -> erDpVedtak(json["after"]["VEDTAK_ID"].asInt())
+            "SIAMO.BEREGNINGSLEDD" -> if (json["after"]["TABELLNAVNALIAS_KILDE"].asText() == "VEDTAK") erDpVedtak(json["after"]["OBJEKT_ID_KILDE"].asInt()) else null
+            else -> null
         }
     }
 
-    private fun hentData(session: Session, primærnøkkel: Int?): String? = session.run(
-        queryOf("SELECT data FROM arena_data WHERE id=?", primærnøkkel).map {
-            it.string("data")
-        }.asSingle
-    )
-}
+    private fun opprettRotObjekter(data: String) = opprettRotObjekter(objectMapper.readTree(data))
 
-private fun erDagpenger(data: String?): Boolean? {
-    if (data == null) return null
-
-    val json = ObjectMapper().readTree(data)
-    val tabell = json["table"].asText()
-    if (tabell == "SIAMO.SAK") {
-        lagreSak(json["after"]["SAK_ID"].asInt(), json["after"]["SAKSKODE"].asText())
-    }
-    if (tabell == "SIAMO.VEDTAK") {
-        lagreVedtak(json["after"]["VEDTAK_ID"].asInt(), json["after"]["SAK_ID"].asInt())
+    private fun opprettRotObjekter(json: JsonNode) {
+        when (json["table"].asText()) {
+            "SIAMO.SAK" -> lagreSak(json["after"]["SAK_ID"].asInt(), json["after"]["SAKSKODE"].asText())
+            "SIAMO.VEDTAK" -> lagreVedtak(json["after"]["VEDTAK_ID"].asInt(), json["after"]["SAK_ID"].asInt())
+        }
     }
 
-    return when (tabell) {
-        "SIAMO.SAK" -> json["after"]["SAKSKODE"].asText() == "DAGP"
-        "SIAMO.VEDTAK" -> erDpVedtak(json["after"]["VEDTAK_ID"].asInt())
-        "SIAMO.VEDTAKFAKTA" -> erDpVedtak(json["after"]["VEDTAK_ID"].asInt())
-        "SIAMO.BEREGNINGSLEDD" -> if (json["after"]["TABELLNAVNALIAS_KILDE"].asText() == "VEDTAK") erDpVedtak(json["after"]["OBJEKT_ID_KILDE"].asInt()) else null
-        else -> null
-    }
-}
+    private fun erDpVedtak(vedtakId: Int): Boolean? =
+        using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
+            session.run(
+                queryOf(
+                    "SELECT er_dagpenger FROM sak LEFT JOIN vedtak ON sak.sak_id = vedtak.sak_id WHERE vedtak.vedtak_id = ?",
+                    vedtakId
+                ).map {
+                    it.boolean("er_dagpenger")
+                }.asSingle
+            )
+        }
 
-private fun erDpVedtak(vedtakId: Int): Boolean? =
-    using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
-        session.run(
-            queryOf(
-                "SELECT er_dagpenger FROM sak LEFT JOIN vedtak ON sak.sak_id = vedtak.sak_id WHERE vedtak.vedtak_id = ?",
-                vedtakId
-            ).map {
-                it.boolean("er_dagpenger")
-            }.asSingle
-        )
-    }
+    private fun lagreSak(sakId: Int, saksKode: String) =
+        using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
+            session.run(
+                queryOf(
+                    "INSERT INTO sak (sak_id,er_dagpenger) VALUES(?,?) ON CONFLICT DO NOTHING",
+                    sakId,
+                    saksKode == "DAGP"
+                ).asUpdate
+            )
+        }
 
-private fun lagreSak(sakId: Int, saksKode: String) {
-    val erDagpenger = saksKode == "DAGP"
-    using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
-        session.run(
-            queryOf(
-                "INSERT INTO sak (sak_id,er_dagpenger) VALUES(?,?) ON CONFLICT DO NOTHING", sakId, erDagpenger
-            ).asUpdate
-        )
-    }
-}
+    private fun lagreVedtak(vedtakId: Int, sakId: Int) =
+        using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
+            session.run(
+                queryOf(
+                    "INSERT INTO vedtak (vedtak_id,sak_id) VALUES(?,?) ON CONFLICT DO NOTHING", vedtakId, sakId
+                ).asUpdate
+            )
+        }
 
-private fun lagreVedtak(vedtakId: Int, sakId: Int) {
-    using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
-        session.run(
-            queryOf(
-                "INSERT INTO vedtak (vedtak_id,sak_id) VALUES(?,?) ON CONFLICT DO NOTHING", vedtakId, sakId
-            ).asUpdate
-        )
+    internal interface DataObserver {
+        fun nyData() {}
     }
-}
-
-internal interface DataObserver {
-    fun nyData() {}
 }

@@ -22,10 +22,7 @@ class SletterutineTest {
             val ikkeDpSak = 6789
             val msMellomSlettinger = 100L
             Sletterutine(
-                dataRepository,
-                msFørSletterutineBegynner = 0L,
-                msMellomSlettinger,
-                batchStørrelse = 10
+                dataRepository, msFørSletterutineBegynner = 0L, msMellomSlettinger, batchStørrelse = 10
             ).start()
 
             dataRepository.lagre(beregningsleddJSON(ikkeDpVedtak, kode = "IKKE_DP"))
@@ -45,10 +42,7 @@ class SletterutineTest {
             genererIkkeDagpengeData(antallRader = 30)
 
             Sletterutine(
-                dataRepository,
-                msFørSletterutineBegynner = 0L,
-                msMellomSlettinger = 10L,
-                batchStørrelse = 10
+                dataRepository, msFørSletterutineBegynner = 0L, msMellomSlettinger = 10L, batchStørrelse = 10
             ).start()
 
             Thread.sleep(1000)
@@ -58,7 +52,11 @@ class SletterutineTest {
 
     private fun genererNulletData(antallRader: Int) {
         for (i in 1..antallRader) {
-            val primærnøkkel = dataRepository.lagre("{}")
+            val primærnøkkel = dataRepository.lagre(
+                """{
+                |  "table": "BAR"
+                }""".trimMargin()
+            )
             using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
                 session.run(
                     queryOf("UPDATE arena_data SET data=null, behandlet=now() WHERE id=?", primærnøkkel).asExecute
@@ -73,8 +71,7 @@ class SletterutineTest {
         }
     }
 
-    private fun antallRaderMedData() =
-        using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
-            session.run(queryOf("SELECT COUNT(id) FROM arena_data WHERE data is not null").map { it.int(1) }.asSingle)
-        }
+    private fun antallRaderMedData() = using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
+        session.run(queryOf("SELECT COUNT(id) FROM arena_data WHERE data is not null").map { it.int(1) }.asSingle)
+    }
 }

@@ -7,6 +7,7 @@ import kotliquery.using
 import no.nav.dagpenger.arena.trakt.helpers.Postgres.withMigratedDb
 import no.nav.dagpenger.arena.trakt.helpers.beregningsleddJSON
 import no.nav.dagpenger.arena.trakt.helpers.lagre
+import no.nav.dagpenger.arena.trakt.helpers.sakJSON
 import no.nav.dagpenger.arena.trakt.helpers.testHendelse
 import no.nav.dagpenger.arena.trakt.helpers.vedtakJSON
 import no.nav.dagpenger.arena.trakt.helpers.vedtaksfaktaJSON
@@ -31,7 +32,8 @@ internal class HendelseRepositoryTest {
 
             dataRepository.lagre(beregningsleddJSON(kode = "BL1"))
             dataRepository.lagre(vedtaksfaktaJSON(kode = "VF1"))
-            dataRepository.lagre(vedtakJSON(vedtaksid.toInt()))
+            dataRepository.lagre(vedtakJSON(vedtaksid.toInt(), 123))
+            dataRepository.lagre(sakJSON(123, "DAGP"))
 
             runBlocking {
                 hendelseRepository.startAsync(0).await()

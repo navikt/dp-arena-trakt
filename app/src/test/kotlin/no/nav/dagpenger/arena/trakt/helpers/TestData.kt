@@ -15,7 +15,7 @@ internal fun testHendelse(id: String) = Hendelse(Hendelse.HendelseId(Hendelse.Ty
     krev(Vedtak(id))
 }
 
-internal fun DataRepository.lagre(json: String): Int? =
+internal fun DataRepository.lagre(json: String) =
     lagre("t", UUID.randomUUID().toString(), LocalDateTime.now(), LocalDateTime.now(), json)
 
 @Language("JSON")

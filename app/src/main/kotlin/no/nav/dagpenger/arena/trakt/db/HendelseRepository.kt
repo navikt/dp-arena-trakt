@@ -17,6 +17,7 @@ import no.nav.dagpenger.arena.trakt.datakrav.Beregningsledd
 import no.nav.dagpenger.arena.trakt.datakrav.Datakrav
 import no.nav.dagpenger.arena.trakt.datakrav.Vedtak
 import no.nav.dagpenger.arena.trakt.datakrav.Vedtaksfakta
+import no.nav.dagpenger.arena.trakt.db.DataRepository.DataObserver
 import no.nav.dagpenger.arena.trakt.serde.HendelseVisitor
 import no.nav.dagpenger.arena.trakt.serde.VedtakHendelseJsonBuilder
 import no.nav.helse.rapids_rivers.RapidsConnection

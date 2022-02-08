@@ -53,8 +53,7 @@ internal class DataRepositoryTest {
     fun `DpSak lagres, vurderes deretter til sletting, DpSak blir ikke slettet`() {
         withMigratedDb {
             val dpSak = 456
-            val primærnøkkel = dataRepository.lagre(sakJSON(dpSak, saksKode = "DAGP"))
-            dataRepository.slettRadSomIkkeOmhandlerDagpenger(primærnøkkel)
+            dataRepository.lagre(sakJSON(dpSak, saksKode = "DAGP"))
             assertEquals(1, antallRaderMedData())
         }
     }
@@ -63,8 +62,7 @@ internal class DataRepositoryTest {
     fun `Ikke DpSak lagres, vurderes deretter til sletting, blir slettet`() {
         withMigratedDb {
             val aapSak = 456
-            val primærnøkkel = dataRepository.lagre(sakJSON(aapSak, saksKode = "AAP"))
-            dataRepository.slettRadSomIkkeOmhandlerDagpenger(primærnøkkel)
+            dataRepository.lagre(sakJSON(aapSak, saksKode = "AAP"))
             assertEquals(0, antallRaderMedData())
         }
     }
