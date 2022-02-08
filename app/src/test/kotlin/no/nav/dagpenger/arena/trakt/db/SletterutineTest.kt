@@ -38,6 +38,41 @@ class SletterutineTest {
         }
     }
 
+    @Test
+    fun `Sletterutine håndterer rader med nullet data`() {
+        withMigratedDb {
+            genererNulletData(antallRader = 20)
+            genererIkkeDagpengeData(antallRader = 30)
+
+            Sletterutine(
+                dataRepository,
+                msFørSletterutineBegynner = 0L,
+                msMellomSlettinger = 10L,
+                batchStørrelse = 10
+            ).start()
+
+            Thread.sleep(1000)
+            assertEquals(0, antallRaderMedData())
+        }
+    }
+
+    private fun genererNulletData(antallRader: Int) {
+        for (i in 1..antallRader) {
+            val primærnøkkel = dataRepository.lagre("{}")
+            using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
+                session.run(
+                    queryOf("UPDATE arena_data SET data=null, behandlet=now() WHERE id=?", primærnøkkel).asExecute
+                )
+            }
+        }
+    }
+
+    private fun genererIkkeDagpengeData(antallRader: Int) {
+        for (i in 1..antallRader) {
+            dataRepository.lagre(sakJSON((0..antallRader).random(), saksKode = "AAP"))
+        }
+    }
+
     private fun antallRaderMedData() =
         using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
             session.run(queryOf("SELECT COUNT(id) FROM arena_data WHERE data is not null").map { it.int(1) }.asSingle)
