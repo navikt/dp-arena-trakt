@@ -9,12 +9,13 @@ private val logg = KotlinLogging.logger {}
 internal class Sletterutine internal constructor(
     private val dataRepository: DataRepository,
     private val msFørSletterutineBegynner: Long = 1000L,
-    private val msMellomSlettinger: Long = 1000L
+    private val msMellomSlettinger: Long = 10000L
 ) {
 
     private class SletteTask(val dataRepository: DataRepository) : TimerTask() {
         override fun run() {
-            val raderSlettet = dataRepository.slettDataSomIkkeOmhandlerDagpenger()
+            val batchStørrelse = 100000
+            val raderSlettet = dataRepository.batchSlettDataSomIkkeOmhandlerDagpenger(batchStørrelse)
             logg.info { "Rader slettet: ${raderSlettet.sum()}" }
         }
     }

@@ -36,15 +36,15 @@ internal class DataRepository private constructor(
             )
         }.also { observers.forEach { it.nyData() } } // TODO: Det er kun ny data dersom it != null?
 
-    internal fun slettDataSomIkkeOmhandlerDagpenger(): List<Int> {
+    internal fun batchSlettDataSomIkkeOmhandlerDagpenger(batchStørrelse: Int): List<Int> {
         return using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
-            val iderTilSletting = hentRaderSomSkalSlettes(session)
+            val iderTilSletting = hentRaderSomSkalSlettes(session, batchStørrelse)
             slettDataSomIkkeOmhandlerDagpenger(session, iderTilSletting)
         }
     }
 
-    private fun hentRaderSomSkalSlettes(session: Session) = session.run(
-        queryOf("SELECT id, data FROM arena_data WHERE behandlet is NULL ORDER BY id ASC").map {
+    private fun hentRaderSomSkalSlettes(session: Session, batchStørrelse: Int) = session.run(
+        queryOf("SELECT id, data FROM arena_data WHERE behandlet is NULL ORDER BY id ASC LIMIT ?", batchStørrelse).map {
             if (erDagpenger(it.string("data")) == false) listOf(it.int("id")) else null
         }.asList
     )

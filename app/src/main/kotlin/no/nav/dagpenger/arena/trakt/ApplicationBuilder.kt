@@ -4,6 +4,7 @@ import mu.KotlinLogging
 import no.nav.dagpenger.arena.trakt.db.DataRepository
 import no.nav.dagpenger.arena.trakt.db.HendelseRepository
 import no.nav.dagpenger.arena.trakt.db.PostgresDataSourceBuilder.runMigration
+import no.nav.dagpenger.arena.trakt.db.Sletterutine
 import no.nav.dagpenger.arena.trakt.tjenester.BeregningsleddService
 import no.nav.dagpenger.arena.trakt.tjenester.VedtakService
 import no.nav.dagpenger.arena.trakt.tjenester.VedtaksfaktaService
@@ -33,6 +34,7 @@ internal class ApplicationBuilder(config: Map<String, String>) : StatusListener 
             val hendelseRepository =
                 HendelseRepository(rapidsConnection) // .also { ferdigeHendelserPolling = it.startAsync(30000L) }
             val repository = DataRepository() // .also { it.addObserver(hendelseRepository) }
+            Sletterutine(repository).start()
             // DataMottakService(rapidsConnection, repository)
             BeregningsleddService(rapidsConnection, hendelseRepository)
             VedtaksfaktaService(rapidsConnection, hendelseRepository)
