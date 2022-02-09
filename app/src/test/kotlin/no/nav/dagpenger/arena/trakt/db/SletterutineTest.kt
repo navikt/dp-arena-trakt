@@ -39,7 +39,7 @@ class SletterutineTest {
     }
 
     @Test
-    fun `Sletterutine håndterer data som ikke er linket til noe sak eller vedtak`() {
+    fun `Sletterutine håndterer flere rader med data med uviss ytelse enn batchStørrelsen`() {
         withMigratedDb {
             val `antall saker som skal nulles av sletterutine` = 50
 
@@ -59,27 +59,36 @@ class SletterutineTest {
         }
     }
 
-    private fun genererSakerUtenLinkTilSakTabell(antallRader: Int) {
+    private fun genererDataFraUkjentYtelse(antallRader: Int, json: String = vedtaksfaktaJSON()) {
+        for (i in 1..antallRader) {
+            lagreData(json)
+        }
+    }
 
+    private fun genererSakerUtenLinkTilSakTabell(antallRader: Int) {
+        for (i in 1..antallRader) {
+            lagreData(sakJSON(saksKode = "AAP"))
+        }
+    }
+
+    private fun lagreData(json: String) {
         @Language("PostgreSQL")
         val lagreQuery = """INSERT INTO arena_data (tabell, pos, skjedde, replikert, data)
-        |VALUES (?, ?, ?, ?, ?::jsonb)
-        |ON CONFLICT DO NOTHING
-        |""".trimMargin()
+            |VALUES (?, ?, ?, ?, ?::jsonb)
+            |ON CONFLICT DO NOTHING
+            |""".trimMargin()
 
-        for (i in 1..antallRader) {
-            using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
-                session.run(
-                    queryOf(
-                        lagreQuery,
-                        "SIAMO.SAK",
-                        UUID.randomUUID().toString(),
-                        LocalDateTime.now(),
-                        LocalDateTime.now(),
-                        sakJSON(saksKode = "AAP")
-                    ).asExecute
-                )
-            }
+        using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
+            session.run(
+                queryOf(
+                    lagreQuery,
+                    "SIAMO.SAK",
+                    UUID.randomUUID().toString(),
+                    LocalDateTime.now(),
+                    LocalDateTime.now(),
+                    json
+                ).asExecute
+            )
         }
     }
 
