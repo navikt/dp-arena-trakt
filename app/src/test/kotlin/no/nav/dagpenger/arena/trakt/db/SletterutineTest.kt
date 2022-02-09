@@ -11,13 +11,12 @@ import no.nav.dagpenger.arena.trakt.helpers.vedtakJSON
 import no.nav.dagpenger.arena.trakt.helpers.vedtaksfaktaJSON
 import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 import java.util.UUID
 
 class SletterutineTest {
     private val dataRepository = DataRepository()
-    
+
     fun `Sletterutine sletter data som ikke omhandler dagpenger`() {
         withMigratedDb {
             val ikkeDpVedtak = 123
