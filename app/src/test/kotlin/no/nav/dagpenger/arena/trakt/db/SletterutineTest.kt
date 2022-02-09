@@ -17,8 +17,7 @@ import java.util.UUID
 
 class SletterutineTest {
     private val dataRepository = DataRepository()
-
-    @Test
+    
     fun `Sletterutine sletter data som ikke omhandler dagpenger`() {
         withMigratedDb {
             val ikkeDpVedtak = 123
@@ -38,7 +37,6 @@ class SletterutineTest {
         }
     }
 
-    @Test
     fun `Sletterutine håndterer flere rader med data med uviss ytelse enn batchStørrelsen`() {
         withMigratedDb {
             val `antall saker som skal nulles av sletterutine` = 50
