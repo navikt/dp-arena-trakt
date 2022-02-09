@@ -54,7 +54,6 @@ internal class DataRepository private constructor(
     internal fun batchSlettDataSomIkkeOmhandlerDagpenger(batchStørrelse: Int) =
         using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
             val iderTilSletting = hentRaderSomSkalSlettes(session, batchStørrelse)
-            println("Slettes: $iderTilSletting")
             slettRader(session, iderTilSletting)
         }
 
