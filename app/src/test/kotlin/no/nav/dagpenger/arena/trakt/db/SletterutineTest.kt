@@ -9,8 +9,11 @@ import no.nav.dagpenger.arena.trakt.helpers.lagre
 import no.nav.dagpenger.arena.trakt.helpers.sakJSON
 import no.nav.dagpenger.arena.trakt.helpers.vedtakJSON
 import no.nav.dagpenger.arena.trakt.helpers.vedtaksfaktaJSON
+import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import java.time.LocalDateTime
+import java.util.UUID
 
 class SletterutineTest {
     private val dataRepository = DataRepository()
@@ -36,10 +39,16 @@ class SletterutineTest {
     }
 
     @Test
-    fun `Sletterutine håndterer rader med nullet data`() {
+    fun `Sletterutine håndterer data som ikke er linket til noe sak eller vedtak`() {
         withMigratedDb {
+            val `antall saker som skal nulles av sletterutine` = 50
+
             genererNulletData(antallRader = 20)
-            genererIkkeDagpengeData(antallRader = 30)
+            genererSakerUtenLinkTilSakTabell(antallRader = `antall saker som skal nulles av sletterutine`)
+            genererNulletData(antallRader = 50)
+            genererDataAvType("AAP", antallRader = 40)
+
+            assertEquals(`antall saker som skal nulles av sletterutine`, antallRaderMedData())
 
             Sletterutine(
                 dataRepository, msFørSletterutineBegynner = 0L, msMellomSlettinger = 10L, batchStørrelse = 10
@@ -47,6 +56,30 @@ class SletterutineTest {
 
             Thread.sleep(1000)
             assertEquals(0, antallRaderMedData())
+        }
+    }
+
+    private fun genererSakerUtenLinkTilSakTabell(antallRader: Int) {
+
+        @Language("PostgreSQL")
+        val lagreQuery = """INSERT INTO arena_data (tabell, pos, skjedde, replikert, data)
+        |VALUES (?, ?, ?, ?, ?::jsonb)
+        |ON CONFLICT DO NOTHING
+        |""".trimMargin()
+
+        for (i in 1..antallRader) {
+            using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
+                session.run(
+                    queryOf(
+                        lagreQuery,
+                        "SIAMO.SAK",
+                        UUID.randomUUID().toString(),
+                        LocalDateTime.now(),
+                        LocalDateTime.now(),
+                        sakJSON(saksKode = "AAP")
+                    ).asExecute
+                )
+            }
         }
     }
 
@@ -65,9 +98,9 @@ class SletterutineTest {
         }
     }
 
-    private fun genererIkkeDagpengeData(antallRader: Int) {
+    private fun genererDataAvType(saksKode: String, antallRader: Int) {
         for (i in 1..antallRader) {
-            dataRepository.lagre(sakJSON((0..antallRader).random(), saksKode = "AAP"))
+            dataRepository.lagre(sakJSON((0..antallRader).random(), saksKode = saksKode))
         }
     }
 
