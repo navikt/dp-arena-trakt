@@ -1,0 +1,1 @@
+ALTER TABLE arena_data ADD COLUMN antall_slettevurderinger INT NOT NULL DEFAULT 0;

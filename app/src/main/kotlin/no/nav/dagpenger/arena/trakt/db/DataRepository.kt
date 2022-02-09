@@ -79,10 +79,15 @@ internal class DataRepository private constructor(
         }.asList
     )
 
-    @Language("PostgreSQL")
-    private fun utsettSletting(session: Session, primærnøkkel: Long?): Boolean {
-        logg.info { "Kan ikke bestemme ytelse for data med Id: $primærnøkkel nå. Prøver behandling senere" }
-        return session.run(queryOf("UPDATE arena_data SET vurderes_slettet=(now() + INTERVAL '5 minutes') WHERE id=?", primærnøkkel).asExecute)
+    private fun utsettSletting(session: Session, primærnøkkel: Long?) {
+        @Language("PostgreSQL")
+        val updateQuery = """
+            UPDATE arena_data
+            SET vurderes_slettet=(NOW() + INTERVAL '5 minutes'),
+                antall_slettevurderinger=antall_slettevurderinger + 1
+            WHERE id=?
+        """.trimIndent()
+        session.run(queryOf(updateQuery, primærnøkkel).asExecute)
     }
 
     @Language("PostgreSQL")
