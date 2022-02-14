@@ -56,6 +56,7 @@ internal class DataRepository private constructor(
                 false -> slettRad(it)
                 true -> observers.forEach { observer -> observer.nyData() }
                 // null -> TODO("Kan ikke avgjøre om dette er dagpenger, må vente på mer data")
+                else -> {}
             }
         }
 

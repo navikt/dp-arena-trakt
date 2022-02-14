@@ -10,7 +10,7 @@ Gradle brukes som byggverktøy og er bundlet inn.
 `./gradlew sA b`
 
 ## Batch innlesing
-Batch innlesing kan skrus på ved å sette variabelen `batch_insert: true` i [dev-vars.yaml](.nais/dev-vars.yaml) og [prod-vars.yaml](.nais/prod-vars.yaml) 
+Gjøres via github actions, se: [Batchlasting av data](https://github.com/navikt/dp-arena-trakt/actions/workflows/run-job.yaml)
 
 ## Databasen
 
@@ -34,5 +34,6 @@ Interne henvendelser kan sendes via Slack i kanalen #team-dagpenger-dev.
 
 ### Dataminimering
 
-Vi markerer data vi trenger som "i bruk" og sletter alt annet etter innsamling
+Vi vurderer og sletter data fortløpende ettersom de kommer inn. Siden vi ikke alltid kan fastsette om vi skal slette 
+eller beholde data, så har vi også en sletterutine som kjører kontinuerlig for å se om den finner data som kan slettes.
 
