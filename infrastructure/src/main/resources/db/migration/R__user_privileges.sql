@@ -18,6 +18,7 @@ $$
         THEN
             GRANT INSERT ON arena_data TO job;
             GRANT USAGE, SELECT ON SEQUENCE arena_data_id_seq TO job;
+            GRANT USAGE, SELECT ON SEQUENCE arena_data_sletterekkefolge_seq TO job;
         END IF;
     END
 $$;
