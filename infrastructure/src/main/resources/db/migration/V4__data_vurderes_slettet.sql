@@ -1,1 +1,0 @@
-ALTER TABLE arena_data ADD COLUMN vurderes_slettet TIMESTAMP NOT NULL DEFAULT now();

@@ -19,6 +19,14 @@ internal class DataRepository private constructor(
 
     companion object {
         private val objectMapper = ObjectMapper()
+
+        @Language("PostgreSQL")
+        val finnRaderTilSlettingQuery = """
+            SELECT id, data FROM arena_data 
+            WHERE data IS NOT NULL 
+                AND behandlet IS NULL
+            ORDER BY vurder_sletting ASC LIMIT ?
+        """.trimIndent()
     }
 
     fun addObserver(observer: DataObserver) = observers.add(observer)
@@ -58,31 +66,24 @@ internal class DataRepository private constructor(
         }
 
     @Language("PostgreSQL")
-    private fun hentRaderSomSkalSlettes(session: Session, batchStørrelse: Int) = session.run(
-        queryOf(
-            """
-            SELECT id, data FROM arena_data 
-            WHERE data IS NOT NULL 
-                AND behandlet IS NULL
-                AND vurderes_slettet < now()
-            ORDER BY id ASC LIMIT ?
-            """.trimIndent(),
-            batchStørrelse
-        ).map {
-            if (erDagpenger(it.string("data")) == false) {
-                listOf(it.long("id"))
-            } else {
-                utsettSletting(session, it.long("id"))
-                null
-            }
-        }.asList
-    )
+    private fun hentRaderSomSkalSlettes(session: Session, batchStørrelse: Int): List<List<Long>> {
+        return session.run(
+            queryOf(finnRaderTilSlettingQuery, batchStørrelse).map {
+                if (erDagpenger(it.string("data")) == false) {
+                    listOf(it.long("id"))
+                } else {
+                    utsettSletting(session, it.long("id"))
+                    null
+                }
+            }.asList
+        )
+    }
 
     private fun utsettSletting(session: Session, primærnøkkel: Long?) {
         @Language("PostgreSQL")
         val updateQuery = """
             UPDATE arena_data
-            SET vurderes_slettet=(NOW() + INTERVAL '5 minutes'),
+            SET vurder_sletting=(NOW() + INTERVAL '5 minutes'),
                 antall_slettevurderinger=antall_slettevurderinger + 1
             WHERE id=?
         """.trimIndent()

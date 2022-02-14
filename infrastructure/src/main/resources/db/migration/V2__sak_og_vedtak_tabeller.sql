@@ -7,5 +7,5 @@ CREATE TABLE IF NOT EXISTS sak
 CREATE TABLE IF NOT EXISTS vedtak
 (
     vedtak_id INT PRIMARY KEY,
-    sak_id    INT NOT NULL REFERENCES sak (sak_id)
+    sak_id INT NULL
 )

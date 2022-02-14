@@ -11,10 +11,12 @@ import no.nav.dagpenger.arena.trakt.helpers.vedtakJSON
 import no.nav.dagpenger.arena.trakt.helpers.vedtaksfaktaJSON
 import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 import java.util.UUID
 
-class SletterutineTest {
+internal class SletterutineTest {
     private val dataRepository = DataRepository()
 
     fun `Sletterutine sletter data som ikke omhandler dagpenger`() {
@@ -53,6 +55,24 @@ class SletterutineTest {
 
             Thread.sleep(1000)
             assertEquals(0, antallRaderMedData())
+        }
+    }
+
+    @Test
+    fun `Spørringen treffer indeks`() {
+        withMigratedDb {
+            genererDataFraUkjentYtelse(2000)
+            val query = DataRepository.finnRaderTilSlettingQuery
+            val batchsize = 200
+            val plan: String = using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
+                session.run(
+                    queryOf("EXPLAIN ANALYZE $query", batchsize).map {
+                        it.string(1)
+                    }.asList
+                )
+            }.joinToString("\n")
+
+            assertTrue(plan.contains("Bitmap Index Scan on i_behandlet"))
         }
     }
 
