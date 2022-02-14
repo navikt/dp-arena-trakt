@@ -11,17 +11,14 @@ internal class Sletterutine internal constructor(
     private val msMellomSlettinger: Long = 10000L,
     private val batchStørrelse: Int = 100000
 ) {
-
-    internal fun start() {
-        fixedRateTimer(
-            "Sletterutine",
-            daemon = true, // JVMen avsluttes når det kun er sletterutine tråden som kjører
-            initialDelay = msFørSletterutineBegynner,
-            period = msMellomSlettinger
-        ) {
-            logg.info { "Sletterutine starter" }
-            val raderSlettet = dataRepository.batchSlettDataSomIkkeOmhandlerDagpenger(batchStørrelse)
-            logg.info { "Rader slettet: ${raderSlettet.sum()}" }
-        }
+    internal fun start() = fixedRateTimer(
+        "Sletterutine",
+        daemon = true, // JVMen avsluttes når det kun er sletterutine tråden som kjører
+        initialDelay = msFørSletterutineBegynner,
+        period = msMellomSlettinger
+    ) {
+        logg.info { "Sletterutine starter" }
+        val raderSlettet = dataRepository.batchSlettDataSomIkkeOmhandlerDagpenger(batchStørrelse)
+        logg.info { "Rader slettet: ${raderSlettet.sum()}" }
     }
 }

@@ -11,16 +11,15 @@ import no.nav.dagpenger.arena.trakt.tjenester.VedtaksfaktaService
 import no.nav.helse.rapids_rivers.RapidApplication
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.RapidsConnection.StatusListener
+import java.util.Timer
 
 val log = KotlinLogging.logger {}
 
 internal class ApplicationBuilder(config: Map<String, String>) : StatusListener {
-    // private lateinit var ferdigeHendelserPolling: Job
+    private lateinit var sletterutine: Timer
     private val rapidsConnection = RapidApplication.Builder(
         RapidApplication.RapidApplicationConfig.fromEnv(config)
-    ).build { _, kafkaRapid ->
-        // clean()
-    }
+    ).build()
 
     init {
         rapidsConnection.register(this)
@@ -34,7 +33,7 @@ internal class ApplicationBuilder(config: Map<String, String>) : StatusListener 
             val hendelseRepository =
                 HendelseRepository(rapidsConnection) // .also { ferdigeHendelserPolling = it.startAsync(30000L) }
             val repository = DataRepository() // .also { it.addObserver(hendelseRepository) }
-            Sletterutine(repository).start()
+            sletterutine = Sletterutine(repository).start()
             // DataMottakService(rapidsConnection, repository)
             BeregningsleddService(rapidsConnection, hendelseRepository)
             VedtaksfaktaService(rapidsConnection, hendelseRepository)
@@ -43,6 +42,6 @@ internal class ApplicationBuilder(config: Map<String, String>) : StatusListener 
     }
 
     override fun onShutdown(rapidsConnection: RapidsConnection) {
-        // ferdigeHendelserPolling.cancel()
+        sletterutine.cancel()
     }
 }
