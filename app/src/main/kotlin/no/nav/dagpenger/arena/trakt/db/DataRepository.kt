@@ -25,7 +25,7 @@ internal class DataRepository private constructor(
             SELECT id, data FROM arena_data 
             WHERE data IS NOT NULL 
                 AND behandlet IS NULL
-            ORDER BY vurder_sletting ASC LIMIT ?
+            ORDER BY sletterekkefolge ASC LIMIT ?
         """.trimIndent()
     }
 
@@ -84,7 +84,7 @@ internal class DataRepository private constructor(
         @Language("PostgreSQL")
         val updateQuery = """
             UPDATE arena_data
-            SET vurder_sletting=(NOW() + INTERVAL '5 minutes'),
+            SET sletterekkefolge=nextval("sletterekkefolge"),
                 antall_slettevurderinger=antall_slettevurderinger + 1
             WHERE id=?
         """.trimIndent()

@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS arena_data
     skjedde                  TIMESTAMP    NOT NULL,
     replikert                TIMESTAMP    NOT NULL,
     data                     jsonb,
-    vurder_sletting          TIMESTAMP    NOT NULL DEFAULT NOW(),
+    sletterekkefolge         BIGSERIAL,
     behandlet                TIMESTAMP    NULL     DEFAULT NULL,
     antall_slettevurderinger INT          NOT NULL DEFAULT 0,
     hendelse_id              uuid
@@ -19,6 +19,6 @@ CREATE INDEX IF NOT EXISTS i_datagin ON arena_data USING gin (data);
 CREATE UNIQUE INDEX IF NOT EXISTS ui_duplikat ON arena_data (tabell, pos);
 
 CREATE INDEX IF NOT EXISTS i_behandlet ON arena_data (behandlet);
-CREATE INDEX IF NOT EXISTS i_vurderes_slettet ON arena_data (vurder_sletting);
+CREATE INDEX IF NOT EXISTS i_sletterekkefolge ON arena_data (sletterekkefolge);
 
 CREATE INDEX IF NOT EXISTS i_brukte_data ON arena_data (hendelse_id, mottatt);
