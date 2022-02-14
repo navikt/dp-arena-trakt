@@ -7,7 +7,7 @@ av [dp-vedtak](https://github.com/navikt/dp-vedtak).
 
 Gradle brukes som byggverktøy og er bundlet inn.
 
-`./gradlew sA b`
+`./gradlew b`
 
 ## Batch innlesing
 Gjøres via github actions, se: [Batchlasting av data](https://github.com/navikt/dp-arena-trakt/actions/workflows/run-job.yaml)
