@@ -7,6 +7,7 @@ import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
 import mu.KotlinLogging
+import no.nav.dagpenger.arena.trakt.db.DataRepository.DataObserver.NyDataEvent
 import org.intellij.lang.annotations.Language
 import java.time.LocalDateTime
 
@@ -52,12 +53,7 @@ internal class DataRepository private constructor(
                 ).asUpdateAndReturnGeneratedKey
             )
         }.also {
-            when (erDagpenger(json)) {
-                false -> slettRad(it)
-                true -> observers.forEach { observer -> observer.nyData() }
-                // null -> TODO("Kan ikke avgjøre om dette er dagpenger, må vente på mer data")
-                else -> {}
-            }
+            observers.forEach { observer -> observer.nyData(NyDataEvent("Type", it, erDagpenger(json))) } //TODO: Legg til riktig type
         }
 
     internal fun batchSlettDataSomIkkeOmhandlerDagpenger(batchStørrelse: Int) =
@@ -96,7 +92,7 @@ internal class DataRepository private constructor(
         session.batchPreparedStatement("UPDATE arena_data SET data=NULL, behandlet=NOW() WHERE id=?", iderTilSletting)
 
     @Language("PostgreSQL")
-    private fun slettRad(primærnøkkel: Long?) =
+    internal fun slettRad(primærnøkkel: Long?) =
         using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
             session.run(queryOf("UPDATE arena_data SET data=NULL, behandlet=NOW() WHERE id=?", primærnøkkel).asExecute)
         }
@@ -150,7 +146,11 @@ internal class DataRepository private constructor(
         using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
             session.run(
                 queryOf(
-                    "INSERT INTO vedtak (vedtak_id,sak_id) VALUES(?,?) ON CONFLICT DO NOTHING", vedtakId, sakId
+                    //language=PostgreSQL
+                    """INSERT INTO vedtak (vedtak_id, sak_id)
+                        |VALUES (?, ?)
+                        |ON CONFLICT DO UPDATE SET sist_oppdatert=NOW()
+                        |""".trimMargin(), vedtakId, sakId
                 ).asUpdate
             )
         }
@@ -175,6 +175,24 @@ internal class DataRepository private constructor(
         }
 
     internal interface DataObserver {
-        fun nyData() {}
+        data class NyDataEvent(val type: String, val primærnøkkel: Long?, val erDagpenger: Boolean?)
+
+        fun nyData(nyDataEvent: NyDataEvent)
+    }
+
+    internal class SlettUønsketYtelseObserver(private val dataRepository: DataRepository) : DataObserver {
+
+        override fun nyData(nyDataEvent: NyDataEvent) {
+            if (nyDataEvent.erDagpenger == false) {
+                dataRepository.slettRad(nyDataEvent.primærnøkkel)
+            }
+        }
+    }
+    internal class OppdaterVedtakObserver(private val dataRepository: DataRepository) : DataObserver {
+        override fun nyData(nyDataEvent: NyDataEvent) {
+            if (nyDataEvent.erDagpenger == true) {
+                //oppdaterVedtak(nyDataEvent)
+            }
+        }
     }
 }

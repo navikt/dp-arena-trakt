@@ -2,6 +2,8 @@ package no.nav.dagpenger.arena.trakt
 
 import mu.KotlinLogging
 import no.nav.dagpenger.arena.trakt.db.DataRepository
+import no.nav.dagpenger.arena.trakt.db.DataRepository.OppdaterVedtakObserver
+import no.nav.dagpenger.arena.trakt.db.DataRepository.SlettUønsketYtelseObserver
 import no.nav.dagpenger.arena.trakt.db.HendelseRepository
 import no.nav.dagpenger.arena.trakt.db.PostgresDataSourceBuilder.runMigration
 import no.nav.dagpenger.arena.trakt.db.Sletterutine
@@ -32,7 +34,10 @@ internal class ApplicationBuilder(config: Map<String, String>) : StatusListener 
         runMigration().also {
             val hendelseRepository =
                 HendelseRepository(rapidsConnection) // .also { ferdigeHendelserPolling = it.startAsync(30000L) }
-            val repository = DataRepository() // .also { it.addObserver(hendelseRepository) }
+            val repository = DataRepository().apply {
+                addObserver(SlettUønsketYtelseObserver(this))
+                addObserver(OppdaterVedtakObserver(this))
+            }
             sletterutine = Sletterutine(repository).start()
             // DataMottakService(rapidsConnection, repository)
             BeregningsleddService(rapidsConnection, hendelseRepository)

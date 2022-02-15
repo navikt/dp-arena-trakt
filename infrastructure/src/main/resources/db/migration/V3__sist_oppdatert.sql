@@ -1,0 +1,3 @@
+ALTER TABLE vedtak
+    ADD COLUMN sist_oppdatert TIMESTAMP DEFAULT NOW(),
+    ADD COLUMN sist_forsokt   TIMESTAMP DEFAULT NULL;
