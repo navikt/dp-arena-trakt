@@ -84,7 +84,7 @@ internal class DataRepository private constructor(
         @Language("PostgreSQL")
         val updateQuery = """
             UPDATE arena_data
-            SET sletterekkefolge=nextval("sletterekkefolge"),
+            SET sletterekkefolge=nextval('arena_data_sletterekkefolge_seq'),
                 antall_slettevurderinger=antall_slettevurderinger + 1
             WHERE id=?
         """.trimIndent()
