@@ -15,6 +15,5 @@ subprojects {
 
     tasks.withType<KotlinCompile>().configureEach {
         dependsOn("ktlintFormat")
-        kotlinOptions.allWarningsAsErrors = true
     }
 }

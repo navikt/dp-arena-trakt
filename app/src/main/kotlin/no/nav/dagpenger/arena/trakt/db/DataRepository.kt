@@ -84,7 +84,7 @@ internal class DataRepository private constructor(
         @Language("PostgreSQL")
         val updateQuery = """
             UPDATE arena_data
-            SET sletterekkefolge=nextval('arena_data_sletterekkefolge_seq'),
+            SET sletterekkefolge=NEXTVAL('arena_data_sletterekkefolge_seq'),
                 antall_slettevurderinger=antall_slettevurderinger + 1
             WHERE id=?
         """.trimIndent()
@@ -152,6 +152,25 @@ internal class DataRepository private constructor(
                 queryOf(
                     "INSERT INTO vedtak (vedtak_id,sak_id) VALUES(?,?) ON CONFLICT DO NOTHING", vedtakId, sakId
                 ).asUpdate
+            )
+        }
+
+    fun hentVedtaksdata(vedtakId: Int) =
+        using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
+            //language=PostgreSQL
+            session.run(
+                queryOf(
+                    """SELECT data
+                    |FROM arena_data
+                    |WHERE data @> ?::jsonb
+                    |   OR data @> ?::jsonb
+                    |   OR data @> ?::jsonb""".trimMargin(),
+                    """{ "table": "SIAMO.VEDTAK", "after": { "VEDTAK_ID": $vedtakId }}""",
+                    """{ "table": "SIAMO.VEDTAKFAKTA", "after": { "VEDTAK_ID": $vedtakId }}""",
+                    """{ "table": "SIAMO.BEREGNINGSLEDD", "after": { "TABELLNAVNALIAS_KILDE": "VEDTAK", "OBJEKT_ID_KILDE": $vedtakId }}"""
+                ).map {
+                    it.string("data")
+                }.asList
             )
         }
 

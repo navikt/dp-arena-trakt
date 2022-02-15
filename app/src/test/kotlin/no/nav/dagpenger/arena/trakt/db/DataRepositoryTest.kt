@@ -91,6 +91,67 @@ internal class DataRepositoryTest {
         }
     }
 
+    private fun genererDataFraUkjentYtelse(antallRader: Int, json: String = vedtaksfaktaJSON()) {
+        val data = mutableListOf<List<Any>>().apply {
+            repeat(antallRader) {
+                this.add(
+                    listOf(
+                        "SIAMO.SAK",
+                        UUID.randomUUID().toString(),
+                        LocalDateTime.now(),
+                        LocalDateTime.now(),
+                        json
+                    )
+                )
+            }
+        }
+
+        using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
+            //language=PostgreSQL
+            session.batchPreparedStatement(
+                """INSERT INTO arena_data (tabell, pos, skjedde, replikert, data)
+                    |VALUES (?, ?, ?, ?, ?::jsonb)
+                    |ON CONFLICT DO NOTHING
+                    |""".trimMargin(),
+                data
+            )
+        }
+    }
+
+    @Test
+    fun `Finn all vedtaksdata`() {
+        withMigratedDb {
+            val vedtakId = 123
+            assertEquals(0, dataRepository.hentVedtaksdata(vedtakId).size)
+
+            genererDataFraUkjentYtelse(200, vedtaksfaktaJSON(1231231))
+            dataRepository.lagre(beregningsleddJSON(vedtakId))
+            dataRepository.lagre(vedtaksfaktaJSON(vedtakId))
+            dataRepository.lagre(vedtakJSON(vedtakId, 5))
+            dataRepository.lagre(vedtakJSON(15345, 53))
+            val plan = using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
+                session.run(
+                    queryOf(
+                        """EXPLAIN ANALYSE
+                        |SELECT data
+                        |FROM arena_data
+                        |WHERE data @> ?::jsonb
+                        |   OR data @> ?::jsonb
+                        |   OR data @> ?::jsonb
+                        |""".trimMargin(),
+                        """{ "table": "SIAMO.VEDTAK", "after": { "VEDTAK_ID": $vedtakId }}""",
+                        """{ "table": "SIAMO.VEDTAKFAKTA", "after": { "VEDTAK_ID": $vedtakId }}""",
+                        """{ "table": "SIAMO.BEREGNINGSLEDD", "after": { "TABELLNAVNALIAS_KILDE": "VEDTAK", "OBJEKT_ID_KILDE": $vedtakId }}"""
+                    ).map {
+                        it.string(1)
+                    }.asList
+                )
+            }.joinToString("\n")
+            println(plan)
+            assertEquals(3, dataRepository.hentVedtaksdata(vedtakId).size)
+        }
+    }
+
     private fun antallRaderMedData() =
         using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
             session.run(queryOf("SELECT COUNT(id) FROM arena_data WHERE data is not null").map { it.int(1) }.asSingle)
