@@ -92,7 +92,7 @@ internal class DataRepositoryTest {
     }
 
     @Test
-    fun `Finn all vedtaksdata`() {
+    fun `Finn alle relevante rader tilknyttet ett gitt vedtak`() {
         withMigratedDb {
             val vedtakId = 123
             assertEquals(0, dataRepository.hentVedtaksdata(vedtakId).size)
