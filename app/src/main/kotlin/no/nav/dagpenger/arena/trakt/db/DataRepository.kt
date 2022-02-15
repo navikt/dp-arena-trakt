@@ -157,9 +157,9 @@ internal class DataRepository private constructor(
 
     fun hentVedtaksdata(vedtakId: Int) =
         using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
-            //language=PostgreSQL
             session.run(
                 queryOf(
+                    //language=PostgreSQL
                     """SELECT data
                     |FROM arena_data
                     |WHERE data @> ?::jsonb
