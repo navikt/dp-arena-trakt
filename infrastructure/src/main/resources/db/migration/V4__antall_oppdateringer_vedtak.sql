@@ -1,1 +1,0 @@
-ALTER TABLE vedtak ADD COLUMN antall_oppdateringer INT DEFAULT 0;

@@ -37,7 +37,7 @@ spec:
     pool: {{kafka_pool}}
   gcp:
     sqlInstances:
-      - name: dp-arena-trakt-v1
+      - name: dp-arena-trakt-v2
         type: POSTGRES_12
         tier: {{db_tier}}
         diskType: SSD
@@ -50,4 +50,4 @@ spec:
             envVarPrefix: DB
             users:
               - name: job
-        cascadingDelete: true
+        cascadingDelete: false
