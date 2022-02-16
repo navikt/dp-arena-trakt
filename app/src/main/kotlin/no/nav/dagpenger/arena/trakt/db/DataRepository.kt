@@ -54,9 +54,10 @@ internal class DataRepository private constructor(
                 ).asUpdateAndReturnGeneratedKey
             )
         }.also {
+            val nyDataEvent = NyDataEvent(tabell, it, erDagpenger(json))
             observers.forEach { observer ->
-                observer.nyData(NyDataEvent("Type", it, erDagpenger(json)))
-            } // TODO: Legg til riktig type
+                observer.nyData(nyDataEvent)
+            }
         }
 
     internal fun batchSlettDataSomIkkeOmhandlerDagpenger(batchStørrelse: Int) =
@@ -69,7 +70,10 @@ internal class DataRepository private constructor(
     private fun hentRaderSomSkalSlettes(session: Session, batchStørrelse: Int): List<List<Long>> {
         return session.run(
             queryOf(finnRaderTilSlettingQuery, batchStørrelse).map {
-                if (erDagpenger(it.string("data")) == false) {
+                val data = it.string("data")
+                opprettRotObjekter(data)
+
+                if (erDagpenger(data) == false) {
                     listOf(it.long("id"))
                 } else {
                     utsettSletting(session, it.long("id"))
@@ -102,7 +106,6 @@ internal class DataRepository private constructor(
 
     private fun erDagpenger(data: String): Boolean? {
         val json = objectMapper.readTree(data)
-        opprettRotObjekter(json)
 
         return when (json["table"].asText()) {
             "SIAMO.SAK" -> json["after"]["SAKSKODE"].asText() == DAGPENGE_SAK
@@ -195,7 +198,7 @@ internal class DataRepository private constructor(
     }
 
     internal interface DataObserver {
-        data class NyDataEvent(val type: String, val primærnøkkel: Long?, val erDagpenger: Boolean?)
+        data class NyDataEvent(val tabell: String, val primærnøkkel: Long?, val erDagpenger: Boolean?)
 
         fun nyData(nyDataEvent: NyDataEvent)
     }
