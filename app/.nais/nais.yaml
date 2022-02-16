@@ -50,4 +50,4 @@ spec:
             envVarPrefix: DB
             users:
               - name: job
-        cascadingDelete: false
+        cascadingDelete: true
