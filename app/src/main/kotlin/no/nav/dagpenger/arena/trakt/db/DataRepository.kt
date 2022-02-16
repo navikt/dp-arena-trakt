@@ -165,7 +165,7 @@ internal class DataRepository private constructor(
                     |INSERT INTO vedtak (vedtak_id, sak_id)
                     |VALUES (?, ?)
                     |ON CONFLICT (vedtak_id) DO UPDATE 
-                    |    SET sist_oppdatert=NOW(), antall_oppdateringer = excluded.antall_oppdateringer + 1
+                    |    SET sist_oppdatert=NOW(), antall_oppdateringer = vedtak.antall_oppdateringer + 1
                 """.trimMargin(),
                     vedtakId, sakId
                 ).asUpdate
