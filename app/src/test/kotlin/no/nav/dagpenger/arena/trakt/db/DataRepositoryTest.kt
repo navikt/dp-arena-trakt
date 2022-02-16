@@ -16,7 +16,6 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
-import java.time.LocalTime
 import java.util.UUID
 
 internal class DataRepositoryTest {
@@ -26,7 +25,7 @@ internal class DataRepositoryTest {
     }
 
     @Test
-    fun `Vedtak oppdateres når ved ny data knyttet til vedtaket`() {
+    fun `Vedtak oppdateres ved ny data knyttet til vedtaket`() {
         val dagpengeSakId = 1234
         val dagpengeVedtakId = 12345
 
@@ -36,21 +35,9 @@ internal class DataRepositoryTest {
             dataRepository.lagre(vedtaksfaktaJSON(dagpengeVedtakId), tabell = "SIAMO.VEDTAKFAKTA")
             dataRepository.lagre(beregningsleddJSON(dagpengeVedtakId), tabell = "SIAMO.BEREGNINGSLEDD")
 
-            val sist_oppdatert = hentVedtak(dagpengeVedtakId)
-
-            assertEquals(LocalTime.now(), sist_oppdatert)
+            assertEquals(3, antallOppdateringerForVedtak(dagpengeVedtakId))
         }
     }
-
-    private fun hentVedtak(vedtakId : Int) =
-        using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
-            session.run(
-                queryOf("SELECT sist_oppdatert FROM vedtak WHERE vedtak_id=?", vedtakId).map {
-                    it.localTime("sist_oppdatert")
-                }.asSingle
-            )
-        }
-
 
     @Test
     fun `Kan lagre JSON blobber som kommer fra Arena`() {
@@ -139,6 +126,15 @@ internal class DataRepositoryTest {
             assertEquals(3, dataRepository.hentVedtaksdata(vedtakId).size)
         }
     }
+
+    private fun antallOppdateringerForVedtak(vedtakId: Int) =
+        using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
+            session.run(
+                queryOf("SELECT antall_oppdateringer FROM vedtak WHERE vedtak_id=?", vedtakId).map {
+                    it.int("antall_oppdateringer")
+                }.asSingle
+            )
+        }
 
     private fun antallRaderMedData() =
         using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->

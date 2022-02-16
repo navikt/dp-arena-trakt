@@ -147,8 +147,9 @@ internal class DataRepository private constructor(
     private fun lagreSak(sakId: Int, saksKode: String) =
         using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
             session.run(
+                //language=PostgreSQL
                 queryOf(
-                    "INSERT INTO sak (sak_id,er_dagpenger) VALUES(?,?) ON CONFLICT DO NOTHING",
+                    """INSERT INTO sak (sak_id,er_dagpenger) VALUES(?,?) ON CONFLICT DO NOTHING""",
                     sakId,
                     saksKode == DAGPENGE_SAK
                 ).asUpdate
@@ -158,12 +159,14 @@ internal class DataRepository private constructor(
     private fun lagreVedtak(vedtakId: Int, sakId: Int) =
         using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
             session.run(
+                //language=PostgreSQL
                 queryOf(
-                    //language=PostgreSQL
-                    """INSERT INTO vedtak (vedtak_id, sak_id)
-                        |VALUES (?, ?)
-                        |ON CONFLICT (vedtak_id) DO UPDATE SET sist_oppdatert=NOW()
-                        |""".trimMargin(),
+                    """
+                    |INSERT INTO vedtak (vedtak_id, sak_id)
+                    |VALUES (?, ?)
+                    |ON CONFLICT (vedtak_id) DO UPDATE 
+                    |    SET sist_oppdatert=NOW(), antall_oppdateringer = excluded.antall_oppdateringer + 1
+                """.trimMargin(),
                     vedtakId, sakId
                 ).asUpdate
             )
@@ -172,13 +175,15 @@ internal class DataRepository private constructor(
     fun hentVedtaksdata(vedtakId: Int): List<String> {
         return using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
             session.run(
+                //language=PostgreSQL
                 queryOf(
-                    //language=PostgreSQL
-                    """SELECT data
-                        |FROM arena_data
-                        |WHERE data @> ?::jsonb
-                        |   OR data @> ?::jsonb
-                        |   OR data @> ?::jsonb""".trimMargin(),
+                    """
+                    |SELECT 
+                    |data
+                    |FROM arena_data
+                    |WHERE data @> ?::jsonb
+                    |   OR data @> ?::jsonb
+                    |   OR data @> ?::jsonb""".trimMargin(),
                     """{ "table": "SIAMO.VEDTAK", "after": { "VEDTAK_ID": $vedtakId }}""",
                     """{ "table": "SIAMO.VEDTAKFAKTA", "after": { "VEDTAK_ID": $vedtakId }}""",
                     """{ "table": "SIAMO.BEREGNINGSLEDD", "after": { "TABELLNAVNALIAS_KILDE": "VEDTAK", "OBJEKT_ID_KILDE": $vedtakId }}"""
