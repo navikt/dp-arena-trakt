@@ -53,7 +53,7 @@ internal class DataRepository private constructor(
                 ).asUpdateAndReturnGeneratedKey
             )
         }.also {
-            observers.forEach { observer -> observer.nyData(NyDataEvent("Type", it, erDagpenger(json))) } //TODO: Legg til riktig type
+            observers.forEach { observer -> observer.nyData(NyDataEvent("Type", it, erDagpenger(json))) } // TODO: Legg til riktig type
         }
 
     internal fun batchSlettDataSomIkkeOmhandlerDagpenger(batchStørrelse: Int) =
@@ -150,29 +150,34 @@ internal class DataRepository private constructor(
                     """INSERT INTO vedtak (vedtak_id, sak_id)
                         |VALUES (?, ?)
                         |ON CONFLICT DO UPDATE SET sist_oppdatert=NOW()
-                        |""".trimMargin(), vedtakId, sakId
+                        |""".trimMargin(),
+                    vedtakId, sakId
                 ).asUpdate
             )
         }
 
-    fun hentVedtaksdata(vedtakId: Int) =
-        using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
+    fun hentVedtaksdata(vedtakId: Int): List<String> {
+        val selectParams = listOf(
+            """{ "table": "SIAMO.VEDTAK", "after": { "VEDTAK_ID": $vedtakId }}""",
+            """{ "table": "SIAMO.VEDTAKFAKTA", "after": { "VEDTAK_ID": $vedtakId }}""",
+            """{ "table": "SIAMO.BEREGNINGSLEDD", "after": { "TABELLNAVNALIAS_KILDE": "VEDTAK", "OBJEKT_ID_KILDE": $vedtakId }}"""
+        )
+        return using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
             session.run(
                 queryOf(
                     //language=PostgreSQL
                     """SELECT data
-                    |FROM arena_data
-                    |WHERE data @> ?::jsonb
-                    |   OR data @> ?::jsonb
-                    |   OR data @> ?::jsonb""".trimMargin(),
-                    """{ "table": "SIAMO.VEDTAK", "after": { "VEDTAK_ID": $vedtakId }}""",
-                    """{ "table": "SIAMO.VEDTAKFAKTA", "after": { "VEDTAK_ID": $vedtakId }}""",
-                    """{ "table": "SIAMO.BEREGNINGSLEDD", "after": { "TABELLNAVNALIAS_KILDE": "VEDTAK", "OBJEKT_ID_KILDE": $vedtakId }}"""
+                        |FROM arena_data
+                        |WHERE data @> ?::jsonb
+                        |   OR data @> ?::jsonb
+                        |   OR data @> ?::jsonb""".trimMargin(),
+                    selectParams
                 ).map {
                     it.string("data")
                 }.asList
             )
         }
+    }
 
     internal interface DataObserver {
         data class NyDataEvent(val type: String, val primærnøkkel: Long?, val erDagpenger: Boolean?)
@@ -181,7 +186,6 @@ internal class DataRepository private constructor(
     }
 
     internal class SlettUønsketYtelseObserver(private val dataRepository: DataRepository) : DataObserver {
-
         override fun nyData(nyDataEvent: NyDataEvent) {
             if (nyDataEvent.erDagpenger == false) {
                 dataRepository.slettRad(nyDataEvent.primærnøkkel)
@@ -191,7 +195,7 @@ internal class DataRepository private constructor(
     internal class OppdaterVedtakObserver(private val dataRepository: DataRepository) : DataObserver {
         override fun nyData(nyDataEvent: NyDataEvent) {
             if (nyDataEvent.erDagpenger == true) {
-                //oppdaterVedtak(nyDataEvent)
+                // oppdaterVedtak(nyDataEvent)
             }
         }
     }

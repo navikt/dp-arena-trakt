@@ -18,6 +18,7 @@ import no.nav.dagpenger.arena.trakt.datakrav.Datakrav
 import no.nav.dagpenger.arena.trakt.datakrav.Vedtak
 import no.nav.dagpenger.arena.trakt.datakrav.Vedtaksfakta
 import no.nav.dagpenger.arena.trakt.db.DataRepository.DataObserver
+import no.nav.dagpenger.arena.trakt.db.DataRepository.DataObserver.NyDataEvent
 import no.nav.dagpenger.arena.trakt.serde.HendelseVisitor
 import no.nav.dagpenger.arena.trakt.serde.VedtakHendelseJsonBuilder
 import no.nav.helse.rapids_rivers.RapidsConnection
@@ -29,7 +30,7 @@ private val sikkerlogg = KotlinLogging.logger("tjenestekall.hendelse")
 internal class HendelseRepository private constructor(
     private val ventendeHendelser: MutableSet<Hendelse>,
     private val ferdigeHendelser: MutableSet<Hendelse>,
-    private val rapidsConnection: RapidsConnection
+    private val rapidsConnection: RapidsConnection,
 ) : DataObserver {
     private var harNyData: Boolean = false
 
@@ -85,13 +86,13 @@ internal class HendelseRepository private constructor(
             MarkerSomBruktVisitor(hendelse).queries().forEach { query -> session.run(query.asUpdate) }
         }
 
-    override fun nyData() {
+    override fun nyData(nyDataEvent: NyDataEvent) {
         harNyData = true
     }
 
     private fun CoroutineScope.launchPeriodicAsync(
         repeatMillis: Long,
-        action: () -> Unit
+        action: () -> Unit,
     ) = this.async {
         if (repeatMillis > 0) {
             while (isActive) {
