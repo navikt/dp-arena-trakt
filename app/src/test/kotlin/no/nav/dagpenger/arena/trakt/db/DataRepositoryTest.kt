@@ -15,8 +15,8 @@ import no.nav.dagpenger.arena.trakt.helpers.vedtaksfaktaJSON
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
-import java.time.Instant.now
 import java.time.LocalDateTime
+import java.time.LocalTime
 import java.util.UUID
 
 internal class DataRepositoryTest {
@@ -38,7 +38,7 @@ internal class DataRepositoryTest {
 
             val sist_oppdatert = hentVedtak(dagpengeVedtakId)
 
-            assertEquals(now(), sist_oppdatert)
+            assertEquals(LocalTime.now(), sist_oppdatert)
         }
     }
 
@@ -46,7 +46,7 @@ internal class DataRepositoryTest {
         using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
             session.run(
                 queryOf("SELECT sist_oppdatert FROM vedtak WHERE vedtak_id=?", vedtakId).map {
-                    it.string("sist_oppdatert")
+                    it.localTime("sist_oppdatert")
                 }.asSingle
             )
         }
