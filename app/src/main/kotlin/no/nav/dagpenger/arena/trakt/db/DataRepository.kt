@@ -54,13 +54,7 @@ internal class DataRepository private constructor(
             )
         }.also {
             observers.forEach { observer ->
-                observer.nyData(
-                    NyDataEvent(
-                        "Type",
-                        it,
-                        erDagpenger(json)
-                    )
-                )
+                observer.nyData(NyDataEvent("Type", it, erDagpenger(json)))
             } // TODO: Legg til riktig type
         }
 

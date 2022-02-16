@@ -3,6 +3,7 @@ package no.nav.dagpenger.arena.trakt.db
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
+import no.nav.dagpenger.arena.trakt.db.DataRepository.SlettUønsketYtelseObserver
 import no.nav.dagpenger.arena.trakt.helpers.Postgres.withMigratedDb
 import no.nav.dagpenger.arena.trakt.helpers.beregningsleddJSON
 import no.nav.dagpenger.arena.trakt.helpers.lagre
@@ -16,7 +17,9 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 internal class DataRepositoryTest {
-    private val dataRepository = DataRepository()
+    private val dataRepository = DataRepository().apply {
+        addObserver(SlettUønsketYtelseObserver(this))
+    }
 
     @Test
     fun `Kan lagre JSON blobber som kommer fra Arena`() {
