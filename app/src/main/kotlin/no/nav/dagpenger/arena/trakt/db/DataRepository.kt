@@ -53,7 +53,15 @@ internal class DataRepository private constructor(
                 ).asUpdateAndReturnGeneratedKey
             )
         }.also {
-            observers.forEach { observer -> observer.nyData(NyDataEvent("Type", it, erDagpenger(json))) } // TODO: Legg til riktig type
+            observers.forEach { observer ->
+                observer.nyData(
+                    NyDataEvent(
+                        "Type",
+                        it,
+                        erDagpenger(json)
+                    )
+                )
+            } // TODO: Legg til riktig type
         }
 
     internal fun batchSlettDataSomIkkeOmhandlerDagpenger(batchStørrelse: Int) =
@@ -149,7 +157,7 @@ internal class DataRepository private constructor(
                     //language=PostgreSQL
                     """INSERT INTO vedtak (vedtak_id, sak_id)
                         |VALUES (?, ?)
-                        |ON CONFLICT DO UPDATE SET sist_oppdatert=NOW()
+                        |ON CONFLICT (vedtak_id) DO UPDATE SET sist_oppdatert=NOW()
                         |""".trimMargin(),
                     vedtakId, sakId
                 ).asUpdate
@@ -157,11 +165,6 @@ internal class DataRepository private constructor(
         }
 
     fun hentVedtaksdata(vedtakId: Int): List<String> {
-        val selectParams = listOf(
-            """{ "table": "SIAMO.VEDTAK", "after": { "VEDTAK_ID": $vedtakId }}""",
-            """{ "table": "SIAMO.VEDTAKFAKTA", "after": { "VEDTAK_ID": $vedtakId }}""",
-            """{ "table": "SIAMO.BEREGNINGSLEDD", "after": { "TABELLNAVNALIAS_KILDE": "VEDTAK", "OBJEKT_ID_KILDE": $vedtakId }}"""
-        )
         return using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
             session.run(
                 queryOf(
@@ -171,7 +174,9 @@ internal class DataRepository private constructor(
                         |WHERE data @> ?::jsonb
                         |   OR data @> ?::jsonb
                         |   OR data @> ?::jsonb""".trimMargin(),
-                    selectParams
+                    """{ "table": "SIAMO.VEDTAK", "after": { "VEDTAK_ID": $vedtakId }}""",
+                    """{ "table": "SIAMO.VEDTAKFAKTA", "after": { "VEDTAK_ID": $vedtakId }}""",
+                    """{ "table": "SIAMO.BEREGNINGSLEDD", "after": { "TABELLNAVNALIAS_KILDE": "VEDTAK", "OBJEKT_ID_KILDE": $vedtakId }}"""
                 ).map {
                     it.string("data")
                 }.asList
@@ -192,6 +197,7 @@ internal class DataRepository private constructor(
             }
         }
     }
+
     internal class OppdaterVedtakObserver(private val dataRepository: DataRepository) : DataObserver {
         override fun nyData(nyDataEvent: NyDataEvent) {
             if (nyDataEvent.erDagpenger == true) {
