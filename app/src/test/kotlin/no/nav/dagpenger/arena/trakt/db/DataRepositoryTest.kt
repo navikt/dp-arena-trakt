@@ -3,6 +3,8 @@ package no.nav.dagpenger.arena.trakt.db
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
+import no.nav.dagpenger.arena.trakt.db.ArenaKoder.DAGPENGE_SAK
+import no.nav.dagpenger.arena.trakt.db.DataRepository.OppdaterVedtakObserver
 import no.nav.dagpenger.arena.trakt.db.DataRepository.SlettUønsketYtelseObserver
 import no.nav.dagpenger.arena.trakt.helpers.Postgres.withMigratedDb
 import no.nav.dagpenger.arena.trakt.helpers.beregningsleddJSON
@@ -13,13 +15,42 @@ import no.nav.dagpenger.arena.trakt.helpers.vedtaksfaktaJSON
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
+import java.time.Instant.now
 import java.time.LocalDateTime
 import java.util.UUID
 
 internal class DataRepositoryTest {
     private val dataRepository = DataRepository().apply {
         addObserver(SlettUønsketYtelseObserver(this))
+        addObserver(OppdaterVedtakObserver(this))
     }
+
+    @Test
+    fun `Vedtak oppdateres når ved ny data knyttet til vedtaket`() {
+        val dagpengeSakId = 1234
+        val dagpengeVedtakId = 12345
+
+        withMigratedDb {
+            dataRepository.lagre(sakJSON(dagpengeSakId, saksKode = DAGPENGE_SAK), tabell = "SIAMO.SAK")
+            dataRepository.lagre(vedtakJSON(dagpengeVedtakId, dagpengeSakId), tabell = "SIAMO.VEDTAK")
+            dataRepository.lagre(vedtaksfaktaJSON(dagpengeVedtakId), tabell = "SIAMO.VEDTAKFAKTA")
+            dataRepository.lagre(beregningsleddJSON(dagpengeVedtakId), tabell = "SIAMO.BEREGNINGSLEDD")
+
+            val sist_oppdatert = hentVedtak(dagpengeVedtakId)
+
+            assertEquals(now(), sist_oppdatert)
+        }
+    }
+
+    private fun hentVedtak(vedtakId : Int) =
+        using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
+            session.run(
+                queryOf("SELECT sist_oppdatert FROM vedtak WHERE vedtak_id=?", vedtakId).map {
+                    it.string("sist_oppdatert")
+                }.asSingle
+            )
+        }
+
 
     @Test
     fun `Kan lagre JSON blobber som kommer fra Arena`() {
@@ -33,7 +64,7 @@ internal class DataRepositoryTest {
     @Test
     fun `Lagre returnerer primærnøkkelen til nylig inserted element`() {
         withMigratedDb {
-            val generertPrimærnøkkel = dataRepository.lagre(sakJSON(456, "DAGP"))
+            val generertPrimærnøkkel = dataRepository.lagre(sakJSON(456, DAGPENGE_SAK))
             assertEquals(1, generertPrimærnøkkel)
         }
     }
@@ -56,7 +87,7 @@ internal class DataRepositoryTest {
     fun `DpSak lagres, vurderes deretter til sletting, DpSak blir ikke slettet`() {
         withMigratedDb {
             val dpSak = 456
-            dataRepository.lagre(sakJSON(dpSak, saksKode = "DAGP"))
+            dataRepository.lagre(sakJSON(dpSak, saksKode = DAGPENGE_SAK))
             assertEquals(1, antallRaderMedData())
         }
     }
@@ -82,7 +113,7 @@ internal class DataRepositoryTest {
             dataRepository.lagre(vedtaksfaktaJSON(ikkeDpVedtak, kode = "IKKE_DP"))
             dataRepository.lagre(vedtakJSON(ikkeDpVedtak, ikkeDpSak))
             dataRepository.lagre(vedtakJSON(dpVedtak, dpSak))
-            dataRepository.lagre(sakJSON(dpSak, saksKode = "DAGP"))
+            dataRepository.lagre(sakJSON(dpSak, saksKode = DAGPENGE_SAK))
 
             dataRepository.batchSlettDataSomIkkeOmhandlerDagpenger(10)
 

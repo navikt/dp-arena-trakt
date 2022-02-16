@@ -4,6 +4,7 @@ import kotlinx.coroutines.runBlocking
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
+import no.nav.dagpenger.arena.trakt.db.ArenaKoder.DAGPENGE_SAK
 import no.nav.dagpenger.arena.trakt.helpers.Postgres.withMigratedDb
 import no.nav.dagpenger.arena.trakt.helpers.beregningsleddJSON
 import no.nav.dagpenger.arena.trakt.helpers.lagre
@@ -33,7 +34,7 @@ internal class HendelseRepositoryTest {
             dataRepository.lagre(beregningsleddJSON(kode = "BL1"))
             dataRepository.lagre(vedtaksfaktaJSON(kode = "VF1"))
             dataRepository.lagre(vedtakJSON(vedtaksid.toInt(), 123))
-            dataRepository.lagre(sakJSON(123, "DAGP"))
+            dataRepository.lagre(sakJSON(123, DAGPENGE_SAK))
 
             runBlocking {
                 hendelseRepository.startAsync(0).await()

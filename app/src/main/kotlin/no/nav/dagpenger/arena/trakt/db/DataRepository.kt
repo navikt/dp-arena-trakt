@@ -7,6 +7,7 @@ import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
 import mu.KotlinLogging
+import no.nav.dagpenger.arena.trakt.db.ArenaKoder.DAGPENGE_SAK
 import no.nav.dagpenger.arena.trakt.db.DataRepository.DataObserver.NyDataEvent
 import org.intellij.lang.annotations.Language
 import java.time.LocalDateTime
@@ -104,13 +105,18 @@ internal class DataRepository private constructor(
         opprettRotObjekter(json)
 
         return when (json["table"].asText()) {
-            "SIAMO.SAK" -> json["after"]["SAKSKODE"].asText() == "DAGP"
+            "SIAMO.SAK" -> json["after"]["SAKSKODE"].asText() == DAGPENGE_SAK
             "SIAMO.VEDTAK" -> erDpVedtak(json["after"]["VEDTAK_ID"].asInt())
             "SIAMO.VEDTAKFAKTA" -> erDpVedtak(json["after"]["VEDTAK_ID"].asInt())
-            "SIAMO.BEREGNINGSLEDD" -> if (json["after"]["TABELLNAVNALIAS_KILDE"].asText() == "VEDTAK") erDpVedtak(json["after"]["OBJEKT_ID_KILDE"].asInt()) else null
+            "SIAMO.BEREGNINGSLEDD" -> tilhørerBeregningsleddDpVedtak(json)
             else -> null
         }
     }
+
+    private fun tilhørerBeregningsleddDpVedtak(json: JsonNode) =
+        if (json["after"]["TABELLNAVNALIAS_KILDE"].asText() == "VEDTAK") {
+            erDpVedtak(json["after"]["OBJEKT_ID_KILDE"].asInt())
+        } else null
 
     private fun opprettRotObjekter(data: String) = opprettRotObjekter(objectMapper.readTree(data))
 
@@ -121,17 +127,22 @@ internal class DataRepository private constructor(
         }
     }
 
-    private fun erDpVedtak(vedtakId: Int): Boolean? =
-        using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
+    //language=PostgreSQL
+    private fun erDpVedtak(vedtakId: Int): Boolean? {
+        val kanVedtakKnyttesTilSakQuery = """
+            SELECT er_dagpenger FROM sak
+                LEFT JOIN vedtak ON sak.sak_id = vedtak.sak_id
+            WHERE vedtak.vedtak_id = ?
+        """.trimIndent()
+
+        return using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
             session.run(
-                queryOf(
-                    "SELECT er_dagpenger FROM sak LEFT JOIN vedtak ON sak.sak_id = vedtak.sak_id WHERE vedtak.vedtak_id = ?",
-                    vedtakId
-                ).map {
+                queryOf(kanVedtakKnyttesTilSakQuery, vedtakId).map {
                     it.boolean("er_dagpenger")
                 }.asSingle
             )
         }
+    }
 
     private fun lagreSak(sakId: Int, saksKode: String) =
         using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
@@ -139,7 +150,7 @@ internal class DataRepository private constructor(
                 queryOf(
                     "INSERT INTO sak (sak_id,er_dagpenger) VALUES(?,?) ON CONFLICT DO NOTHING",
                     sakId,
-                    saksKode == "DAGP"
+                    saksKode == DAGPENGE_SAK
                 ).asUpdate
             )
         }
@@ -195,8 +206,11 @@ internal class DataRepository private constructor(
     internal class OppdaterVedtakObserver(private val dataRepository: DataRepository) : DataObserver {
         override fun nyData(nyDataEvent: NyDataEvent) {
             if (nyDataEvent.erDagpenger == true) {
-                // oppdaterVedtak(nyDataEvent)
+                dataRepository.oppdaterVedtak(nyDataEvent)
             }
         }
+    }
+
+    internal fun oppdaterVedtak(nyDataEvent: NyDataEvent) {
     }
 }
