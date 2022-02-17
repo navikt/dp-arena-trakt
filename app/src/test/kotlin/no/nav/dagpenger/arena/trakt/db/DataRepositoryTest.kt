@@ -19,9 +19,8 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 internal class DataRepositoryTest {
-    private val dataRepository = DataRepository().apply {
-        addObserver(SlettUønsketYtelseObserver(this))
-    }
+
+    private val dataRepository = DataRepository()
 
     @Test
     fun `Kan lagre JSON blobber som kommer fra Arena`() {
@@ -60,15 +59,6 @@ internal class DataRepositoryTest {
             val dpSak = 456
             dataRepository.lagre(sakJSON(dpSak, saksKode = DAGPENGE_SAK))
             assertEquals(1, antallRaderMedData())
-        }
-    }
-
-    @Test
-    fun `Ikke DpSak lagres, vurderes deretter til sletting, blir slettet`() {
-        withMigratedDb {
-            val aapSak = 456
-            dataRepository.lagre(sakJSON(aapSak, saksKode = "AAP"))
-            assertEquals(0, antallRaderMedData())
         }
     }
 
