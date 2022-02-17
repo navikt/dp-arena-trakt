@@ -104,30 +104,6 @@ internal class DataRepositoryTest {
     }
 
     @Test
-    fun `Ikke dagpenge relaterte data skal slettes`() {
-        withMigratedDb {
-            val ikkeDpVedtak = 123
-            val ikkeDpSak = 6789
-            val dpVedtak = 127
-            val dpSak = 456
-
-            dataRepository.lagre(beregningsleddJSON(ikkeDpVedtak, kode = "IKKE_DP"))
-            dataRepository.lagre(vedtaksfaktaJSON(ikkeDpVedtak, kode = "IKKE_DP"))
-            dataRepository.lagre(vedtakJSON(ikkeDpVedtak, ikkeDpSak))
-            dataRepository.lagre(vedtakJSON(dpVedtak, dpSak))
-            dataRepository.lagre(sakJSON(dpSak, saksKode = DAGPENGE_SAK))
-
-            dataRepository.batchSlettDataSomIkkeOmhandlerDagpenger(10)
-
-            assertEquals(5, antallRaderMedData())
-            dataRepository.lagre(sakJSON(ikkeDpSak))
-            dataRepository.batchSlettDataSomIkkeOmhandlerDagpenger(10)
-            dataRepository.batchSlettDataSomIkkeOmhandlerDagpenger(10)
-            assertEquals(2, antallRaderMedData())
-        }
-    }
-
-    @Test
     fun `Finn alle relevante rader tilknyttet ett gitt vedtak`() {
         withMigratedDb {
             val vedtakId = 123
