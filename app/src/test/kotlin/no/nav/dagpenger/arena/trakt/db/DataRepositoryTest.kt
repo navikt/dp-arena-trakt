@@ -4,8 +4,6 @@ import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
 import no.nav.dagpenger.arena.trakt.db.ArenaKoder.DAGPENGE_SAK
-import no.nav.dagpenger.arena.trakt.db.DataRepository.OppdaterVedtakObserver
-import no.nav.dagpenger.arena.trakt.db.DataRepository.SlettUønsketYtelseObserver
 import no.nav.dagpenger.arena.trakt.helpers.Postgres.withMigratedDb
 import no.nav.dagpenger.arena.trakt.helpers.beregningsleddJSON
 import no.nav.dagpenger.arena.trakt.helpers.lagre

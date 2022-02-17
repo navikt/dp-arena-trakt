@@ -14,7 +14,6 @@ class SlettUønsketYtelseObserverTest {
         addObserver(DataRepository.SlettUønsketYtelseObserver(this))
     }
 
-
     @Test
     fun `Ikke DpSak lagres, vurderes deretter til sletting, blir slettet`() {
         Postgres.withMigratedDb {
@@ -28,5 +27,4 @@ class SlettUønsketYtelseObserverTest {
         using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
             session.run(queryOf("SELECT COUNT(id) FROM arena_data WHERE data is not null").map { it.int(1) }.asSingle)
         }
-
 }
