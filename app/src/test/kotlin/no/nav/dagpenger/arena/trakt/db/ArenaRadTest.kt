@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
-class ArenaRadTest {
+internal class ArenaRadTest {
 
     @Test
     fun `Json data blir opprettet som riktig type av ArenaRad`() {

@@ -16,7 +16,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 internal class IntegrationTest {
-    private val dataRepository: DataRepository = DataRepository()
+    private val dataRepository = DataRepository()
     private var hendelseRepository: HendelseRepository
     private val rapid = TestRapid().also {
         hendelseRepository = HendelseRepository(it)

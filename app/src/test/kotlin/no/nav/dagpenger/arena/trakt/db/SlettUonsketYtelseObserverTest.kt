@@ -3,15 +3,17 @@ package no.nav.dagpenger.arena.trakt.db
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
+import no.nav.dagpenger.arena.trakt.db.DataRepository.SlettUønsketYtelseObserver
 import no.nav.dagpenger.arena.trakt.helpers.Postgres.withMigratedDb
 import no.nav.dagpenger.arena.trakt.helpers.lagre
 import no.nav.dagpenger.arena.trakt.helpers.sakJSON
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
-class SlettUønsketYtelseObserverTest {
+internal class SlettUonsketYtelseObserverTest {
+
     private val dataRepository = DataRepository().apply {
-        addObserver(DataRepository.SlettUønsketYtelseObserver(this))
+        addObserver(SlettUønsketYtelseObserver(this))
     }
 
     @Test

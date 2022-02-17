@@ -204,8 +204,7 @@ internal class DataRepository private constructor(
                 //language=PostgreSQL
                 queryOf(
                     """
-                    |SELECT 
-                    |data
+                    |SELECT data
                     |FROM arena_data
                     |WHERE data @> ?::jsonb
                     |   OR data @> ?::jsonb

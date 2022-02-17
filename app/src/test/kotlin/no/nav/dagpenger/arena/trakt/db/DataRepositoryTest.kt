@@ -4,6 +4,7 @@ import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
 import no.nav.dagpenger.arena.trakt.db.ArenaKoder.DAGPENGE_SAK
+import no.nav.dagpenger.arena.trakt.db.ArenaKoder.SAK_TABELL
 import no.nav.dagpenger.arena.trakt.db.ArenaKoder.VEDTAK_TABELL
 import no.nav.dagpenger.arena.trakt.helpers.Postgres.withMigratedDb
 import no.nav.dagpenger.arena.trakt.helpers.beregningsleddJSON
@@ -56,7 +57,7 @@ internal class DataRepositoryTest {
     fun `DpSak lagres, vurderes deretter til sletting, DpSak blir ikke slettet`() {
         withMigratedDb {
             val dpSak = 456
-            dataRepository.lagre(sakJSON(dpSak, saksKode = DAGPENGE_SAK))
+            dataRepository.lagre(sakJSON(dpSak, saksKode = DAGPENGE_SAK), tabell = SAK_TABELL)
             assertEquals(1, antallRaderMedData())
         }
     }
