@@ -181,12 +181,14 @@ internal class DataRepository private constructor(
         return using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
             session.run(
                 //language=PostgreSQL
-                queryOf("""
+                queryOf(
+                    """
                         UPDATE vedtak
                         SET sist_oppdatert=NOW(),
                             antall_oppdateringer = antall_oppdateringer + 1
                         WHERE vedtak_id = ? 
-                        """.trimMargin(), vedtakId
+                        """.trimMargin(),
+                    vedtakId
                 ).asUpdate
             )
         }
