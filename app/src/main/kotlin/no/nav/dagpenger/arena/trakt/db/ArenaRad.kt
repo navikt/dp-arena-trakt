@@ -1,9 +1,17 @@
 package no.nav.dagpenger.arena.trakt.db
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import no.nav.dagpenger.arena.trakt.db.ArenaKoder.BEREGNINGSLEDD_TABELL
+import no.nav.dagpenger.arena.trakt.db.ArenaKoder.SAK_TABELL
+import no.nav.dagpenger.arena.trakt.db.ArenaKoder.VEDTAKFAKTA_TABELL
+import no.nav.dagpenger.arena.trakt.db.ArenaKoder.VEDTAK_TABELL
 
 internal object ArenaKoder {
     const val DAGPENGE_SAK = "DAGP"
+    const val SAK_TABELL = "SIAMO.SAK"
+    const val VEDTAK_TABELL = "SIAMO.VEDTAK"
+    const val VEDTAKFAKTA_TABELL = "SIAMO.VEDTAKFAKTA"
+    const val BEREGNINGSLEDD_TABELL = "SIAMO.BEREGNINGSLEDD"
 }
 
 internal sealed class ArenaRad(val data: String) {
@@ -11,10 +19,10 @@ internal sealed class ArenaRad(val data: String) {
         private val objectMapper = ObjectMapper().reader()
         fun lagRad(tabell: String, data: String) =
             when (tabell) {
-                "SIAMO.SAK" -> SakRad(data)
-                "SIAMO.VEDTAK" -> VedtakRad(data)
-                "SIAMO.VEDTAKFAKTA" -> VedtakFaktaRad(data)
-                "SIAMO.BEREGNINGSLEDD" -> BeregningsleddRad(data)
+                SAK_TABELL -> SakRad(data)
+                VEDTAK_TABELL -> VedtakRad(data)
+                VEDTAKFAKTA_TABELL -> VedtakFaktaRad(data)
+                BEREGNINGSLEDD_TABELL -> BeregningsleddRad(data)
                 else -> throw IllegalArgumentException("Ukjent tabelltype")
             }
     }

@@ -3,6 +3,10 @@ package no.nav.dagpenger.arena.trakt.db
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
+import no.nav.dagpenger.arena.trakt.db.ArenaKoder.BEREGNINGSLEDD_TABELL
+import no.nav.dagpenger.arena.trakt.db.ArenaKoder.SAK_TABELL
+import no.nav.dagpenger.arena.trakt.db.ArenaKoder.VEDTAKFAKTA_TABELL
+import no.nav.dagpenger.arena.trakt.db.ArenaKoder.VEDTAK_TABELL
 import no.nav.dagpenger.arena.trakt.db.DataRepository.OppdaterVedtakObserver
 import no.nav.dagpenger.arena.trakt.helpers.Postgres.withMigratedDb
 import no.nav.dagpenger.arena.trakt.helpers.beregningsleddJSON
@@ -25,10 +29,10 @@ internal class OppdaterVedtakObserverTest {
         val dagpengeVedtakId = 12345
 
         withMigratedDb {
-            dataRepository.lagre(sakJSON(dagpengeSakId, saksKode = ArenaKoder.DAGPENGE_SAK), tabell = "SIAMO.SAK")
-            dataRepository.lagre(vedtakJSON(dagpengeVedtakId, dagpengeSakId), tabell = "SIAMO.VEDTAK")
-            dataRepository.lagre(vedtaksfaktaJSON(dagpengeVedtakId), tabell = "SIAMO.VEDTAKFAKTA")
-            dataRepository.lagre(beregningsleddJSON(dagpengeVedtakId), tabell = "SIAMO.BEREGNINGSLEDD")
+            dataRepository.lagre(sakJSON(dagpengeSakId, saksKode = ArenaKoder.DAGPENGE_SAK), tabell = SAK_TABELL)
+            dataRepository.lagre(vedtakJSON(dagpengeVedtakId, dagpengeSakId), tabell = VEDTAK_TABELL)
+            dataRepository.lagre(vedtaksfaktaJSON(dagpengeVedtakId), tabell = VEDTAKFAKTA_TABELL)
+            dataRepository.lagre(beregningsleddJSON(dagpengeVedtakId), tabell = BEREGNINGSLEDD_TABELL)
 
             assertEquals(3, antallOppdateringerForVedtak(dagpengeVedtakId))
         }
@@ -40,10 +44,10 @@ internal class OppdaterVedtakObserverTest {
         val ikkeDagpengeVedtakId = 12345
 
         withMigratedDb {
-            dataRepository.lagre(sakJSON(ikkeDagpengeSakId, saksKode = "AAP"), tabell = "SIAMO.SAK")
-            dataRepository.lagre(vedtakJSON(ikkeDagpengeVedtakId, ikkeDagpengeSakId), tabell = "SIAMO.VEDTAK")
-            dataRepository.lagre(vedtaksfaktaJSON(ikkeDagpengeVedtakId), tabell = "SIAMO.VEDTAKFAKTA")
-            dataRepository.lagre(beregningsleddJSON(ikkeDagpengeVedtakId), tabell = "SIAMO.BEREGNINGSLEDD")
+            dataRepository.lagre(sakJSON(ikkeDagpengeSakId, saksKode = "AAP"), tabell = SAK_TABELL)
+            dataRepository.lagre(vedtakJSON(ikkeDagpengeVedtakId, ikkeDagpengeSakId), tabell = VEDTAK_TABELL)
+            dataRepository.lagre(vedtaksfaktaJSON(ikkeDagpengeVedtakId), tabell = VEDTAKFAKTA_TABELL)
+            dataRepository.lagre(beregningsleddJSON(ikkeDagpengeVedtakId), tabell = BEREGNINGSLEDD_TABELL)
 
             assertEquals(0, antallOppdateringerForVedtak(ikkeDagpengeVedtakId))
         }

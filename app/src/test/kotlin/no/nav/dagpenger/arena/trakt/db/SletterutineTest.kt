@@ -3,6 +3,8 @@ package no.nav.dagpenger.arena.trakt.db
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
+import no.nav.dagpenger.arena.trakt.db.ArenaKoder.DAGPENGE_SAK
+import no.nav.dagpenger.arena.trakt.db.ArenaKoder.SAK_TABELL
 import no.nav.dagpenger.arena.trakt.helpers.Postgres.withMigratedDb
 import no.nav.dagpenger.arena.trakt.helpers.beregningsleddJSON
 import no.nav.dagpenger.arena.trakt.helpers.lagre
@@ -32,7 +34,7 @@ internal class SletterutineTest {
             dataRepository.lagre(vedtaksfaktaJSON(ikkeDpVedtak, kode = "IKKE_DP"))
             dataRepository.lagre(vedtakJSON(ikkeDpVedtak, ikkeDpSak))
             dataRepository.lagre(vedtakJSON(dpVedtak, dpSak))
-            dataRepository.lagre(sakJSON(dpSak, saksKode = ArenaKoder.DAGPENGE_SAK))
+            dataRepository.lagre(sakJSON(dpSak, saksKode = DAGPENGE_SAK))
 
             dataRepository.batchSlettDataSomIkkeOmhandlerDagpenger(10)
 
@@ -84,7 +86,7 @@ internal class SletterutineTest {
             session.run(
                 queryOf(
                     lagreQuery,
-                    "SIAMO.SAK",
+                    SAK_TABELL,
                     UUID.randomUUID().toString(),
                     LocalDateTime.now(),
                     LocalDateTime.now(),

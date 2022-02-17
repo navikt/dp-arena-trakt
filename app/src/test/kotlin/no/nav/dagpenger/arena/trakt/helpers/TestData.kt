@@ -4,6 +4,7 @@ import no.nav.dagpenger.arena.trakt.Hendelse
 import no.nav.dagpenger.arena.trakt.datakrav.Beregningsledd
 import no.nav.dagpenger.arena.trakt.datakrav.Vedtak
 import no.nav.dagpenger.arena.trakt.datakrav.Vedtaksfakta
+import no.nav.dagpenger.arena.trakt.db.ArenaKoder.SAK_TABELL
 import no.nav.dagpenger.arena.trakt.db.DataRepository
 import org.intellij.lang.annotations.Language
 import java.time.LocalDateTime
@@ -15,7 +16,7 @@ internal fun testHendelse(id: String) = Hendelse(Hendelse.HendelseId(Hendelse.Ty
     krev(Vedtak(id))
 }
 
-internal fun DataRepository.lagre(json: String, tabell: String = "SIAMO.SAK") =
+internal fun DataRepository.lagre(json: String, tabell: String = SAK_TABELL) =
     lagre(tabell, UUID.randomUUID().toString(), LocalDateTime.now(), LocalDateTime.now(), json)
 
 @Language("JSON")

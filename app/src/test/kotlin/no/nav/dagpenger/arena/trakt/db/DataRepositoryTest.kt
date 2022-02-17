@@ -4,6 +4,7 @@ import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
 import no.nav.dagpenger.arena.trakt.db.ArenaKoder.DAGPENGE_SAK
+import no.nav.dagpenger.arena.trakt.db.ArenaKoder.VEDTAK_TABELL
 import no.nav.dagpenger.arena.trakt.helpers.Postgres.withMigratedDb
 import no.nav.dagpenger.arena.trakt.helpers.beregningsleddJSON
 import no.nav.dagpenger.arena.trakt.helpers.lagre
@@ -43,9 +44,9 @@ internal class DataRepositoryTest {
         val skjedde = LocalDateTime.now()
 
         withMigratedDb {
-            val primærNøkkel = dataRepository.lagre("SIAMO.VEDTAK", pos, LocalDateTime.now(), skjedde, vedtakJSON())
+            val primærNøkkel = dataRepository.lagre(VEDTAK_TABELL, pos, LocalDateTime.now(), skjedde, vedtakJSON())
             assertEquals(1, primærNøkkel)
-            val ignorert = dataRepository.lagre("SIAMO.VEDTAK", pos, LocalDateTime.now(), skjedde, vedtakJSON())
+            val ignorert = dataRepository.lagre(VEDTAK_TABELL, pos, LocalDateTime.now(), skjedde, vedtakJSON())
             assertNull(ignorert)
             assertEquals(1, antallRaderMedData())
         }

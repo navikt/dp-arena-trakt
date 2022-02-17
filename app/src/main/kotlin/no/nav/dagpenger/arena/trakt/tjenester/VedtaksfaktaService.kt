@@ -2,6 +2,7 @@ package no.nav.dagpenger.arena.trakt.tjenester
 
 import mu.KotlinLogging
 import mu.withLoggingContext
+import no.nav.dagpenger.arena.trakt.db.ArenaKoder.VEDTAKFAKTA_TABELL
 import no.nav.dagpenger.arena.trakt.db.HendelseRepository
 import no.nav.dagpenger.arena.trakt.db.HendelseRepository.Companion.vedtak
 import no.nav.helse.rapids_rivers.JsonMessage
@@ -18,7 +19,7 @@ internal class VedtaksfaktaService(
 ) : River.PacketListener {
     init {
         River(rapidsConnection).validate {
-            it.demandValue("table", "SIAMO.VEDTAKFAKTA")
+            it.demandValue("table", VEDTAKFAKTA_TABELL)
             it.requireKey(
                 "after.VEDTAK_ID",
                 "after.VEDTAKFAKTAKODE"

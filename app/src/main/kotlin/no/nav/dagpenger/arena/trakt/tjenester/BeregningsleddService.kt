@@ -2,6 +2,7 @@ package no.nav.dagpenger.arena.trakt.tjenester
 
 import mu.KotlinLogging
 import mu.withLoggingContext
+import no.nav.dagpenger.arena.trakt.db.ArenaKoder.BEREGNINGSLEDD_TABELL
 import no.nav.dagpenger.arena.trakt.db.HendelseRepository
 import no.nav.dagpenger.arena.trakt.db.HendelseRepository.Companion.vedtak
 import no.nav.helse.rapids_rivers.JsonMessage
@@ -19,7 +20,7 @@ internal class BeregningsleddService(
 ) : River.PacketListener {
     init {
         River(rapidsConnection).validate {
-            it.demandValue("table", "SIAMO.BEREGNINGSLEDD")
+            it.demandValue("table", BEREGNINGSLEDD_TABELL)
             it.demandValue("after.TABELLNAVNALIAS_KILDE", "VEDTAK")
             it.requireKey(
                 "after.BEREGNINGSLEDDKODE",

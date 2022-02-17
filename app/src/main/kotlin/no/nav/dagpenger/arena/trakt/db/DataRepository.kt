@@ -7,7 +7,11 @@ import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
 import mu.KotlinLogging
+import no.nav.dagpenger.arena.trakt.db.ArenaKoder.BEREGNINGSLEDD_TABELL
 import no.nav.dagpenger.arena.trakt.db.ArenaKoder.DAGPENGE_SAK
+import no.nav.dagpenger.arena.trakt.db.ArenaKoder.SAK_TABELL
+import no.nav.dagpenger.arena.trakt.db.ArenaKoder.VEDTAKFAKTA_TABELL
+import no.nav.dagpenger.arena.trakt.db.ArenaKoder.VEDTAK_TABELL
 import no.nav.dagpenger.arena.trakt.db.DataRepository.DataObserver.NyDataEvent
 import org.intellij.lang.annotations.Language
 import java.time.LocalDateTime
@@ -110,10 +114,10 @@ internal class DataRepository private constructor(
         val json = objectMapper.readTree(data)
 
         return when (json["table"].asText()) {
-            "SIAMO.SAK" -> json["after"]["SAKSKODE"].asText() == DAGPENGE_SAK
-            "SIAMO.VEDTAK" -> erDpVedtak(json["after"]["VEDTAK_ID"].asInt())
-            "SIAMO.VEDTAKFAKTA" -> erDpVedtak(json["after"]["VEDTAK_ID"].asInt())
-            "SIAMO.BEREGNINGSLEDD" -> tilhørerBeregningsleddDpVedtak(json)
+            SAK_TABELL -> json["after"]["SAKSKODE"].asText() == DAGPENGE_SAK
+            VEDTAK_TABELL -> erDpVedtak(json["after"]["VEDTAK_ID"].asInt())
+            VEDTAKFAKTA_TABELL -> erDpVedtak(json["after"]["VEDTAK_ID"].asInt())
+            BEREGNINGSLEDD_TABELL -> tilhørerBeregningsleddDpVedtak(json)
             else -> null
         }
     }
@@ -127,8 +131,8 @@ internal class DataRepository private constructor(
 
     private fun opprettRotObjekter(json: JsonNode) {
         when (json["table"].asText()) {
-            "SIAMO.SAK" -> lagreSak(json["after"]["SAK_ID"].asInt(), json["after"]["SAKSKODE"].asText())
-            "SIAMO.VEDTAK" -> lagreVedtak(json["after"]["VEDTAK_ID"].asInt(), json["after"]["SAK_ID"].asInt())
+            SAK_TABELL -> lagreSak(json["after"]["SAK_ID"].asInt(), json["after"]["SAKSKODE"].asText())
+            VEDTAK_TABELL -> lagreVedtak(json["after"]["VEDTAK_ID"].asInt(), json["after"]["SAK_ID"].asInt())
         }
     }
 
@@ -206,9 +210,9 @@ internal class DataRepository private constructor(
                     |WHERE data @> ?::jsonb
                     |   OR data @> ?::jsonb
                     |   OR data @> ?::jsonb""".trimMargin(),
-                    """{ "table": "SIAMO.VEDTAK", "after": { "VEDTAK_ID": $vedtakId }}""",
-                    """{ "table": "SIAMO.VEDTAKFAKTA", "after": { "VEDTAK_ID": $vedtakId }}""",
-                    """{ "table": "SIAMO.BEREGNINGSLEDD", "after": { "TABELLNAVNALIAS_KILDE": "VEDTAK", "OBJEKT_ID_KILDE": $vedtakId }}"""
+                    """{ "table": "$VEDTAK_TABELL", "after": { "VEDTAK_ID": $vedtakId }}""",
+                    """{ "table": "$VEDTAKFAKTA_TABELL", "after": { "VEDTAK_ID": $vedtakId }}""",
+                    """{ "table": "$BEREGNINGSLEDD_TABELL", "after": { "TABELLNAVNALIAS_KILDE": "VEDTAK", "OBJEKT_ID_KILDE": $vedtakId }}"""
                 ).map {
                     it.string("data")
                 }.asList
