@@ -40,6 +40,21 @@ internal class DataRepositoryTest {
     }
 
     @Test
+    fun `Vedtak oppdateres ikke når sak ikke er knyttet til vedtaket`() {
+        val ikkeDagpengeSakId = 1234
+        val ikkeDagpengeVedtakId = 12345
+
+        withMigratedDb {
+            dataRepository.lagre(sakJSON(ikkeDagpengeSakId, saksKode = "AAP"), tabell = "SIAMO.SAK")
+            dataRepository.lagre(vedtakJSON(ikkeDagpengeVedtakId, ikkeDagpengeSakId), tabell = "SIAMO.VEDTAK")
+            dataRepository.lagre(vedtaksfaktaJSON(ikkeDagpengeVedtakId), tabell = "SIAMO.VEDTAKFAKTA")
+            dataRepository.lagre(beregningsleddJSON(ikkeDagpengeVedtakId), tabell = "SIAMO.BEREGNINGSLEDD")
+
+            assertEquals(0, antallOppdateringerForVedtak(ikkeDagpengeVedtakId))
+        }
+    }
+
+    @Test
     fun `Kan lagre JSON blobber som kommer fra Arena`() {
         withMigratedDb {
             dataRepository.lagre(beregningsleddJSON(kode = "BL1"))

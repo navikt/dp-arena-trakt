@@ -232,15 +232,9 @@ internal class DataRepository private constructor(
 
     internal class OppdaterVedtakObserver(private val dataRepository: DataRepository) : DataObserver {
         override fun nyData(nyDataEvent: NyDataEvent) {
-            if (nyDataEvent.erDagpenger == true) {
-                dataRepository.oppdaterVedtak(nyDataEvent)
+            if (nyDataEvent.erDagpenger == true && nyDataEvent.arenaRad.vedtakId() != null) {
+                dataRepository.oppdaterVedtak(nyDataEvent.arenaRad.vedtakId()!!)
             }
-        }
-    }
-
-    internal fun oppdaterVedtak(nyDataEvent: NyDataEvent) {
-        if (nyDataEvent.arenaRad.vedtakId() != null) {
-            oppdaterVedtak(nyDataEvent.arenaRad.vedtakId()!!)
         }
     }
 }
