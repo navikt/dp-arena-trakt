@@ -40,8 +40,9 @@ internal class DataRepository private constructor(
         |ON CONFLICT DO NOTHING
         |""".trimMargin()
 
-    fun lagre(tabell: String, pos: String, skjedde: LocalDateTime, replikert: LocalDateTime, json: String) =
-        using(sessionOf(PostgresDataSourceBuilder.dataSource, returnGeneratedKey = true)) { session ->
+    fun lagre(tabell: String, pos: String, skjedde: LocalDateTime, replikert: LocalDateTime, json: String): Long? {
+        val arenaRad = ArenaRad.lagRad(tabell, json)
+        return using(sessionOf(PostgresDataSourceBuilder.dataSource, returnGeneratedKey = true)) { session ->
             opprettRotObjekter(json)
             session.run(
                 queryOf(
@@ -54,11 +55,12 @@ internal class DataRepository private constructor(
                 ).asUpdateAndReturnGeneratedKey
             )
         }.also {
-            val nyDataEvent = NyDataEvent(tabell, it, erDagpenger(json))
+            val nyDataEvent = NyDataEvent(arenaRad, it, erDagpenger(json))
             observers.forEach { observer ->
                 observer.nyData(nyDataEvent)
             }
         }
+    }
 
     internal fun batchSlettDataSomIkkeOmhandlerDagpenger(batchStørrelse: Int) =
         using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
@@ -175,6 +177,21 @@ internal class DataRepository private constructor(
             )
         }
 
+    private fun oppdaterVedtak(vedtakId: Int): Int {
+        return using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
+            session.run(
+                //language=PostgreSQL
+                queryOf("""
+                        UPDATE vedtak
+                        SET sist_oppdatert=NOW(),
+                            antall_oppdateringer = antall_oppdateringer + 1
+                        WHERE vedtak_id = ? 
+                        """.trimMargin(), vedtakId
+                ).asUpdate
+            )
+        }
+    }
+
     fun hentVedtaksdata(vedtakId: Int): List<String> {
         return using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
             session.run(
@@ -198,7 +215,7 @@ internal class DataRepository private constructor(
     }
 
     internal interface DataObserver {
-        data class NyDataEvent(val tabell: String, val primærnøkkel: Long?, val erDagpenger: Boolean?)
+        data class NyDataEvent(val arenaRad: ArenaRad, val primærnøkkel: Long?, val erDagpenger: Boolean?)
 
         fun nyData(nyDataEvent: NyDataEvent)
     }
@@ -220,5 +237,8 @@ internal class DataRepository private constructor(
     }
 
     internal fun oppdaterVedtak(nyDataEvent: NyDataEvent) {
+        if (nyDataEvent.arenaRad.vedtakId() != null) {
+            oppdaterVedtak(nyDataEvent.arenaRad.vedtakId()!!)
+        }
     }
 }

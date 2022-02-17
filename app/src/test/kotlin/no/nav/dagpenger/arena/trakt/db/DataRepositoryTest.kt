@@ -35,7 +35,7 @@ internal class DataRepositoryTest {
             dataRepository.lagre(vedtaksfaktaJSON(dagpengeVedtakId), tabell = "SIAMO.VEDTAKFAKTA")
             dataRepository.lagre(beregningsleddJSON(dagpengeVedtakId), tabell = "SIAMO.BEREGNINGSLEDD")
 
-            assertEquals(0, antallOppdateringerForVedtak(dagpengeVedtakId))
+            assertEquals(3, antallOppdateringerForVedtak(dagpengeVedtakId))
         }
     }
 
