@@ -21,37 +21,6 @@ import java.util.UUID
 internal class DataRepositoryTest {
     private val dataRepository = DataRepository().apply {
         addObserver(SlettUønsketYtelseObserver(this))
-        addObserver(OppdaterVedtakObserver(this))
-    }
-
-    @Test
-    fun `Vedtak oppdateres ved ny data knyttet til vedtaket`() {
-        val dagpengeSakId = 1234
-        val dagpengeVedtakId = 12345
-
-        withMigratedDb {
-            dataRepository.lagre(sakJSON(dagpengeSakId, saksKode = DAGPENGE_SAK), tabell = "SIAMO.SAK")
-            dataRepository.lagre(vedtakJSON(dagpengeVedtakId, dagpengeSakId), tabell = "SIAMO.VEDTAK")
-            dataRepository.lagre(vedtaksfaktaJSON(dagpengeVedtakId), tabell = "SIAMO.VEDTAKFAKTA")
-            dataRepository.lagre(beregningsleddJSON(dagpengeVedtakId), tabell = "SIAMO.BEREGNINGSLEDD")
-
-            assertEquals(3, antallOppdateringerForVedtak(dagpengeVedtakId))
-        }
-    }
-
-    @Test
-    fun `Vedtak oppdateres ikke når sak ikke er knyttet til vedtaket`() {
-        val ikkeDagpengeSakId = 1234
-        val ikkeDagpengeVedtakId = 12345
-
-        withMigratedDb {
-            dataRepository.lagre(sakJSON(ikkeDagpengeSakId, saksKode = "AAP"), tabell = "SIAMO.SAK")
-            dataRepository.lagre(vedtakJSON(ikkeDagpengeVedtakId, ikkeDagpengeSakId), tabell = "SIAMO.VEDTAK")
-            dataRepository.lagre(vedtaksfaktaJSON(ikkeDagpengeVedtakId), tabell = "SIAMO.VEDTAKFAKTA")
-            dataRepository.lagre(beregningsleddJSON(ikkeDagpengeVedtakId), tabell = "SIAMO.BEREGNINGSLEDD")
-
-            assertEquals(0, antallOppdateringerForVedtak(ikkeDagpengeVedtakId))
-        }
     }
 
     @Test
@@ -117,15 +86,6 @@ internal class DataRepositoryTest {
             assertEquals(3, dataRepository.hentVedtaksdata(vedtakId).size)
         }
     }
-
-    private fun antallOppdateringerForVedtak(vedtakId: Int) =
-        using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
-            session.run(
-                queryOf("SELECT antall_oppdateringer FROM vedtak WHERE vedtak_id=?", vedtakId).map {
-                    it.int("antall_oppdateringer")
-                }.asSingle
-            )
-        }
 
     private fun antallRaderMedData() =
         using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
