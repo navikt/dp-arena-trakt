@@ -4,7 +4,7 @@ import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
 import no.nav.dagpenger.arena.trakt.db.DataRepository.OppdaterVedtakObserver
-import no.nav.dagpenger.arena.trakt.helpers.Postgres
+import no.nav.dagpenger.arena.trakt.helpers.Postgres.withMigratedDb
 import no.nav.dagpenger.arena.trakt.helpers.beregningsleddJSON
 import no.nav.dagpenger.arena.trakt.helpers.lagre
 import no.nav.dagpenger.arena.trakt.helpers.sakJSON
@@ -24,7 +24,7 @@ internal class OppdaterVedtakObserverTest {
         val dagpengeSakId = 1234
         val dagpengeVedtakId = 12345
 
-        Postgres.withMigratedDb {
+        withMigratedDb {
             dataRepository.lagre(sakJSON(dagpengeSakId, saksKode = ArenaKoder.DAGPENGE_SAK), tabell = "SIAMO.SAK")
             dataRepository.lagre(vedtakJSON(dagpengeVedtakId, dagpengeSakId), tabell = "SIAMO.VEDTAK")
             dataRepository.lagre(vedtaksfaktaJSON(dagpengeVedtakId), tabell = "SIAMO.VEDTAKFAKTA")
@@ -39,7 +39,7 @@ internal class OppdaterVedtakObserverTest {
         val ikkeDagpengeSakId = 1234
         val ikkeDagpengeVedtakId = 12345
 
-        Postgres.withMigratedDb {
+        withMigratedDb {
             dataRepository.lagre(sakJSON(ikkeDagpengeSakId, saksKode = "AAP"), tabell = "SIAMO.SAK")
             dataRepository.lagre(vedtakJSON(ikkeDagpengeVedtakId, ikkeDagpengeSakId), tabell = "SIAMO.VEDTAK")
             dataRepository.lagre(vedtaksfaktaJSON(ikkeDagpengeVedtakId), tabell = "SIAMO.VEDTAKFAKTA")

@@ -3,10 +3,10 @@ package no.nav.dagpenger.arena.trakt.db
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
-import no.nav.dagpenger.arena.trakt.helpers.Postgres
+import no.nav.dagpenger.arena.trakt.helpers.Postgres.withMigratedDb
 import no.nav.dagpenger.arena.trakt.helpers.lagre
 import no.nav.dagpenger.arena.trakt.helpers.sakJSON
-import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 class SlettUønsketYtelseObserverTest {
@@ -16,10 +16,10 @@ class SlettUønsketYtelseObserverTest {
 
     @Test
     fun `Ikke DpSak lagres, vurderes deretter til sletting, blir slettet`() {
-        Postgres.withMigratedDb {
+        withMigratedDb {
             val aapSak = 456
             dataRepository.lagre(sakJSON(aapSak, saksKode = "AAP"))
-            Assertions.assertEquals(0, antallRaderMedData())
+            assertEquals(0, antallRaderMedData())
         }
     }
 

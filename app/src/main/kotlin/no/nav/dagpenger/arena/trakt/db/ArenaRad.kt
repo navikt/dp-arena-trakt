@@ -2,10 +2,13 @@ package no.nav.dagpenger.arena.trakt.db
 
 import com.fasterxml.jackson.databind.ObjectMapper
 
-sealed class ArenaRad(val data: String) {
+internal object ArenaKoder {
+    const val DAGPENGE_SAK = "DAGP"
+}
+
+internal sealed class ArenaRad(val data: String) {
     companion object {
         private val objectMapper = ObjectMapper().reader()
-
         fun lagRad(tabell: String, data: String) =
             when (tabell) {
                 "SIAMO.SAK" -> SakRad(data)
@@ -19,27 +22,22 @@ sealed class ArenaRad(val data: String) {
     internal val json = objectMapper.readTree(data)
     open fun vedtakId(): Int? = null
     open fun sakId(): Int? = null
-    abstract fun type(): String
 }
 
-class SakRad(data: String) : ArenaRad(data) {
-    override fun type() = "SAK"
+internal class SakRad(data: String) : ArenaRad(data) {
     override fun sakId() = json["after"]["SAK_ID"].asInt()
 }
 
-class VedtakFaktaRad(data: String) : ArenaRad(data) {
-    override fun type() = "VEDTAKFAKTA"
+internal class VedtakFaktaRad(data: String) : ArenaRad(data) {
     override fun vedtakId() = json["after"]["VEDTAK_ID"].asInt()
 }
 
-class VedtakRad(data: String) : ArenaRad(data) {
-    override fun type() = "VEDTAK"
+internal class VedtakRad(data: String) : ArenaRad(data) {
     override fun vedtakId() = json["after"]["VEDTAK_ID"].asInt()
     override fun sakId() = json["after"]["SAK_ID"].asInt()
 }
 
-class BeregningsleddRad(data: String) : ArenaRad(data) {
-    override fun type() = "BEREGNINGSLEDD"
+internal class BeregningsleddRad(data: String) : ArenaRad(data) {
     override fun vedtakId() = json["after"]["TABELLNAVNALIAS_KILDE"].asText()
         .takeIf { it == "VEDTAK" }
         ?.let { json["after"]["OBJEKT_ID_KILDE"].asInt() }
