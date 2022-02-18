@@ -1,11 +1,12 @@
 package no.nav.dagpenger.arena.trakt.db
 
+import no.nav.dagpenger.arena.trakt.db.VedtakParser.UfullstendigDagpengeVedtak
 import no.nav.dagpenger.arena.trakt.helpers.Postgres.withMigratedDb
 import no.nav.dagpenger.arena.trakt.helpers.beregningsleddJSON
 import no.nav.dagpenger.arena.trakt.helpers.lagre
 import no.nav.dagpenger.arena.trakt.helpers.vedtakJSON
 import no.nav.dagpenger.arena.trakt.helpers.vedtaksfaktaJSON
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 internal class VedtakParserTest {
@@ -13,20 +14,20 @@ internal class VedtakParserTest {
     private val vedtakParser = VedtakParser()
 
     @Test
-    fun `Vedtakparser produserer et inkomplett vedtak`() {
-        assertFalse(vedtakParser.erAllDataTilstede(ukomplettVedtaksData()))
+    fun `Vedtakparser produserer et ufullstendig dagpengevedtak`() {
+        val dagpengevedtak = vedtakParser.parse(ufullstendigVedtaksData())
+        assertTrue(dagpengevedtak is UfullstendigDagpengeVedtak)
     }
 
     @Test
-    fun `Vedtakparser produserer et komplett vedtak`() {
-        assertTrue(vedtakParser.erAllDataTilstede(komplettVedtaksData()))
+    fun `Vedtakparser produserer et fullstendig dagpengevedtak`() {
+        val dagpengevedtak = vedtakParser.parse(fullstendigVedtaksdata())
+        assertTrue(dagpengevedtak is VedtakParser.FullstendigDagpengevedtak)
     }
 
-    fun ukomplettVedtaksData(): List<String> {
-        return listOf(vedtakJSON())
-    }
+    private fun ufullstendigVedtaksData() = listOf(vedtakJSON())
 
-    fun komplettVedtaksData(): List<String> {
+    private fun fullstendigVedtaksdata(): List<String> {
         val dataRepository = DataRepository()
         var vedtaksData = mutableListOf<String>()
         withMigratedDb {
