@@ -44,6 +44,9 @@ internal class ApplicationBuilder(config: Map<String, String>) : StatusListener 
     }
 
     override fun onShutdown(rapidsConnection: RapidsConnection) {
-        sletterutine.cancel()
+        if (::sletterutine.isInitialized) {
+            // Får vi shutdown før DB-migreringer er ferdige så har ikke jobben startet
+            sletterutine.cancel()
+        }
     }
 }
