@@ -31,10 +31,10 @@ internal class Sletterutine internal constructor(
         val runId = UUID.randomUUID()
         withLoggingContext("runId" to runId.toString()) {
             logg.info { "Sletterutine starter" }
-            slettejobbLatency.time {
-                val raderSlettet = dataRepository.batchSlettDataSomIkkeOmhandlerDagpenger(batchStørrelse)
-                logg.info { "Rader slettet: ${raderSlettet.sum()}" }
-            }
+            // slettejobbLatency.time {
+            val raderSlettet = dataRepository.batchSlettDataSomIkkeOmhandlerDagpenger(batchStørrelse)
+            logg.info { "Rader slettet: ${raderSlettet.sum()}" }
+            // }
         }
     }
 }
