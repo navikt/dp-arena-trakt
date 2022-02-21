@@ -9,7 +9,7 @@ internal class Sletterutine internal constructor(
     private val dataRepository: DataRepository,
     private val msFørSletterutineBegynner: Long = 1000L,
     private val msMellomSlettinger: Long = 10000L,
-    private val batchStørrelse: Int = 100000
+    private val batchStørrelse: Int = 1000
 ) {
     internal fun start() = fixedRateTimer(
         "Sletterutine",
