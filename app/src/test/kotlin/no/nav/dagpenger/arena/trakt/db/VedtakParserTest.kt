@@ -7,6 +7,7 @@ import no.nav.dagpenger.arena.trakt.helpers.lagre
 import no.nav.dagpenger.arena.trakt.helpers.vedtakJSON
 import no.nav.dagpenger.arena.trakt.helpers.vedtaksfaktaJSON
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
 internal class VedtakParserTest {
@@ -20,6 +21,7 @@ internal class VedtakParserTest {
     }
 
     @Test
+    @Disabled
     fun `Vedtakparser produserer et fullstendig dagpengevedtak`() {
         val dagpengevedtak = vedtakParser.parse(fullstendigVedtaksdata())
         assertTrue(dagpengevedtak is VedtakParser.FullstendigDagpengevedtak)
