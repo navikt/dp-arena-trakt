@@ -76,9 +76,9 @@ internal class DataRepository private constructor(
     @Language("PostgreSQL")
     private fun hentRaderSomSkalSlettes(session: Session, batchStørrelse: Int): List<List<Long>> {
         val ids = mutableListOf<List<Long>>()
-        session.forEach(
-            queryOf(finnRaderTilSlettingQuery, batchStørrelse)
-        ) {
+        val query = queryOf(finnRaderTilSlettingQuery, batchStørrelse)
+        logger.info { "Kjører query: $query" }
+        session.forEach(query) {
             val data = it.string("data")
             opprettRotObjekter(data)
 
