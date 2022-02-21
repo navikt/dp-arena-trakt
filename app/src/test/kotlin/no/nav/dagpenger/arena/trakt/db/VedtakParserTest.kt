@@ -1,10 +1,11 @@
 package no.nav.dagpenger.arena.trakt.db
 
+import no.nav.dagpenger.arena.trakt.db.VedtakParser.FullstendigDagpengevedtak
 import no.nav.dagpenger.arena.trakt.db.VedtakParser.UfullstendigDagpengeVedtak
 import no.nav.dagpenger.arena.trakt.helpers.Postgres.withMigratedDb
 import no.nav.dagpenger.arena.trakt.helpers.beregningsleddJSON
 import no.nav.dagpenger.arena.trakt.helpers.lagre
-import no.nav.dagpenger.arena.trakt.helpers.vedtakJSON
+import no.nav.dagpenger.arena.trakt.helpers.nyRettighetVedtakJSON
 import no.nav.dagpenger.arena.trakt.helpers.vedtaksfaktaJSON
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Disabled
@@ -23,11 +24,12 @@ internal class VedtakParserTest {
     @Test
     @Disabled
     fun `Vedtakparser produserer et fullstendig dagpengevedtak`() {
-        val dagpengevedtak = vedtakParser.parse(fullstendigVedtaksdata())
-        assertTrue(dagpengevedtak is VedtakParser.FullstendigDagpengevedtak)
+        val dagpengevedtak = vedtakParser.parse(listOf(nyRettighetVedtakJSON()))
+
+        assertTrue(dagpengevedtak is FullstendigDagpengevedtak)
     }
 
-    private fun ufullstendigVedtaksData() = listOf(vedtakJSON())
+    private fun ufullstendigVedtaksData() = listOf(nyRettighetVedtakJSON())
 
     private fun fullstendigVedtaksdata(): List<String> {
         val dataRepository = DataRepository()
@@ -36,8 +38,7 @@ internal class VedtakParserTest {
             val vedtakId = 123
             dataRepository.lagre(beregningsleddJSON(vedtakId))
             dataRepository.lagre(vedtaksfaktaJSON(vedtakId))
-            dataRepository.lagre(vedtakJSON(vedtakId, 5))
-            dataRepository.lagre(vedtakJSON(15345, 53))
+            dataRepository.lagre(nyRettighetVedtakJSON(vedtakId, 5))
 
             vedtaksData = dataRepository.hentVedtaksdata(vedtakId).toMutableList()
         }
