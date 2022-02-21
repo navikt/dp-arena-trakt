@@ -16,7 +16,7 @@ import no.nav.dagpenger.arena.trakt.db.DataRepository.DataObserver.NyDataEvent
 import org.intellij.lang.annotations.Language
 import java.time.LocalDateTime
 
-private val logg = KotlinLogging.logger {}
+private val logger = KotlinLogging.logger {}
 
 internal class DataRepository private constructor(
     private val observers: MutableList<DataObserver>,
@@ -69,24 +69,30 @@ internal class DataRepository private constructor(
     internal fun batchSlettDataSomIkkeOmhandlerDagpenger(batchStørrelse: Int) =
         using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
             val iderTilSletting = hentRaderSomSkalSlettes(session, batchStørrelse)
+            logger.info { "Fant ${iderTilSletting.size} rader som skal slettes" }
             slettRader(session, iderTilSletting)
         }
 
     @Language("PostgreSQL")
     private fun hentRaderSomSkalSlettes(session: Session, batchStørrelse: Int): List<List<Long>> {
-        return session.run(
-            queryOf(finnRaderTilSlettingQuery, batchStørrelse).map {
-                val data = it.string("data")
-                opprettRotObjekter(data)
+        val ids = mutableListOf<List<Long>>()
+        session.forEach(
+            queryOf(finnRaderTilSlettingQuery, batchStørrelse)
+        ) {
+            val data = it.string("data")
+            opprettRotObjekter(data)
 
-                if (erDagpenger(data) == false) {
-                    listOf(it.long("id"))
-                } else {
-                    utsettSletting(session, it.long("id"))
-                    null
-                }
-            }.asList
-        )
+            if (erDagpenger(data) == false) {
+                ids.add(listOf(it.long("id")))
+                logger.info { "Rad med id(${it.long("id")}) skal slettes" }
+            } else {
+                utsettSletting(session, it.long("id"))
+                logger.info { "Rad med id(${it.long("id")}) skal ikke slettes (nå)" }
+                // TODO: Vi bør kunne markere rader som aldri skal slettes
+            }
+        }
+
+        return ids.toList()
     }
 
     private fun utsettSletting(session: Session, primærnøkkel: Long?) {

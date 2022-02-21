@@ -2,6 +2,8 @@ package no.nav.dagpenger.arena.trakt.db
 
 import io.prometheus.client.Histogram
 import mu.KotlinLogging
+import mu.withLoggingContext
+import java.util.UUID
 import kotlin.concurrent.timer
 
 private val logg = KotlinLogging.logger {}
@@ -26,10 +28,13 @@ internal class Sletterutine internal constructor(
         initialDelay = msFørSletterutineBegynner,
         period = msMellomSlettinger,
     ) {
-        slettejobbLatency.time {
+        val runId = UUID.randomUUID()
+        withLoggingContext("runId" to runId.toString()) {
             logg.info { "Sletterutine starter" }
-            val raderSlettet = dataRepository.batchSlettDataSomIkkeOmhandlerDagpenger(batchStørrelse)
-            logg.info { "Rader slettet: ${raderSlettet.sum()}" }
+            slettejobbLatency.time {
+                val raderSlettet = dataRepository.batchSlettDataSomIkkeOmhandlerDagpenger(batchStørrelse)
+                logg.info { "Rader slettet: ${raderSlettet.sum()}" }
+            }
         }
     }
 }
