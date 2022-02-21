@@ -50,7 +50,11 @@ internal class DataMottakService(
         ) {
             logg.info { "Mottok data fra Arena" }
 
-            dataRepository.lagre(tabell, pos, skjedde, replikert, packet.toJson())
+            try {
+                dataRepository.lagre(tabell, pos, skjedde, replikert, packet.toJson())
+            } catch (exception: NullPointerException) {
+                sikkerlogg.error(exception) { "Fikk NPE ved lagring. Meldinga så slik ut: ${packet.toJson()}" }
+            }
         }
     }
 }
