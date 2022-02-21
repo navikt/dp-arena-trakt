@@ -6,7 +6,6 @@ import no.nav.dagpenger.arena.trakt.db.DataRepository.OppdaterVedtakObserver
 import no.nav.dagpenger.arena.trakt.db.DataRepository.SlettUønsketYtelseObserver
 import no.nav.dagpenger.arena.trakt.db.HendelseRepository
 import no.nav.dagpenger.arena.trakt.db.PostgresDataSourceBuilder.runMigration
-import no.nav.dagpenger.arena.trakt.db.Sletterutine
 import no.nav.dagpenger.arena.trakt.tjenester.DataMottakService
 import no.nav.helse.rapids_rivers.RapidApplication
 import no.nav.helse.rapids_rivers.RapidsConnection
@@ -36,7 +35,7 @@ internal class ApplicationBuilder(config: Map<String, String>) : StatusListener 
                 addObserver(SlettUønsketYtelseObserver(this))
                 addObserver(OppdaterVedtakObserver(this))
             }
-            sletterutine = Sletterutine(repository).start()
+            // sletterutine = Sletterutine(repository).start()
             DataMottakService(rapidsConnection, repository)
             // BeregningsleddService(rapidsConnection, hendelseRepository)
             // VedtaksfaktaService(rapidsConnection, hendelseRepository)
