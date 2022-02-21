@@ -7,9 +7,7 @@ import no.nav.dagpenger.arena.trakt.db.DataRepository.SlettUønsketYtelseObserve
 import no.nav.dagpenger.arena.trakt.db.HendelseRepository
 import no.nav.dagpenger.arena.trakt.db.PostgresDataSourceBuilder.runMigration
 import no.nav.dagpenger.arena.trakt.db.Sletterutine
-import no.nav.dagpenger.arena.trakt.tjenester.BeregningsleddService
-import no.nav.dagpenger.arena.trakt.tjenester.VedtakService
-import no.nav.dagpenger.arena.trakt.tjenester.VedtaksfaktaService
+import no.nav.dagpenger.arena.trakt.tjenester.DataMottakService
 import no.nav.helse.rapids_rivers.RapidApplication
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.RapidsConnection.StatusListener
@@ -39,10 +37,10 @@ internal class ApplicationBuilder(config: Map<String, String>) : StatusListener 
                 addObserver(OppdaterVedtakObserver(this))
             }
             sletterutine = Sletterutine(repository).start()
-            // DataMottakService(rapidsConnection, repository)
-            BeregningsleddService(rapidsConnection, hendelseRepository)
-            VedtaksfaktaService(rapidsConnection, hendelseRepository)
-            VedtakService(rapidsConnection, hendelseRepository)
+            DataMottakService(rapidsConnection, repository)
+            // BeregningsleddService(rapidsConnection, hendelseRepository)
+            // VedtaksfaktaService(rapidsConnection, hendelseRepository)
+            // VedtakService(rapidsConnection, hendelseRepository)
         }
     }
 
