@@ -4,14 +4,14 @@ import io.prometheus.client.Histogram
 import mu.KotlinLogging
 import mu.withLoggingContext
 import java.util.UUID
-import kotlin.concurrent.timer
+import kotlin.concurrent.fixedRateTimer
 
 private val logg = KotlinLogging.logger {}
 
 internal class Sletterutine internal constructor(
     private val dataRepository: DataRepository,
     private val msFørSletterutineBegynner: Long = 1000L,
-    private val msMellomSlettinger: Long = 100L,
+    private val msMellomSlettinger: Long = 10000L,
     private val batchStørrelse: Int = 1000
 ) {
     companion object {
@@ -22,7 +22,7 @@ internal class Sletterutine internal constructor(
             .register()
     }
 
-    internal fun start() = timer(
+    internal fun start() = fixedRateTimer(
         "Sletterutine",
         daemon = true, // JVMen avsluttes når det kun er sletterutine tråden som kjører
         initialDelay = msFørSletterutineBegynner,
