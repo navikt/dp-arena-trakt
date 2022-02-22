@@ -66,6 +66,6 @@ internal class VedtakService(
 private fun JsonMessage.sakId() = this["after.SAK_ID"].asInt()
 private fun JsonMessage.utfallkode() = this["after.UTFALLKODE"].asText()
 private fun JsonMessage.rettighetkode() = this["after.RETTIGHETKODE"].asText()
-private fun JsonMessage.vedtakstatuskode() = this["after.RETTIGHETKODE"].asText()
+private fun JsonMessage.vedtakstatuskode() = this["after.VEDTAKSTATUSKODE"].asText()
 private fun JsonMessage.vedtaktypekode() = this["after.VEDTAKTYPEKODE"].asText()
 private fun JsonMessage.personId() = this["after.PERSON_ID"].asInt()
