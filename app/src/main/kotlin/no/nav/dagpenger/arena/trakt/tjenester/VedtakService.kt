@@ -47,7 +47,6 @@ internal class VedtakService(
                 vedtakstatuskode = packet.vedtakstatuskode()
             )
             logg.info { "Mottok vedtak" }
-            sikkerlogg.info { "Mottok vedtak: $vedtak" }
             vedtakRepository.lagre(vedtak)
         }
     }

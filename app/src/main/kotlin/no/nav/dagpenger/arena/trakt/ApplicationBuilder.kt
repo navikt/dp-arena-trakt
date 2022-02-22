@@ -1,6 +1,5 @@
 package no.nav.dagpenger.arena.trakt
 
-import no.nav.dagpenger.arena.trakt.db.PostgresDataSourceBuilder.clean
 import no.nav.dagpenger.arena.trakt.db.PostgresDataSourceBuilder.runMigration
 import no.nav.dagpenger.arena.trakt.db.SakRepository
 import no.nav.dagpenger.arena.trakt.db.VedtakRepository
@@ -13,9 +12,7 @@ import no.nav.helse.rapids_rivers.RapidsConnection.StatusListener
 internal class ApplicationBuilder(config: Map<String, String>) : StatusListener {
     private val rapidsConnection = RapidApplication.Builder(
         RapidApplication.RapidApplicationConfig.fromEnv(config)
-    ).build { _, _ ->
-        clean()
-    }
+    ).build()
 
     init {
         rapidsConnection.register(this)
