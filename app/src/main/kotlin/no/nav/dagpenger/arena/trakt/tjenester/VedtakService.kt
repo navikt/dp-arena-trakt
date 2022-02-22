@@ -2,7 +2,6 @@ package no.nav.dagpenger.arena.trakt.tjenester
 
 import mu.KotlinLogging
 import mu.withLoggingContext
-import no.nav.dagpenger.arena.trakt.db.ArenaKoder.VEDTAK_TABELL
 import no.nav.dagpenger.arena.trakt.db.VedtakRepository
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
@@ -14,11 +13,11 @@ private val sikkerlogg = KotlinLogging.logger("tjenestekall.vedtak")
 
 internal class VedtakService(
     rapidsConnection: RapidsConnection,
-    private val vedtakRepository: VedtakRepository
+    private val vedtakRepository: VedtakRepository,
 ) : River.PacketListener {
     init {
         River(rapidsConnection).validate {
-            it.demandValue("table", VEDTAK_TABELL)
+            it.demandValue("table", "SIAMO.VEDTAK")
             it.requireKey(
                 "after.SAK_ID",
                 "after.VEDTAK_ID",
@@ -60,7 +59,7 @@ internal class VedtakService(
         val vedtaktypekode: String,
         val utfallkode: String,
         val rettighetkode: String,
-        val vedtakstatuskode: String
+        val vedtakstatuskode: String,
     )
 }
 

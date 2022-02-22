@@ -6,8 +6,11 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":infrastructure"))
     implementation(Database.Kotlinquery)
+    implementation(Konfig.konfig)
+    implementation(Database.Flyway)
+    implementation(Database.HikariCP)
+    implementation(Database.Postgres)
     testImplementation(TestContainers.postgresql)
     testImplementation(Junit5.api)
     testImplementation(Mockk.mockk)
