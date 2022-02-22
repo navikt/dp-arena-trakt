@@ -7,7 +7,7 @@ import no.nav.dagpenger.arena.trakt.tjenester.SakService.Sak
 import org.intellij.lang.annotations.Language
 
 internal class SakRepository private constructor(
-    private val observers: List<SakObserver>
+    private val observers: MutableList<SakObserver>
 ) {
     constructor() : this(mutableListOf<SakObserver>())
 
@@ -20,6 +20,8 @@ internal class SakRepository private constructor(
             |ON CONFLICT (sak_id) DO NOTHING
         """.trimMargin()
     }
+
+    fun leggTilObserver(observer: SakObserver) = observers.add(observer)
 
     fun lagre(sak: Sak): Int {
         return using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->

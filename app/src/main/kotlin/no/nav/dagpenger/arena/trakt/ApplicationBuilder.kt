@@ -23,8 +23,9 @@ internal class ApplicationBuilder(config: Map<String, String>) : StatusListener 
 
     override fun onStartup(rapidsConnection: RapidsConnection) {
         runMigration().also {
-            SakService(rapidsConnection, SakRepository())
-            VedtakService(rapidsConnection, VedtakRepository())
+            val sakRepository = SakRepository()
+            SakService(rapidsConnection, sakRepository)
+            VedtakService(rapidsConnection, VedtakRepository(sakRepository))
         }
     }
 

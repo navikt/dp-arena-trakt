@@ -1,5 +1,6 @@
 package no.nav.dagpenger.arena.trakt.db
 
+import kotliquery.Row
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
@@ -10,9 +11,14 @@ import org.intellij.lang.annotations.Language
 
 internal class VedtakRepository private constructor(
     private val sakRepository: SakRepository,
-    private val observers: List<VedtakObserver>,
+    private val observers: MutableList<VedtakObserver>,
 ) : SakObserver {
     constructor(sakRepository: SakRepository) : this(sakRepository, mutableListOf())
+
+    init {
+        sakRepository.leggTilObserver(FinnUsendteVedtak(this))
+        sakRepository.leggTilObserver(SlettVedtakFraAndreYtelser(this))
+    }
 
     companion object {
         @Language("PostgreSQL")
@@ -27,7 +33,12 @@ internal class VedtakRepository private constructor(
             |VALUES (?, ?, ?, ?, ?, ?, ?)
             |ON CONFLICT (vedtak_id) DO NOTHING
         """.trimMargin()
+
+        @Language("PostgreSQL")
+        private val slettQuery = "DELETE FROM vedtak WHERE vedtak_id = ?"
     }
+
+    fun leggTilObserver(observer: VedtakObserver) = observers.add(observer)
 
     fun lagre(vedtak: Vedtak): Int {
         return using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
@@ -47,37 +58,67 @@ internal class VedtakRepository private constructor(
             when (sakRepository.erDagpenger(vedtak.sakId)) {
                 true -> observers.forEach { it.nyttDagpengeVedtak(vedtak) }
                 false -> slett(vedtak)
-                null -> { /*Vent*/
+                null -> {
+                    // Vi må vente til vi får sak, så vi kan avgjøre om det er dagpenger
                 }
             }
         }
     }
 
-    private fun slett(vedtak: Vedtak) {
-        TODO("Not yet implemented")
+    private fun slett(vedtak: Vedtak) = slett(vedtak.vedtakId)
+
+    private fun slett(vedtakId: Int) = using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
+        session.run(queryOf(slettQuery, vedtakId).asExecute)
     }
 
-    override fun nySak(sak: SakService.Sak) {
-        if (sak.erDagpenger) {
-            // finn vedtak som ikke er sendt
-            finnUsendteVedtakMedSak(sak.sakId).forEach { vedtak ->
-                observers.forEach { it.nyttDagpengeVedtak(vedtak) }
+    private class FinnUsendteVedtak(private val repository: VedtakRepository) : SakObserver {
+        override fun nySak(sak: SakService.Sak) {
+            if (!sak.erDagpenger) return
+            repository.finnUsendteVedtakMedSak(sak.sakId).forEach { vedtak ->
+                repository.observers.forEach { it.nyttDagpengeVedtak(vedtak) }
             }
-        } else {
-            // finn evt. vedtak som skal slettes
-            slettVedtakMedSak(sak.sakId)
         }
     }
 
-    private fun finnUsendteVedtakMedSak(sakId: Int): List<Vedtak> {
-        TODO("Not yet implemented")
+    private class SlettVedtakFraAndreYtelser(private val repository: VedtakRepository) : SakObserver {
+        override fun nySak(sak: SakService.Sak) {
+            if (sak.erDagpenger) return
+            repository.slettVedtakMedSak(sak.sakId)
+        }
     }
 
+    private fun finnUsendteVedtakMedSak(sakId: Int) =
+        using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
+            session.run(
+                queryOf(
+                    //language=PostgreSQL
+                    "SELECT * FROM vedtak WHERE sak_id = ?", sakId
+                ).map { it.vedtak() }.asList
+            )
+        }
+
     private fun slettVedtakMedSak(sakId: Int) {
-        TODO("Not yet implemented")
+        using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
+            session.run(
+                queryOf(
+                    //language=PostgreSQL
+                    "DELETE FROM vedtak WHERE sak_id = ?", sakId
+                ).asExecute
+            )
+        }
     }
 
     interface VedtakObserver {
         fun nyttDagpengeVedtak(vedtak: Vedtak) {}
     }
+
+    private fun Row.vedtak() = Vedtak(
+        sakId = int("sak_id"),
+        vedtakId = int("vedtak_id"),
+        personId = int("person_id"),
+        vedtaktypekode = string("vedtaktypekode"),
+        utfallkode = string("utfallkode"),
+        rettighetkode = string("rettighetkode"),
+        vedtakstatuskode = string("vedtakstatuskode")
+    )
 }
