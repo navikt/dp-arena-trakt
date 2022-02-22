@@ -3,7 +3,7 @@ package no.nav.dagpenger.arena.trakt.db
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
-import no.nav.dagpenger.arena.trakt.tjenester.SakService
+import no.nav.dagpenger.arena.trakt.tjenester.SakService.Sak
 import org.intellij.lang.annotations.Language
 
 internal class SakRepository {
@@ -17,7 +17,9 @@ internal class SakRepository {
         """.trimMargin()
     }
 
-    fun lagre(sak: SakService.Sak): Int {
+    val observers = listOf<SakObserver>()
+
+    fun lagre(sak: Sak): Int {
         return using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
             session.run(
                 queryOf(
@@ -26,6 +28,12 @@ internal class SakRepository {
                     sak.erDagpenger,
                 ).asUpdate
             )
+        }.also {
+            observers.forEach { it.nySak(sak) }
         }
+    }
+
+    interface SakObserver {
+        fun nySak(sak: Sak) {}
     }
 }
