@@ -1,6 +1,9 @@
 package no.nav.dagpenger.arena.trakt
 
+import mu.KotlinLogging
+import no.nav.dagpenger.arena.trakt.db.HendelseRepository
 import no.nav.dagpenger.arena.trakt.db.PostgresDataSourceBuilder.runMigration
+import no.nav.dagpenger.arena.trakt.db.PubliserNyttVedtakObserver
 import no.nav.dagpenger.arena.trakt.db.SakRepository
 import no.nav.dagpenger.arena.trakt.db.VedtakRepository
 import no.nav.dagpenger.arena.trakt.tjenester.SakService
@@ -8,6 +11,8 @@ import no.nav.dagpenger.arena.trakt.tjenester.VedtakService
 import no.nav.helse.rapids_rivers.RapidApplication
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.RapidsConnection.StatusListener
+
+val logger = KotlinLogging.logger { }
 
 internal class ApplicationBuilder(config: Map<String, String>) : StatusListener {
     private val rapidsConnection = RapidApplication.Builder(
@@ -24,8 +29,12 @@ internal class ApplicationBuilder(config: Map<String, String>) : StatusListener 
     override fun onStartup(rapidsConnection: RapidsConnection) {
         runMigration().also {
             val sakRepository = SakRepository()
+            val hendelseRepository = HendelseRepository(rapidsConnection)
+            val vedtakRepository = VedtakRepository(sakRepository).also {
+                it.leggTilObserver(PubliserNyttVedtakObserver(hendelseRepository))
+            }
             SakService(rapidsConnection, sakRepository)
-            VedtakService(rapidsConnection, VedtakRepository(sakRepository))
+            VedtakService(rapidsConnection, vedtakRepository)
         }
     }
 

@@ -85,6 +85,7 @@ internal class VedtakRepositoryTest {
 
     private val testObserver = object : VedtakObserver {
         val nyeVedtak = mutableListOf<Vedtak>()
+
         override fun nyttDagpengeVedtak(vedtak: Vedtak) {
             nyeVedtak.add(vedtak)
         }

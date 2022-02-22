@@ -1,16 +1,28 @@
 package no.nav.dagpenger.arena.trakt.hendelser
 
 import com.fasterxml.jackson.databind.node.ObjectNode
-import no.nav.dagpenger.arena.trakt.tjenester.VedtakService
+import no.nav.dagpenger.arena.trakt.tjenester.VedtakService.Vedtak
 import java.util.UUID
 
-internal class VedtakHendelse(private val vedtak: VedtakService.Vedtak) : Hendelse(UUID.randomUUID()) {
+internal class VedtakHendelse(private val vedtak: Vedtak) : Hendelse(UUID.randomUUID()) {
     val vedtakId = vedtak.vedtakId
     private val root: ObjectNode = objectMapper.createObjectNode()
     private val rettighetstype get() = Rettighetstype.valueOf(vedtak.rettighetkode).navn
     private val vedtakstype get() = Vedtakstype.valueOf(vedtak.vedtaktypekode).navn
     private val status get() = Status.valueOf(vedtak.vedtakstatuskode).navn
     private val utfall get() = Utfall.valueOf(vedtak.utfallkode).navn
+
+    init {
+        root.put("@event_name", "vedtak")
+        root.put("kilde", "arena")
+        root.put("meldingId", meldingId.toString())
+        root.put("vedtakId", vedtak.vedtakId)
+        root.put("sakId", vedtak.sakId)
+        root.put("rettighet", rettighetstype)
+        root.put("type", vedtakstype)
+        root.put("status", status)
+        root.put("utfall", utfall)
+    }
 
     private enum class Rettighetstype(val navn: String) {
         DAGO("Ordinær"),
@@ -44,14 +56,5 @@ internal class VedtakHendelse(private val vedtak: VedtakService.Vedtak) : Hendel
         NEI("Nei")
     }
 
-    override fun toJson(): String {
-        root.put("meldingId", meldingId.toString())
-        root.put("vedtakId", vedtak.vedtakId)
-        root.put("sakId", vedtak.sakId)
-        root.put("rettighet", rettighetstype)
-        root.put("type", vedtakstype)
-        root.put("status", status)
-        root.put("utfall", utfall)
-        return root.toString()
-    }
+    override fun toJson() = root.toString()
 }

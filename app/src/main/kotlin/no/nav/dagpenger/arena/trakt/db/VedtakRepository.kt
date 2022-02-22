@@ -35,7 +35,14 @@ internal class VedtakRepository private constructor(
         """.trimMargin()
 
         @Language("PostgreSQL")
-        private val slettQuery = "DELETE FROM vedtak WHERE vedtak_id = ?"
+        private const val slettQuery = "DELETE FROM vedtak WHERE vedtak_id = ?"
+
+        @Language("PostgreSQL")
+        private const val finnUsendteVedtakQuery = """
+            SELECT v.*
+            FROM vedtak v
+                LEFT JOIN hendelse_vedtak hv ON v.vedtak_id = hv.vedtak_id
+            WHERE hv.vedtak_id IS NULL AND v.sak_id = ?"""
     }
 
     fun leggTilObserver(observer: VedtakObserver) = observers.add(observer)
@@ -65,6 +72,10 @@ internal class VedtakRepository private constructor(
         }
     }
 
+    internal interface VedtakObserver {
+        fun nyttDagpengeVedtak(vedtak: Vedtak) {}
+    }
+
     private fun slett(vedtak: Vedtak) = slett(vedtak.vedtakId)
 
     private fun slett(vedtakId: Int) = using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
@@ -89,12 +100,7 @@ internal class VedtakRepository private constructor(
 
     private fun finnUsendteVedtakMedSak(sakId: Int) =
         using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
-            session.run(
-                queryOf(
-                    //language=PostgreSQL
-                    "SELECT * FROM vedtak WHERE sak_id = ?", sakId
-                ).map { it.vedtak() }.asList
-            )
+            session.run(queryOf(finnUsendteVedtakQuery, sakId).map { it.vedtak() }.asList)
         }
 
     private fun slettVedtakMedSak(sakId: Int) {
@@ -106,10 +112,6 @@ internal class VedtakRepository private constructor(
                 ).asExecute
             )
         }
-    }
-
-    interface VedtakObserver {
-        fun nyttDagpengeVedtak(vedtak: Vedtak) {}
     }
 
     private fun Row.vedtak() = Vedtak(

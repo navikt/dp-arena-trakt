@@ -97,7 +97,7 @@ internal fun vedtakJSON(vedtakId: Int = 123, sakId: Int = 12345) = """{
     "AAR": 2019,
     "LOPENRSAK": 580493,
     "LOPENRVEDTAK": 1,
-    "RETTIGHETKODE": "AA115",
+    "RETTIGHETKODE": "PERM",
     "AKTFASEKODE": "IKKE",
     "BREV_ID": 30822341,
     "TOTALBELOP": null,

@@ -11,6 +11,8 @@ import no.nav.helse.rapids_rivers.River
 private val logg = KotlinLogging.logger {}
 private val sikkerlogg = KotlinLogging.logger("tjenestekall.vedtak")
 
+internal const val DAGPENGER_SAKSKODE = "DAGP"
+
 internal class SakService(
     rapidsConnection: RapidsConnection,
     private val repository: SakRepository,
@@ -46,4 +48,4 @@ internal class SakService(
     )
 }
 
-private fun JsonMessage.erDagpenger() = this["after.SAKSKODE"].asText() == "DAGP"
+private fun JsonMessage.erDagpenger() = this["after.SAKSKODE"].asText() == DAGPENGER_SAKSKODE
