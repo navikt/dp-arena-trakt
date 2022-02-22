@@ -17,12 +17,12 @@ internal class VedtakRepository {
             |                    utfallkode,
             |                    rettighetkode,
             |                    vedtakstatuskode)
-            |VALUES (?, ?, ?, ?, ?, ?)
+            |VALUES (?, ?, ?, ?, ?, ?, ?)
             |ON CONFLICT (vedtak_id) DO NOTHING
         """.trimMargin()
     }
 
-    fun lagreVedtak(vedtak: Vedtak): Int {
+    fun lagre(vedtak: Vedtak): Int {
         return using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
             session.run(
                 queryOf(

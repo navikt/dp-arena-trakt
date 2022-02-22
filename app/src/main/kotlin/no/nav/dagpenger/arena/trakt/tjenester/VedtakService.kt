@@ -49,7 +49,7 @@ internal class VedtakService(
             )
             logg.info { "Mottok vedtak" }
             sikkerlogg.info { "Mottok vedtak: $vedtak" }
-            vedtakRepository.lagreVedtak(vedtak)
+            vedtakRepository.lagre(vedtak)
         }
     }
 
@@ -64,9 +64,9 @@ internal class VedtakService(
     )
 }
 
-private fun JsonMessage.sakId(): Int = this["after.SAK_ID"].asInt()
-private fun JsonMessage.utfallkode(): String = this["after.UTFALLKODE"].asText()
-private fun JsonMessage.rettighetkode(): String = this["after.RETTIGHETKODE"].asText()
-private fun JsonMessage.vedtakstatuskode(): String = this["after.RETTIGHETKODE"].asText()
-private fun JsonMessage.vedtaktypekode(): String = this["after.VEDTAKTYPEKODE"].asText()
-private fun JsonMessage.personId(): Int = this["after.PERSON_ID"].asInt()
+private fun JsonMessage.sakId() = this["after.SAK_ID"].asInt()
+private fun JsonMessage.utfallkode() = this["after.UTFALLKODE"].asText()
+private fun JsonMessage.rettighetkode() = this["after.RETTIGHETKODE"].asText()
+private fun JsonMessage.vedtakstatuskode() = this["after.RETTIGHETKODE"].asText()
+private fun JsonMessage.vedtaktypekode() = this["after.VEDTAKTYPEKODE"].asText()
+private fun JsonMessage.personId() = this["after.PERSON_ID"].asInt()

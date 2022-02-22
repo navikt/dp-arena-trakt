@@ -10,15 +10,15 @@ internal class VedtakRepositoryTest {
     @Test
     fun `lagrer vedtak`() {
         withMigratedDb {
-            repository.lagreVedtak(
+            repository.lagre(
                 Vedtak(
                     sakId = 1,
                     vedtakId = 2,
                     personId = 3,
-                    vedtaktypekode = "IVERK",
-                    utfallkode = "Ja",
-                    rettighetkode = "ORD",
-                    vedtakstatuskode = "",
+                    vedtaktypekode = "O",
+                    utfallkode = "JA",
+                    rettighetkode = "DAGO",
+                    vedtakstatuskode = "IVERK",
                 )
             )
         }

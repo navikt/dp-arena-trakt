@@ -18,7 +18,7 @@ class VedtakServiceTest {
         rapid.sendTestMessage(vedtakJSON())
 
         verify {
-            vedtakRepository.lagreVedtak(ofType())
+            vedtakRepository.lagre(ofType())
         }
     }
 }
