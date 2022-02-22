@@ -42,7 +42,7 @@ internal class VedtakRepository private constructor(
             SELECT v.*
             FROM vedtak v
                 LEFT JOIN hendelse_vedtak hv ON v.vedtak_id = hv.vedtak_id
-            WHERE hv.vedtak_id IS NULL AND v.sak_id = ?"""
+            WHERE hv.vedtak_id IS NULL AND v.sak_id = ? LIMIT 1000"""
     }
 
     fun leggTilObserver(observer: VedtakObserver) = observers.add(observer)
