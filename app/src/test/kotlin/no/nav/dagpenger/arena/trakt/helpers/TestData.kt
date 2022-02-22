@@ -1,6 +1,17 @@
 package no.nav.dagpenger.arena.trakt.helpers
 
+import no.nav.dagpenger.arena.trakt.tjenester.VedtakService.Vedtak
 import org.intellij.lang.annotations.Language
+
+internal fun vedtak(vedtakId: Int = 1, sakId: Int = 1) = Vedtak(
+    sakId = sakId,
+    vedtakId = vedtakId,
+    personId = 1,
+    vedtaktypekode = "O",
+    utfallkode = "JA",
+    rettighetkode = "DAGO",
+    vedtakstatuskode = "IVERK",
+)
 
 @Language("JSON")
 internal fun vedtaksfaktaJSON(vedtakId: Int = 123, kode: String = "ENDRTILUNN") = """{

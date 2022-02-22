@@ -5,6 +5,7 @@ import kotliquery.sessionOf
 import kotliquery.using
 import no.nav.dagpenger.arena.trakt.db.VedtakRepository.VedtakObserver
 import no.nav.dagpenger.arena.trakt.helpers.Postgres.withMigratedDb
+import no.nav.dagpenger.arena.trakt.helpers.vedtak
 import no.nav.dagpenger.arena.trakt.tjenester.SakService.Sak
 import no.nav.dagpenger.arena.trakt.tjenester.VedtakService.Vedtak
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -88,14 +89,4 @@ internal class VedtakRepositoryTest {
             nyeVedtak.add(vedtak)
         }
     }
-
-    private fun vedtak(vedtakId: Int = 1, sakId: Int = 1) = Vedtak(
-        sakId = sakId,
-        vedtakId = vedtakId,
-        personId = 1,
-        vedtaktypekode = "O",
-        utfallkode = "JA",
-        rettighetkode = "DAGO",
-        vedtakstatuskode = "IVERK",
-    )
 }
