@@ -6,7 +6,11 @@ import kotliquery.using
 import no.nav.dagpenger.arena.trakt.tjenester.SakService.Sak
 import org.intellij.lang.annotations.Language
 
-internal class SakRepository {
+internal class SakRepository private constructor(
+    private val observers: List<SakObserver>
+) {
+    constructor() : this(mutableListOf<SakObserver>())
+
     companion object {
         @Language("PostgreSQL")
         private val lagreQuery = """
@@ -16,8 +20,6 @@ internal class SakRepository {
             |ON CONFLICT (sak_id) DO NOTHING
         """.trimMargin()
     }
-
-    val observers = listOf<SakObserver>()
 
     fun lagre(sak: Sak): Int {
         return using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
@@ -31,6 +33,14 @@ internal class SakRepository {
         }.also {
             observers.forEach { it.nySak(sak) }
         }
+    }
+
+    fun erDagpenger(sakId: Int) = using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
+        session.run(
+            queryOf("SELECT er_dagpenger AS er_dagpenger FROM sak WHERE sak_id = ?", sakId).map {
+                it.boolean("er_dagpenger")
+            }.asSingle
+        )
     }
 
     interface SakObserver {

@@ -8,7 +8,12 @@ import no.nav.dagpenger.arena.trakt.tjenester.SakService
 import no.nav.dagpenger.arena.trakt.tjenester.VedtakService.Vedtak
 import org.intellij.lang.annotations.Language
 
-internal class VedtakRepository : SakObserver {
+internal class VedtakRepository private constructor(
+    private val sakRepository: SakRepository,
+    private val observers: List<VedtakObserver>,
+) : SakObserver {
+    constructor(sakRepository: SakRepository) : this(sakRepository, mutableListOf())
+
     companion object {
         @Language("PostgreSQL")
         private val lagreQuery = """
@@ -24,9 +29,7 @@ internal class VedtakRepository : SakObserver {
         """.trimMargin()
     }
 
-    val observers = mutableListOf<VedtakObserver>()
-
-    fun lagre(vedtak: Vedtak) {
+    fun lagre(vedtak: Vedtak): Int {
         return using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
             session.run(
                 queryOf(
@@ -40,16 +43,8 @@ internal class VedtakRepository : SakObserver {
                     vedtak.vedtakstatuskode
                 ).asUpdate
             )
-            val erDagpenger = session.run(
-                queryOf(
-                    "SELECT er_dagpenger AS er_dagpenger FROM sak WHERE sak_id = ?",
-                    vedtak.sakId
-                ).map {
-                    it.boolean("er_dagpenger")
-                }.asSingle
-            )
-
-            when (erDagpenger) {
+        }.also {
+            when (sakRepository.erDagpenger(vedtak.sakId)) {
                 true -> observers.forEach { it.nyttDagpengeVedtak(vedtak) }
                 false -> slett(vedtak)
                 null -> { /*Vent*/
