@@ -5,7 +5,7 @@ import no.nav.dagpenger.arena.trakt.tjenester.VedtakService.Vedtak
 import java.util.UUID
 
 internal class VedtakHendelse(private val vedtak: Vedtak) : Hendelse(UUID.randomUUID()) {
-    val vedtakId = vedtak.vedtakId
+    internal val vedtakId = vedtak.vedtakId
     private val root: ObjectNode = objectMapper.createObjectNode()
     private val rettighetstype get() = Rettighetstype.valueOf(vedtak.rettighetkode).navn
     private val vedtakstype get() = Vedtakstype.valueOf(vedtak.vedtaktypekode).navn
