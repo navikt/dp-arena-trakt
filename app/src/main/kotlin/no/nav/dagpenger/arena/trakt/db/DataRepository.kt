@@ -13,8 +13,6 @@ import no.nav.dagpenger.arena.trakt.db.ArenaKoder.SAK_TABELL
 import no.nav.dagpenger.arena.trakt.db.ArenaKoder.VEDTAKFAKTA_TABELL
 import no.nav.dagpenger.arena.trakt.db.ArenaKoder.VEDTAK_TABELL
 import no.nav.dagpenger.arena.trakt.db.DataRepository.DataObserver.NyDataEvent
-import no.nav.dagpenger.arena.trakt.tjenester.VedtakService
-import no.nav.dagpenger.arena.trakt.tjenester.VedtakService.Vedtak
 import org.intellij.lang.annotations.Language
 import java.time.LocalDateTime
 
@@ -162,22 +160,7 @@ internal class DataRepository private constructor(
             )
         }
 
-    fun lagreVedtak(vedtak: Vedtak) =
-        using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
-            session.run(
-                //language=PostgreSQL
-                queryOf(
-                    """
-                    |INSERT INTO vedtak (vedtak_id, sak_id)
-                    |VALUES (?, ?)
-                    |ON CONFLICT (vedtak_id) DO UPDATE 
-                    |    SET sist_oppdatert=NOW(), antall_oppdateringer = vedtak.antall_oppdateringer + 1
-                """.trimMargin(),
-                ).asUpdate
-            )
-        }
-
-    private fun oppdaterVedtak(vedtakId: Int): Int {
+    fun oppdaterVedtak(vedtakId: Int): Int {
         return using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
             session.run(
                 //language=PostgreSQL

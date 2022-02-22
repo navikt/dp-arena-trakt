@@ -3,7 +3,7 @@ package no.nav.dagpenger.arena.trakt.tjenester
 import mu.KotlinLogging
 import mu.withLoggingContext
 import no.nav.dagpenger.arena.trakt.db.ArenaKoder.VEDTAK_TABELL
-import no.nav.dagpenger.arena.trakt.db.DataRepository
+import no.nav.dagpenger.arena.trakt.db.VedtakRepository
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.RapidsConnection
@@ -14,7 +14,7 @@ private val sikkerlogg = KotlinLogging.logger("tjenestekall.vedtak")
 
 internal class VedtakService(
     rapidsConnection: RapidsConnection,
-    private val dataRepository: DataRepository
+    private val vedtakRepository: VedtakRepository
 ) : River.PacketListener {
     init {
         River(rapidsConnection).validate {
@@ -49,7 +49,7 @@ internal class VedtakService(
             )
             logg.info { "Mottok vedtak" }
             sikkerlogg.info { "Mottok vedtak: $vedtak" }
-            dataRepository.lagreVedtak(vedtak)
+            vedtakRepository.lagreVedtak(vedtak)
         }
     }
 
