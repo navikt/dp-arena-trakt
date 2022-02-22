@@ -13,6 +13,8 @@ import no.nav.dagpenger.arena.trakt.db.ArenaKoder.SAK_TABELL
 import no.nav.dagpenger.arena.trakt.db.ArenaKoder.VEDTAKFAKTA_TABELL
 import no.nav.dagpenger.arena.trakt.db.ArenaKoder.VEDTAK_TABELL
 import no.nav.dagpenger.arena.trakt.db.DataRepository.DataObserver.NyDataEvent
+import no.nav.dagpenger.arena.trakt.tjenester.VedtakService
+import no.nav.dagpenger.arena.trakt.tjenester.VedtakService.Vedtak
 import org.intellij.lang.annotations.Language
 import java.time.LocalDateTime
 
@@ -47,7 +49,6 @@ internal class DataRepository private constructor(
     fun lagre(tabell: String, pos: String, skjedde: LocalDateTime, replikert: LocalDateTime, json: String): Long? {
         val arenaRad = ArenaRad.lagRad(tabell, json)
         return using(sessionOf(PostgresDataSourceBuilder.dataSource, returnGeneratedKey = true)) { session ->
-            opprettRotObjekter(json)
             session.run(
                 queryOf(
                     lagreQuery,
@@ -80,7 +81,6 @@ internal class DataRepository private constructor(
         logger.info { "Kjører query: $query" }
         session.forEach(query) {
             val data = it.string("data")
-            opprettRotObjekter(data)
 
             if (erDagpenger(data) == false) {
                 ids.add(listOf(it.long("id")))
@@ -133,15 +133,6 @@ internal class DataRepository private constructor(
             erDpVedtak(json["after"]["OBJEKT_ID_KILDE"].asInt())
         } else null
 
-    private fun opprettRotObjekter(data: String) = opprettRotObjekter(objectMapper.readTree(data))
-
-    private fun opprettRotObjekter(json: JsonNode) {
-        when (json["table"].asText()) {
-            SAK_TABELL -> lagreSak(json["after"]["SAK_ID"].asInt(), json["after"]["SAKSKODE"].asText())
-            VEDTAK_TABELL -> lagreVedtak(json["after"]["VEDTAK_ID"].asInt(), json["after"]["SAK_ID"].asInt())
-        }
-    }
-
     //language=PostgreSQL
     private fun erDpVedtak(vedtakId: Int): Boolean? {
         val kanVedtakKnyttesTilSakQuery = """
@@ -171,7 +162,7 @@ internal class DataRepository private constructor(
             )
         }
 
-    private fun lagreVedtak(vedtakId: Int, sakId: Int) =
+    fun lagreVedtak(vedtak: Vedtak) =
         using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
             session.run(
                 //language=PostgreSQL
@@ -182,7 +173,6 @@ internal class DataRepository private constructor(
                     |ON CONFLICT (vedtak_id) DO UPDATE 
                     |    SET sist_oppdatert=NOW(), antall_oppdateringer = vedtak.antall_oppdateringer + 1
                 """.trimMargin(),
-                    vedtakId, sakId
                 ).asUpdate
             )
         }

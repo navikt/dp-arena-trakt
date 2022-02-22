@@ -10,6 +10,7 @@ dependencies {
     implementation(Database.Kotlinquery)
     testImplementation(TestContainers.postgresql)
     testImplementation(Junit5.api)
+    testImplementation(Mockk.mockk)
 }
 
 application {
