@@ -10,10 +10,15 @@ internal class VedtakRepository {
     companion object {
         @Language("PostgreSQL")
         private val lagreQuery = """
-            |INSERT INTO vedtak (vedtak_id, sak_id)
-            |VALUES (?, ?)
-            |ON CONFLICT (vedtak_id) DO UPDATE 
-            |    SET sist_oppdatert=NOW(), antall_oppdateringer = vedtak.antall_oppdateringer + 1
+            |INSERT INTO vedtak (vedtak_id,
+            |                    sak_id,
+            |                    person_id,
+            |                    vedtaktypekode,
+            |                    utfallkode,
+            |                    rettighetkode,
+            |                    vedtakstatuskode)
+            |VALUES (?, ?, ?, ?, ?, ?)
+            |ON CONFLICT (vedtak_id) DO NOTHING
         """.trimMargin()
     }
 
@@ -24,6 +29,11 @@ internal class VedtakRepository {
                     lagreQuery,
                     vedtak.vedtakId,
                     vedtak.sakId,
+                    vedtak.personId,
+                    vedtak.vedtaktypekode,
+                    vedtak.utfallkode,
+                    vedtak.rettighetkode,
+                    vedtak.vedtakstatuskode
                 ).asUpdate
             )
         }
