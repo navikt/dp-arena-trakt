@@ -6,8 +6,8 @@ import kotliquery.using
 import no.nav.dagpenger.arena.trakt.db.VedtakRepository.VedtakObserver
 import no.nav.dagpenger.arena.trakt.helpers.Postgres.withMigratedDb
 import no.nav.dagpenger.arena.trakt.helpers.vedtak
-import no.nav.dagpenger.arena.trakt.tjenester.SakService.Sak
-import no.nav.dagpenger.arena.trakt.tjenester.VedtakService.Vedtak
+import no.nav.dagpenger.arena.trakt.tjenester.SakSink.Sak
+import no.nav.dagpenger.arena.trakt.tjenester.VedtakSink.Vedtak
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 

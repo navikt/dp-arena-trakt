@@ -1,7 +1,7 @@
 package no.nav.dagpenger.arena.trakt.hendelser
 
 import com.fasterxml.jackson.databind.node.ObjectNode
-import no.nav.dagpenger.arena.trakt.tjenester.VedtakService.Vedtak
+import no.nav.dagpenger.arena.trakt.tjenester.VedtakSink.Vedtak
 import java.util.UUID
 
 internal class VedtakHendelse(private val vedtak: Vedtak) : Hendelse(UUID.randomUUID()) {

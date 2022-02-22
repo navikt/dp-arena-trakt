@@ -7,10 +7,10 @@ import no.nav.dagpenger.arena.trakt.helpers.vedtakJSON
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Test
 
-class VedtakServiceTest {
+class VedtakSinkTest {
     private val vedtakRepository = mockk<VedtakRepository>(relaxed = true)
     private val rapid = TestRapid().also {
-        VedtakService(it, vedtakRepository)
+        VedtakSink(it, vedtakRepository)
     }
 
     @Test

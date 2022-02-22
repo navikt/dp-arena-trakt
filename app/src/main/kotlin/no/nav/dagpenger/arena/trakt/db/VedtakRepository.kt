@@ -5,8 +5,8 @@ import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
 import no.nav.dagpenger.arena.trakt.db.SakRepository.SakObserver
-import no.nav.dagpenger.arena.trakt.tjenester.SakService
-import no.nav.dagpenger.arena.trakt.tjenester.VedtakService.Vedtak
+import no.nav.dagpenger.arena.trakt.tjenester.SakSink
+import no.nav.dagpenger.arena.trakt.tjenester.VedtakSink.Vedtak
 import org.intellij.lang.annotations.Language
 
 internal class VedtakRepository private constructor(
@@ -83,7 +83,7 @@ internal class VedtakRepository private constructor(
     }
 
     private class FinnUsendteVedtak(private val repository: VedtakRepository) : SakObserver {
-        override fun nySak(sak: SakService.Sak) {
+        override fun nySak(sak: SakSink.Sak) {
             if (!sak.erDagpenger) return
             repository.finnUsendteVedtakMedSak(sak.sakId).forEach { vedtak ->
                 repository.observers.forEach { it.nyttDagpengeVedtak(vedtak) }
@@ -92,13 +92,13 @@ internal class VedtakRepository private constructor(
     }
 
     private class SlettVedtakFraAndreYtelser(private val repository: VedtakRepository) : SakObserver {
-        override fun nySak(sak: SakService.Sak) {
+        override fun nySak(sak: SakSink.Sak) {
             if (sak.erDagpenger) return
             repository.slettVedtakMedSak(sak.sakId)
         }
     }
 
-    private fun finnUsendteVedtakMedSak(sakId: Int) =
+    fun finnUsendteVedtakMedSak(sakId: Int) =
         using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
             session.run(queryOf(finnUsendteVedtakQuery, sakId).map { it.vedtak() }.asList)
         }

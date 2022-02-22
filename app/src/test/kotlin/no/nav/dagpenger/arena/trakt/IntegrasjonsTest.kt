@@ -8,8 +8,8 @@ import no.nav.dagpenger.arena.trakt.helpers.Postgres.withMigratedDb
 import no.nav.dagpenger.arena.trakt.helpers.sakJSON
 import no.nav.dagpenger.arena.trakt.helpers.vedtakJSON
 import no.nav.dagpenger.arena.trakt.tjenester.DAGPENGER_SAKSKODE
-import no.nav.dagpenger.arena.trakt.tjenester.SakService
-import no.nav.dagpenger.arena.trakt.tjenester.VedtakService
+import no.nav.dagpenger.arena.trakt.tjenester.SakSink
+import no.nav.dagpenger.arena.trakt.tjenester.VedtakSink
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -25,8 +25,8 @@ class IntegrasjonsTest {
 
     @BeforeEach
     fun setup() {
-        SakService(testRapid, sakRepository)
-        VedtakService(testRapid, vedtakRepository)
+        SakSink(testRapid, sakRepository)
+        VedtakSink(testRapid, vedtakRepository)
     }
 
     @Test

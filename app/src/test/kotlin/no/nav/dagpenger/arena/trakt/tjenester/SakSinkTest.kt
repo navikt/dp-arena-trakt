@@ -7,10 +7,10 @@ import no.nav.dagpenger.arena.trakt.helpers.sakJSON
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Test
 
-class SakServiceTest {
+class SakSinkTest {
     private val repository = mockk<SakRepository>(relaxed = true)
     private val rapid = TestRapid().also {
-        SakService(it, repository)
+        SakSink(it, repository)
     }
 
     @Test

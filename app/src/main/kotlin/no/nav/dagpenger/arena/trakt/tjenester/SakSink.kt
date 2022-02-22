@@ -13,7 +13,7 @@ private val sikkerlogg = KotlinLogging.logger("tjenestekall.vedtak")
 
 internal const val DAGPENGER_SAKSKODE = "DAGP"
 
-internal class SakService(
+internal class SakSink(
     rapidsConnection: RapidsConnection,
     private val repository: SakRepository,
 ) : River.PacketListener {

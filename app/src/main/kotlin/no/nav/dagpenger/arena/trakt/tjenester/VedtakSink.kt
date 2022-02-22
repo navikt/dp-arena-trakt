@@ -11,7 +11,7 @@ import no.nav.helse.rapids_rivers.River
 private val logg = KotlinLogging.logger {}
 private val sikkerlogg = KotlinLogging.logger("tjenestekall.vedtak")
 
-internal class VedtakService(
+internal class VedtakSink(
     rapidsConnection: RapidsConnection,
     private val vedtakRepository: VedtakRepository,
 ) : River.PacketListener {

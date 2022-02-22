@@ -3,7 +3,7 @@ package no.nav.dagpenger.arena.trakt.db
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
-import no.nav.dagpenger.arena.trakt.tjenester.SakService.Sak
+import no.nav.dagpenger.arena.trakt.tjenester.SakSink.Sak
 import org.intellij.lang.annotations.Language
 
 internal class SakRepository private constructor(
@@ -43,6 +43,12 @@ internal class SakRepository private constructor(
                 it.boolean("er_dagpenger")
             }.asSingle
         )
+    }
+
+    fun perSak(block: Sak.() -> Unit) = using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
+        session.forEach(queryOf("SELECT sak_id FROM sak WHERE er_dagpenger=true")) {
+            block(Sak(it.int("sak_id"), true))
+        }
     }
 
     interface SakObserver {
