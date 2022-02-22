@@ -9,8 +9,8 @@ import com.natpryce.konfig.overriding
 internal object Config {
     private fun lagArenaTopicNavn(navn: String, miljø: String) = "teamarenanais.aapen-arena-${navn}endret-v1-$miljø"
     private fun arenaTopics(miljø: String) = listOf(
-        "beregningsledd",
-        "vedtakfakta",
+        // "beregningsledd",
+        // "vedtakfakta",
         "vedtak",
         // "kvotebruk",
         // "beregningslogg",
@@ -44,7 +44,6 @@ internal object Config {
             else -> systemAndEnvProperties overriding defaultProperties
         }
     }
-
     val config: Map<String, String> = properties.list().reversed().fold(emptyMap()) { map, pair ->
         map + pair.second
     }
