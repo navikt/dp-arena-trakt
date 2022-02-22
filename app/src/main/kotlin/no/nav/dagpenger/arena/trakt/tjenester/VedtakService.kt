@@ -39,13 +39,13 @@ internal class VedtakService(
             "vedtakId" to vedtakId.toString(),
         ) {
             val vedtak = Vedtak(
-                sakId= packet.sakId(),
+                sakId = packet.sakId(),
                 vedtakId = vedtakId,
                 personId = packet.personId(),
-                vedtakTypeKode = packet.vedtaktypekode(),
-                utfallKode = packet.utfallkode(),
-                rettighetKode = packet.rettighetkode(),
-                vedtakStatusKode = packet.vedtakstatuskode()
+                vedtaktypekode = packet.vedtaktypekode(),
+                utfallkode = packet.utfallkode(),
+                rettighetkode = packet.rettighetkode(),
+                vedtakstatuskode = packet.vedtakstatuskode()
             )
             logg.info { "Mottok vedtak" }
             sikkerlogg.info { "Mottok vedtak: $vedtak" }
@@ -57,10 +57,10 @@ internal class VedtakService(
         val sakId: Int,
         val vedtakId: Int,
         val personId: Int,
-        val vedtakTypeKode: String,
-        val utfallKode: String,
-        val rettighetKode: String,
-        val vedtakStatusKode: String
+        val vedtaktypekode: String,
+        val utfallkode: String,
+        val rettighetkode: String,
+        val vedtakstatuskode: String
     )
 }
 
@@ -68,5 +68,5 @@ private fun JsonMessage.sakId(): Int = this["after.SAK_ID"].asInt()
 private fun JsonMessage.utfallkode(): String = this["after.UTFALLKODE"].asText()
 private fun JsonMessage.rettighetkode(): String = this["after.RETTIGHETKODE"].asText()
 private fun JsonMessage.vedtakstatuskode(): String = this["after.RETTIGHETKODE"].asText()
-private fun JsonMessage.vedtaktypekode(): String  = this["after.VEDTAKTYPEKODE"].asText()
+private fun JsonMessage.vedtaktypekode(): String = this["after.VEDTAKTYPEKODE"].asText()
 private fun JsonMessage.personId(): Int = this["after.PERSON_ID"].asInt()
