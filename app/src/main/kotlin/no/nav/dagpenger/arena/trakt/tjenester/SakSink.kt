@@ -37,7 +37,7 @@ internal class SakSink(
                 sakId = sakId,
                 erDagpenger = packet.erDagpenger()
             )
-            logg.info { "Mottok sak. Var det dagpenger? ${if (packet.erDagpenger()) "Nei" else "Ja"}" }
+            logg.info { "Mottok sak. Var det dagpenger? ${if (packet.erDagpenger()) "Ja" else "Nei"}" }
             repository.lagre(sak)
         }
     }
