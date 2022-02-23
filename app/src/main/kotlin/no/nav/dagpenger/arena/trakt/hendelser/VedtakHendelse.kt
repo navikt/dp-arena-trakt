@@ -2,6 +2,7 @@ package no.nav.dagpenger.arena.trakt.hendelser
 
 import com.fasterxml.jackson.databind.node.ObjectNode
 import no.nav.dagpenger.arena.trakt.tjenester.VedtakSink.Vedtak
+import java.time.LocalDateTime
 import java.util.UUID
 
 internal class VedtakHendelse(private val vedtak: Vedtak) : Hendelse(UUID.randomUUID()) {
@@ -14,8 +15,9 @@ internal class VedtakHendelse(private val vedtak: Vedtak) : Hendelse(UUID.random
 
     init {
         root.put("@event_name", "vedtak")
-        root.put("kilde", "arena")
-        root.put("meldingId", meldingId.toString())
+        root.put("@kilde", "arena")
+        root.put("@opprettet", LocalDateTime.now().toString())
+        root.put("@meldingId", meldingId.toString())
         root.put("vedtakId", vedtak.vedtakId)
         root.put("sakId", vedtak.sakId)
         root.put("rettighet", rettighetstype)

@@ -38,8 +38,9 @@ class IntegrasjonsTest {
             with(testRapid.inspektør) {
                 assertEquals(1, size)
                 val vedtakHendelse = message(0)
+                println(vedtakHendelse)
                 assertEquals("vedtak", vedtakHendelse["@event_name"].asText())
-                assertEquals("arena", vedtakHendelse["kilde"].asText())
+                assertEquals("arena", vedtakHendelse["@kilde"].asText())
                 assertEquals(1, vedtakHendelse["vedtakId"].asInt())
                 assertEquals(2, vedtakHendelse["sakId"].asInt())
             }
