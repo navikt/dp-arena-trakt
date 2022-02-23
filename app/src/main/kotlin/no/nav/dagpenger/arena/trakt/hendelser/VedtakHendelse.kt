@@ -29,6 +29,7 @@ internal class VedtakHendelse(private val vedtak: Vedtak) : Hendelse(UUID.random
         PERM("Permittering"),
         LONN("Lønnsgarantimidler"),
         FISK("Permittering fiskeindustri"),
+        DEKS("Eksport")
     }
 
     private enum class Vedtakstype(val navn: String) {
