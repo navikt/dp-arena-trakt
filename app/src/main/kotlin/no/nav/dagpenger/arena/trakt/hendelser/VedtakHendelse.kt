@@ -49,12 +49,12 @@ internal class VedtakHendelse(private val vedtak: Vedtak) : Hendelse(UUID.random
         MOTAT("Mottatt"),
         OPPRE("Opprettet"),
         REGIS("Registrert"),
-        AVBRUTT("Avbrutt")
     }
 
     private enum class Utfall(val navn: String) {
         JA("Ja"),
-        NEI("Nei")
+        NEI("Nei"),
+        AVBRUTT("Avbrutt")
     }
 
     override fun toJson() = root.toString()
