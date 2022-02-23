@@ -51,7 +51,7 @@ object Dagpenger {
 object Database {
     const val Postgres = "org.postgresql:postgresql:42.2.22"
     const val Kotlinquery = "com.github.seratch:kotliquery:1.6.1"
-    const val Flyway = "org.flywaydb:flyway-core:7.10.0"
+    const val Flyway = "org.flywaydb:flyway-core:8.5.0"
     const val HikariCP = "com.zaxxer:HikariCP:4.0.3"
     const val VaultJdbc = "no.nav:vault-jdbc:1.3.7"
 }
