@@ -48,6 +48,4 @@ spec:
         databases:
           - name: arena-data
             envVarPrefix: DB
-            users:
-              - name: job
         cascadingDelete: false
