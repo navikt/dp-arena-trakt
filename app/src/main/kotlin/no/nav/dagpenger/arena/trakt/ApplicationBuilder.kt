@@ -2,6 +2,7 @@ package no.nav.dagpenger.arena.trakt
 
 import mu.KotlinLogging
 import no.nav.dagpenger.arena.trakt.db.HendelseRepository
+import no.nav.dagpenger.arena.trakt.db.PostgresDataSourceBuilder.clean
 import no.nav.dagpenger.arena.trakt.db.PostgresDataSourceBuilder.runMigration
 import no.nav.dagpenger.arena.trakt.db.PubliserNyttVedtakObserver
 import no.nav.dagpenger.arena.trakt.db.SakRepository
@@ -19,7 +20,9 @@ internal class ApplicationBuilder(config: Map<String, String>) : StatusListener 
     private lateinit var periodiskSjekk: Timer
     private val rapidsConnection = RapidApplication.Builder(
         RapidApplication.RapidApplicationConfig.fromEnv(config)
-    ).build()
+    ).build { _, _ ->
+        clean()
+    }
 
     init {
         rapidsConnection.register(this)
