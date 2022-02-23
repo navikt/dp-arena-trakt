@@ -6,7 +6,6 @@ import no.nav.dagpenger.arena.trakt.db.PostgresDataSourceBuilder.runMigration
 import no.nav.dagpenger.arena.trakt.db.PubliserNyttVedtakObserver
 import no.nav.dagpenger.arena.trakt.db.SakRepository
 import no.nav.dagpenger.arena.trakt.db.VedtakRepository
-import no.nav.dagpenger.arena.trakt.tjenester.PeriodiskUsendtVedtakSjekk
 import no.nav.dagpenger.arena.trakt.tjenester.SakSink
 import no.nav.dagpenger.arena.trakt.tjenester.VedtakSink
 import no.nav.helse.rapids_rivers.RapidApplication
@@ -38,8 +37,7 @@ internal class ApplicationBuilder(config: Map<String, String>) : StatusListener 
             }
             SakSink(rapidsConnection, sakRepository)
             VedtakSink(rapidsConnection, vedtakRepository)
-
-            periodiskSjekk = PeriodiskUsendtVedtakSjekk(sakRepository, vedtakRepository).start()
+            // periodiskSjekk = PeriodiskUsendtVedtakSjekk(sakRepository, vedtakRepository).start()
         }
     }
 
