@@ -48,7 +48,8 @@ internal class VedtakHendelse(private val vedtak: Vedtak) : Hendelse(UUID.random
         IVERK("Iverksatt"),
         MOTAT("Mottatt"),
         OPPRE("Opprettet"),
-        REGIS("Registrert")
+        REGIS("Registrert"),
+        AVBRUTT("Avbrutt")
     }
 
     private enum class Utfall(val navn: String) {
