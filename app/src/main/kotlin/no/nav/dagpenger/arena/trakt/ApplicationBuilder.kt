@@ -11,12 +11,10 @@ import no.nav.dagpenger.arena.trakt.tjenester.VedtakSink
 import no.nav.helse.rapids_rivers.RapidApplication
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.RapidsConnection.StatusListener
-import java.util.Timer
 
 val logger = KotlinLogging.logger { }
 
 internal class ApplicationBuilder(config: Map<String, String>) : StatusListener {
-    private lateinit var periodiskSjekk: Timer
     private val rapidsConnection = RapidApplication.Builder(
         RapidApplication.RapidApplicationConfig.fromEnv(config)
     ).build()
@@ -37,13 +35,6 @@ internal class ApplicationBuilder(config: Map<String, String>) : StatusListener 
             }
             SakSink(rapidsConnection, sakRepository)
             VedtakSink(rapidsConnection, vedtakRepository)
-            // periodiskSjekk = PeriodiskUsendtVedtakSjekk(sakRepository, vedtakRepository).start()
-        }
-    }
-
-    override fun onShutdown(rapidsConnection: RapidsConnection) {
-        if (::periodiskSjekk.isInitialized) {
-            periodiskSjekk.cancel()
         }
     }
 }
