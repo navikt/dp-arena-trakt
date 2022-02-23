@@ -21,7 +21,8 @@ internal class PeriodiskUsendtVedtakSjekk(
 
         sakRepository.perSak {
             withLoggingContext("sakId" to sakId.toString()) {
-                logger.info { "Sjekker etter vedtak" }
+                logger.info { "Antall vedtak i sak: ${vedtakRepository.antallVedtakMedSakId(sakId)}" }
+                logger.info { "Sjekker etter usendte vedtak" }
                 val vedtak = vedtakRepository.finnUsendteVedtakMedSak(sakId)
                 logger.info { "Fant ${vedtak.size} usendte vedtak" }
 

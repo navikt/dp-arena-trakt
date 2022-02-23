@@ -43,6 +43,12 @@ internal class VedtakRepository private constructor(
             FROM vedtak v
                 LEFT JOIN hendelse_vedtak hv ON v.vedtak_id = hv.vedtak_id
             WHERE hv.vedtak_id IS NULL AND v.sak_id = ? LIMIT 1000"""
+
+        @Language("PostgreSQL")
+        private const val antallVedtakISak = """
+            SELECT COUNT(1) AS antall
+            FROM vedtak
+            WHERE sak_id = ?"""
     }
 
     fun leggTilObserver(observer: VedtakObserver) = observers.add(observer)
@@ -72,6 +78,16 @@ internal class VedtakRepository private constructor(
         }
     }
 
+    fun antallVedtakMedSakId(sakId: Int) =
+        using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
+            session.run(queryOf(antallVedtakISak, sakId).map { it.int("antall") }.asSingle)
+        }
+
+    fun finnUsendteVedtakMedSak(sakId: Int) =
+        using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
+            session.run(queryOf(finnUsendteVedtakQuery, sakId).map { it.vedtak() }.asList)
+        }
+
     internal interface VedtakObserver {
         fun nyttDagpengeVedtak(vedtak: Vedtak) {}
     }
@@ -97,11 +113,6 @@ internal class VedtakRepository private constructor(
             repository.slettVedtakMedSak(sak.sakId)
         }
     }
-
-    fun finnUsendteVedtakMedSak(sakId: Int) =
-        using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
-            session.run(queryOf(finnUsendteVedtakQuery, sakId).map { it.vedtak() }.asList)
-        }
 
     private fun slettVedtakMedSak(sakId: Int) {
         using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
