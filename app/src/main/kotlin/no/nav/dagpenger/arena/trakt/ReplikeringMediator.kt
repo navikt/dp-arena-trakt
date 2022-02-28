@@ -14,13 +14,12 @@ import java.sql.SQLException
 private val logg = KotlinLogging.logger {}
 private val sikkerlogg = KotlinLogging.logger("tjenestekall")
 
-// MessageMediator
-// Tolker replikeringsmeldinger, utfører duplikatsjekk og lagrer håndtering
+// Kobler replikeringsmeldinger fra Kafka til meldinger i kode
 internal class ReplikeringMediator(
     rapidsConnection: RapidsConnection,
-    private val hendelseMediator: IHendelseMediator,
+    private val radMottak: IRadMottak,
     private val replikeringslogg: Replikeringslogg,
-) : IMeldingMediator {
+) : IReplikeringMediator {
     private var messageRecognized = false
     private val riverErrors = mutableListOf<Pair<String, MessageProblems>>()
 
@@ -39,15 +38,15 @@ internal class ReplikeringMediator(
     override fun onRecognizedMessage(message: ReplikeringsMelding, context: MessageContext) {
         try {
             messageRecognized = true
-            message.logRecognized(sikkerlogg)
+            message.logRecognized(logg)
             replikeringslogg.lagre(message)
 
             if (message.skalDuplikatsjekkes && replikeringslogg.erBehandlet(message.id)) {
-                message.logDuplikat(sikkerlogg)
+                message.logDuplikat(logg)
                 return
             }
 
-            hendelseMediator.behandle(message)
+            radMottak.behandle(message)
             replikeringslogg.markerSomBehandlet(message.id)
         } catch (err: SQLException) {
             severeErrorHandler(err, message)
@@ -107,7 +106,7 @@ internal class ReplikeringMediator(
     }
 }
 
-internal interface IMeldingMediator {
+internal interface IReplikeringMediator {
     fun onRecognizedMessage(message: ReplikeringsMelding, context: MessageContext)
     fun onRiverError(riverName: String, problems: MessageProblems, context: MessageContext)
 }

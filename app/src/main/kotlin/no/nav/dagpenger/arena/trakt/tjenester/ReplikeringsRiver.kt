@@ -3,7 +3,7 @@ package no.nav.dagpenger.arena.trakt.tjenester
 import com.fasterxml.jackson.databind.JsonNode
 import mu.KotlinLogging
 import mu.withLoggingContext
-import no.nav.dagpenger.arena.trakt.IMeldingMediator
+import no.nav.dagpenger.arena.trakt.IReplikeringMediator
 import no.nav.dagpenger.arena.trakt.meldinger.ReplikeringsMelding
 import no.nav.dagpenger.arena.trakt.meldinger.ReplikeringsMelding.ReplikeringsId
 import no.nav.helse.rapids_rivers.JsonMessage
@@ -16,7 +16,7 @@ import java.time.format.DateTimeFormatter
 
 internal abstract class ReplikeringsRiver(
     rapidsConnection: RapidsConnection,
-    private val mediator: IMeldingMediator
+    private val replikeringMediator: IReplikeringMediator
 ) : River.PacketValidation {
     private val river = River(rapidsConnection)
     protected abstract val tabell: String
@@ -28,10 +28,8 @@ internal abstract class ReplikeringsRiver(
 
     private fun validateReplikering(packet: JsonMessage) {
         packet.demandValue("table", tabell)
-        packet.requireKey("op_type")
+        packet.requireKey("op_type", "pos")
         packet.require("op_ts", JsonNode::asArenaDato)
-        packet.requireKey("op_ts")
-        packet.requireKey("pos")
     }
 
     protected abstract fun opprettMelding(packet: JsonMessage): ReplikeringsMelding
@@ -51,7 +49,7 @@ internal abstract class ReplikeringsRiver(
                 "replikering_id" to id.toString()
             ) {
                 try {
-                    mediator.onRecognizedMessage(opprettMelding(packet), context)
+                    replikeringMediator.onRecognizedMessage(opprettMelding(packet), context)
                 } catch (e: Exception) {
                     sikkerLogg.error("Klarte ikke å lese melding, innhold: ${packet.toJson()}", e)
                     throw e
@@ -60,7 +58,7 @@ internal abstract class ReplikeringsRiver(
         }
 
         override fun onError(problems: MessageProblems, context: MessageContext) {
-            mediator.onRiverError(riverName, problems, context)
+            replikeringMediator.onRiverError(riverName, problems, context)
         }
     }
 
@@ -70,5 +68,5 @@ internal abstract class ReplikeringsRiver(
 }
 
 private var arenaDateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss[.SSSSSS]")
-fun JsonNode.asArenaDato() =
+fun JsonNode.asArenaDato(): LocalDateTime =
     asText().let { LocalDateTime.parse(it, arenaDateFormatter) }

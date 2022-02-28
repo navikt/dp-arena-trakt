@@ -1,7 +1,7 @@
 package no.nav.dagpenger.arena.trakt.hendelser
 
 import com.fasterxml.jackson.databind.node.ObjectNode
-import no.nav.dagpenger.arena.trakt.modell.Vedtak
+import no.nav.dagpenger.arena.trakt.Vedtak
 import java.time.LocalDateTime
 import java.util.UUID
 

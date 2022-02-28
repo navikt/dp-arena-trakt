@@ -1,4 +1,4 @@
-package no.nav.dagpenger.arena.trakt.modell
+package no.nav.dagpenger.arena.trakt
 
 data class Vedtak(
     val sakId: Int,

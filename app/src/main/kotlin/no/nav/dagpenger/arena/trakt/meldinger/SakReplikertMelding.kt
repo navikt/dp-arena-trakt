@@ -1,9 +1,10 @@
 package no.nav.dagpenger.arena.trakt.meldinger
 
-import no.nav.dagpenger.arena.trakt.modell.Sak
-import no.nav.dagpenger.arena.trakt.IHendelseMediator
+import no.nav.dagpenger.arena.trakt.IRadMottak
+import no.nav.dagpenger.arena.trakt.Sak
 import no.nav.helse.rapids_rivers.JsonMessage
 
+// Kan tolke en replikert rad fra sak-tabellen
 internal class SakReplikertMelding(packet: JsonMessage) : ReplikeringsMelding(packet) {
     private val sakId = packet["after.SAK_ID"].asInt()
     private val erDagpenger = packet["after.SAKSKODE"].asText() == "DAGP"
@@ -13,7 +14,7 @@ internal class SakReplikertMelding(packet: JsonMessage) : ReplikeringsMelding(pa
             erDagpenger
         )
 
-    override fun behandle(mediator: IHendelseMediator) {
-        mediator.behandle(this, sak)
+    override fun behandle(mediator: IRadMottak) {
+        mediator.behandle(sak)
     }
 }

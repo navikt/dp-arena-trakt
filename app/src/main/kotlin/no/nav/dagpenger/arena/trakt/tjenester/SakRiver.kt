@@ -1,13 +1,13 @@
 package no.nav.dagpenger.arena.trakt.tjenester
 
-import no.nav.dagpenger.arena.trakt.IMeldingMediator
+import no.nav.dagpenger.arena.trakt.IReplikeringMediator
 import no.nav.dagpenger.arena.trakt.meldinger.SakReplikertMelding
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.RapidsConnection
 
 internal class SakRiver(
     rapidsConnection: RapidsConnection,
-    mediator: IMeldingMediator
+    mediator: IReplikeringMediator
 ) : ReplikeringsRiver(rapidsConnection, mediator) {
     override val tabell = "SIAMO.SAK"
     override val riverName = "sak"

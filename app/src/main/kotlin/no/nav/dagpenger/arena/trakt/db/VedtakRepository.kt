@@ -4,9 +4,9 @@ import kotliquery.Row
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
+import no.nav.dagpenger.arena.trakt.Sak
+import no.nav.dagpenger.arena.trakt.Vedtak
 import no.nav.dagpenger.arena.trakt.db.SakRepository.SakObserver
-import no.nav.dagpenger.arena.trakt.tjenester.Sak
-import no.nav.dagpenger.arena.trakt.tjenester.Vedtak
 import org.intellij.lang.annotations.Language
 
 internal class VedtakRepository private constructor(
@@ -43,12 +43,6 @@ internal class VedtakRepository private constructor(
             FROM vedtak v
                 LEFT JOIN hendelse_vedtak hv ON v.vedtak_id = hv.vedtak_id
             WHERE hv.vedtak_id IS NULL AND v.sak_id = ? LIMIT 1000"""
-
-        @Language("PostgreSQL")
-        private const val antallVedtakISak = """
-            SELECT COUNT(1) AS antall
-            FROM vedtak
-            WHERE sak_id = ?"""
     }
 
     fun leggTilObserver(observer: VedtakObserver) = observers.add(observer)
@@ -77,11 +71,6 @@ internal class VedtakRepository private constructor(
             }
         }
     }
-
-    fun antallVedtakMedSakId(sakId: Int) =
-        using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
-            session.run(queryOf(antallVedtakISak, sakId).map { it.int("antall") }.asSingle)
-        }
 
     fun finnUsendteVedtakMedSak(sakId: Int) =
         using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->

@@ -1,6 +1,6 @@
 package no.nav.dagpenger.arena.trakt.helpers
 
-import no.nav.dagpenger.arena.trakt.modell.Vedtak
+import no.nav.dagpenger.arena.trakt.Vedtak
 import org.intellij.lang.annotations.Language
 
 internal fun vedtak(vedtakId: Int = 1, sakId: Int = 1) = Vedtak(

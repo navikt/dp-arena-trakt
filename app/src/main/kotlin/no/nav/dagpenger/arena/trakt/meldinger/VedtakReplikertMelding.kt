@@ -1,11 +1,12 @@
 package no.nav.dagpenger.arena.trakt.meldinger
 
-import no.nav.dagpenger.arena.trakt.modell.Vedtak
-import no.nav.dagpenger.arena.trakt.IHendelseMediator
+import no.nav.dagpenger.arena.trakt.IRadMottak
+import no.nav.dagpenger.arena.trakt.Vedtak
 import no.nav.helse.rapids_rivers.JsonMessage
 
+// Tolker innholdet i en replikert rad fra vedtakstabellen
 internal class VedtakReplikertMelding(packet: JsonMessage) : ReplikeringsMelding(packet) {
-    val vedtakId = packet["after.VEDTAK_ID"].asInt()
+    private val vedtakId = packet["after.VEDTAK_ID"].asInt()
     private val sakId = packet["after.SAK_ID"].asInt()
     private val utfallkode = packet["after.UTFALLKODE"].asText()
     private val rettighetkode = packet["after.RETTIGHETKODE"].asText()
@@ -23,7 +24,7 @@ internal class VedtakReplikertMelding(packet: JsonMessage) : ReplikeringsMelding
             vedtakstatuskode
         )
 
-    override fun behandle(mediator: IHendelseMediator) {
-        mediator.behandle(this, vedtak)
+    override fun behandle(mediator: IRadMottak) {
+        mediator.behandle(vedtak)
     }
 }

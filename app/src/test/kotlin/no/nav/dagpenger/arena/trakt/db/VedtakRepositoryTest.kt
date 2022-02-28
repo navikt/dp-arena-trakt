@@ -3,11 +3,11 @@ package no.nav.dagpenger.arena.trakt.db
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
+import no.nav.dagpenger.arena.trakt.Sak
+import no.nav.dagpenger.arena.trakt.Vedtak
 import no.nav.dagpenger.arena.trakt.db.VedtakRepository.VedtakObserver
 import no.nav.dagpenger.arena.trakt.helpers.Postgres.withMigratedDb
 import no.nav.dagpenger.arena.trakt.helpers.vedtak
-import no.nav.dagpenger.arena.trakt.tjenester.Sak
-import no.nav.dagpenger.arena.trakt.tjenester.Vedtak
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
