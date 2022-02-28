@@ -2,6 +2,7 @@ package no.nav.dagpenger.arena.trakt.tjenester
 
 import mu.KotlinLogging
 import mu.withLoggingContext
+import no.nav.dagpenger.arena.trakt.modell.Sak
 import no.nav.dagpenger.arena.trakt.db.SakRepository
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
@@ -41,11 +42,6 @@ internal class SakSink(
             repository.lagre(sak)
         }
     }
-
-    internal data class Sak(
-        val sakId: Int,
-        val erDagpenger: Boolean,
-    )
 }
 
 private fun JsonMessage.erDagpenger() = this["after.SAKSKODE"].asText() == DAGPENGER_SAKSKODE

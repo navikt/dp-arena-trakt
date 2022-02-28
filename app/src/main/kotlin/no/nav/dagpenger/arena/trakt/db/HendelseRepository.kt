@@ -6,7 +6,7 @@ import kotliquery.sessionOf
 import kotliquery.using
 import no.nav.dagpenger.arena.trakt.hendelser.Hendelse
 import no.nav.dagpenger.arena.trakt.hendelser.VedtakHendelse
-import no.nav.dagpenger.arena.trakt.tjenester.VedtakSink.Vedtak
+import no.nav.dagpenger.arena.trakt.modell.Vedtak
 import no.nav.helse.rapids_rivers.RapidsConnection
 import org.intellij.lang.annotations.Language
 

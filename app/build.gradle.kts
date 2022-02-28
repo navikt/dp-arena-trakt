@@ -6,6 +6,7 @@ plugins {
 }
 
 dependencies {
+    implementation(project(":modell"))
     implementation(Database.Kotlinquery)
     implementation(Konfig.konfig)
     implementation(Database.Flyway)

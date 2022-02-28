@@ -1,7 +1,7 @@
 package no.nav.dagpenger.arena.trakt.db
 
 import no.nav.dagpenger.arena.trakt.helpers.Postgres.withMigratedDb
-import no.nav.dagpenger.arena.trakt.tjenester.SakSink
+import no.nav.dagpenger.arena.trakt.tjenester.Sak
 import org.junit.jupiter.api.Test
 
 internal class SakRepositoryTest {
@@ -11,7 +11,7 @@ internal class SakRepositoryTest {
     fun `lagrer sak`() {
         withMigratedDb {
             repository.lagre(
-                SakSink.Sak(
+                Sak(
                     sakId = 1,
                     erDagpenger = true
                 )

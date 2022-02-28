@@ -5,8 +5,8 @@ import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
 import no.nav.dagpenger.arena.trakt.db.SakRepository.SakObserver
-import no.nav.dagpenger.arena.trakt.tjenester.SakSink
-import no.nav.dagpenger.arena.trakt.tjenester.VedtakSink.Vedtak
+import no.nav.dagpenger.arena.trakt.tjenester.Sak
+import no.nav.dagpenger.arena.trakt.tjenester.Vedtak
 import org.intellij.lang.annotations.Language
 
 internal class VedtakRepository private constructor(
@@ -99,7 +99,7 @@ internal class VedtakRepository private constructor(
     }
 
     private class FinnUsendteVedtak(private val repository: VedtakRepository) : SakObserver {
-        override fun nySak(sak: SakSink.Sak) {
+        override fun nySak(sak: Sak) {
             if (!sak.erDagpenger) return
             repository.finnUsendteVedtakMedSak(sak.sakId).forEach { vedtak ->
                 repository.observers.forEach { it.nyttDagpengeVedtak(vedtak) }
@@ -108,7 +108,7 @@ internal class VedtakRepository private constructor(
     }
 
     private class SlettVedtakFraAndreYtelser(private val repository: VedtakRepository) : SakObserver {
-        override fun nySak(sak: SakSink.Sak) {
+        override fun nySak(sak: Sak) {
             if (sak.erDagpenger) return
             repository.slettVedtakMedSak(sak.sakId)
         }

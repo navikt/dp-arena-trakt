@@ -2,6 +2,7 @@ package no.nav.dagpenger.arena.trakt.tjenester
 
 import mu.KotlinLogging
 import mu.withLoggingContext
+import no.nav.dagpenger.arena.trakt.modell.Vedtak
 import no.nav.dagpenger.arena.trakt.db.VedtakRepository
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
@@ -50,16 +51,6 @@ internal class VedtakSink(
             vedtakRepository.lagre(vedtak)
         }
     }
-
-    internal data class Vedtak(
-        val sakId: Int,
-        val vedtakId: Int,
-        val personId: Int,
-        val vedtaktypekode: String,
-        val utfallkode: String,
-        val rettighetkode: String,
-        val vedtakstatuskode: String,
-    )
 }
 
 private fun JsonMessage.sakId() = this["after.SAK_ID"].asInt()

@@ -3,7 +3,7 @@ package no.nav.dagpenger.arena.trakt.db
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
-import no.nav.dagpenger.arena.trakt.tjenester.SakSink.Sak
+import no.nav.dagpenger.arena.trakt.tjenester.Sak
 import org.intellij.lang.annotations.Language
 
 internal class SakRepository private constructor(

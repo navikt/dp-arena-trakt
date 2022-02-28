@@ -1,6 +1,6 @@
 package no.nav.dagpenger.arena.trakt.helpers
 
-import no.nav.dagpenger.arena.trakt.tjenester.VedtakSink.Vedtak
+import no.nav.dagpenger.arena.trakt.modell.Vedtak
 import org.intellij.lang.annotations.Language
 
 internal fun vedtak(vedtakId: Int = 1, sakId: Int = 1) = Vedtak(
@@ -193,7 +193,7 @@ internal fun nyRettighetVedtakJSON(vedtakId: Int = 123, sakId: Int = 12345) = ""
     "OPPSUMMERING_SB2": null,
     "DATO_UTFORT_DEL1": null,
     "DATO_UTFORT_DEL2": null,
-    "OVERFORT_NAVI": null,
+    "OVERFORT_NAVI": null
     "FRA_DATO": "2019-10-07 00:00:00",
     "TIL_DATO": null,
     "SF_OPPFOLGING_ID": null,

@@ -4,7 +4,7 @@ import mu.KotlinLogging
 import mu.withLoggingContext
 import no.nav.dagpenger.arena.trakt.db.HendelseRepository.Companion.fraVedtak
 import no.nav.dagpenger.arena.trakt.db.VedtakRepository.VedtakObserver
-import no.nav.dagpenger.arena.trakt.tjenester.VedtakSink.Vedtak
+import no.nav.dagpenger.arena.trakt.modell.Vedtak
 
 private val logger = KotlinLogging.logger {}
 
