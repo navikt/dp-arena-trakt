@@ -11,5 +11,5 @@ CREATE TABLE IF NOT EXISTS hendelse_vedtak
     vedtak_id  INT REFERENCES vedtak (vedtak_id)     NOT NULL
 );
 
-CREATE INDEX IF NOT EXISTS idx_melding_id ON hendelse (melding_id)
+CREATE INDEX IF NOT EXISTS idx_melding_id ON hendelse (melding_id);
 
