@@ -1,4 +1,4 @@
--- Holder en kommentar?
+-- Bump denne hver gang du lager en ny tabell og vil ha tilgang: 1
 DO
 $$
     BEGIN
