@@ -17,10 +17,6 @@ internal class SakReplikertMelding(packet: JsonMessage) : ReplikeringsMelding(pa
             sakId, erDagpenger, LocalDateTime.now(), LocalDateTime.now()
         )
 
-    init {
-        sikkerlogg.info { "Behandler: ${packet.toJson()}" }
-    }
-
     override fun behandle(mediator: IRadMottak) {
         mediator.behandle(sak)
     }
