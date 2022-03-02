@@ -4,11 +4,14 @@ import kotliquery.Session
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
+import mu.KotlinLogging
 import no.nav.dagpenger.arena.trakt.Vedtak
 import no.nav.dagpenger.arena.trakt.hendelser.Hendelse
 import no.nav.dagpenger.arena.trakt.hendelser.VedtakHendelse
 import no.nav.helse.rapids_rivers.RapidsConnection
 import org.intellij.lang.annotations.Language
+
+private val sikkerlogg = KotlinLogging.logger("tjenestekall.HendelseRepository")
 
 internal class HendelseRepository(private val rapidsConnection: RapidsConnection) {
     companion object {
@@ -23,13 +26,19 @@ internal class HendelseRepository(private val rapidsConnection: RapidsConnection
     }
 
     fun publiser(hendelse: Hendelse) {
-        rapidsConnection.publish(hendelse.toJson())
-        lagre(hendelse)
+        using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
+            session.transaction {
+                it.lagre(hendelse)
+                rapidsConnection.publish(hendelse.toJson()).also {
+                    sikkerlogg.info { "Publiserte nytt dagpengevedtak: ${hendelse.toJson()}" }
+                }
+            }
+        }
     }
 
-    private fun lagre(hendelse: Hendelse) = using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
-        session.lagreHendelse(hendelse)
-        session.lagreLink(hendelse)
+    private fun Session.lagre(hendelse: Hendelse) { // using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
+        this.lagreHendelse(hendelse)
+        this.lagreLink(hendelse)
     }
 
     private fun Session.lagreHendelse(hendelse: Hendelse) = this.run(queryOf(lagreQuery, hendelse.meldingId).asUpdate)
