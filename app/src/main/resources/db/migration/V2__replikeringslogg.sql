@@ -4,5 +4,6 @@ CREATE TABLE IF NOT EXISTS replikeringslogg
     operasjon      CHAR(1)                 NOT NULL,
     replikert      TIMESTAMP               NOT NULL,
     først_sett     TIMESTAMP DEFAULT NOW() NOT NULL,
-    behandlet      TIMESTAMP               NULL
+    behandlet      TIMESTAMP               NULL,
+    beskrivelse    TEXT                    NOT NULL
 );

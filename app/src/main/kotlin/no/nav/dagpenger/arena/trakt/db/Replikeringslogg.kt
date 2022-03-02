@@ -11,8 +11,8 @@ internal class Replikeringslogg {
     companion object {
         @Language("PostgreSQL")
         private val lagreQuery = """
-            |INSERT INTO replikeringslogg(replikering_id, operasjon, replikert, først_sett)
-            |VALUES (?, ?, ?, NOW())
+            |INSERT INTO replikeringslogg(replikering_id, operasjon, replikert, først_sett, beskrivelse)
+            |VALUES (?, ?, ?, NOW(), ?)
             |ON CONFLICT (replikering_id) DO NOTHING
         """.trimMargin()
 
@@ -37,6 +37,7 @@ internal class Replikeringslogg {
                     message.id.toString(),
                     message.operasjon,
                     message.operasjon_ts,
+                    message.meldingBeskrivelse()
                 ).asUpdate
             )
         }
