@@ -63,7 +63,7 @@ internal abstract class ReplikeringsRiver(
     }
 
     companion object {
-        private val sikkerLogg = KotlinLogging.logger("tjenestekall")
+        private val sikkerLogg = KotlinLogging.logger("tjenestekall.ReplikeringsRiver")
     }
 }
 
