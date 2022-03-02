@@ -16,13 +16,8 @@ spec:
         metric:
           name: kafka_consumergroup_group_lag
           selector:
-            matchExpressions:
-              - key: group
-                operator: In
-                values:
-                  - dp-arena-trakt-v12
-            #matchLabels:
-            #  group: dp-arena-trakt-v12
+            matchLabels:
+              group: dp-arena-trakt-v12
         target:
           type: AverageValue
           averageValue: 500
