@@ -9,6 +9,7 @@ import no.nav.dagpenger.arena.trakt.db.VedtakRepository.VedtakObserver
 import no.nav.dagpenger.arena.trakt.meldinger.ReplikeringsMelding
 
 private val logger = KotlinLogging.logger { }
+private val sikkerlogg = KotlinLogging.logger("tjenestekall.RadMottak")
 
 // Behandler rader som tas i mot
 internal class RadMottak(
@@ -38,7 +39,8 @@ internal class RadMottak(
             "vedtakId" to vedtak.vedtakId.toString(),
         ) {
             val vedtakHendelse = HendelseRepository.fraVedtak(vedtak)
-            logger.info { "Publiserer nytt dagpengevedtak: ${vedtakHendelse.toJson()}" }
+            logger.info { "Publiserer nytt dagpengevedtak" }
+            sikkerlogg.info { "Publiserer nytt dagpengevedtak: ${vedtakHendelse.toJson()}" }
             hendelseRepository.publiser(vedtakHendelse)
         }
     }
