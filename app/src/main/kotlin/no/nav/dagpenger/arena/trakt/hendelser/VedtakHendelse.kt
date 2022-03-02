@@ -21,6 +21,7 @@ internal class VedtakHendelse(private val vedtak: Vedtak) : Hendelse(UUID.random
         root.put("@meldingId", meldingId.toString())
         root.put("vedtakId", vedtak.vedtakId)
         root.put("sakId", vedtak.sakId)
+        root.put("personId", vedtak.personId)
         root.put("rettighet", rettighetstype)
         root.put("type", vedtakstype)
         root.put("status", status)
