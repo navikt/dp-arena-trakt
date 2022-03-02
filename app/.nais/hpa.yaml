@@ -1,0 +1,23 @@
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: dp-arena-trakt
+  namespace: teamdagpenger
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: dp-arena-trakt
+  minReplicas: 1
+  maxReplicas: 9
+  metrics:
+    - type: External
+      external:
+        metric:
+          name: kafka_consumergroup_group_lag
+          selector:
+            matchLabels:
+              group: dp-arena-trakt-v12
+        target:
+          type: AverageValue
+          averageValue: 500
