@@ -33,9 +33,9 @@ internal class VedtakRepository private constructor(
             |                    opprettet, 
             |                    oppdatert)
             |VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) 
+            |ON CONFLICT (vedtak_id, oppdatert) DO NOTHING
         """.trimMargin()
 
-        // |ON CONFLICT (vedtak_id) DO NOTHING
         @Language("PostgreSQL")
         private const val slettQuery = "DELETE FROM vedtak WHERE vedtak_id = ?"
 
