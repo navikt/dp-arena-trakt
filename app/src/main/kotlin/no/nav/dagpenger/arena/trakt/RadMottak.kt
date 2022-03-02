@@ -37,8 +37,9 @@ internal class RadMottak(
             "sakId" to vedtak.sakId.toString(),
             "vedtakId" to vedtak.vedtakId.toString(),
         ) {
-            logger.info { "Publiserer nytt dagpengevedtak" }
-            hendelseRepository.publiser(HendelseRepository.fraVedtak(vedtak))
+            val vedtakHendelse = HendelseRepository.fraVedtak(vedtak)
+            logger.info { "Publiserer nytt dagpengevedtak: ${vedtakHendelse.toJson()}" }
+            hendelseRepository.publiser(vedtakHendelse)
         }
     }
 }
@@ -46,5 +47,5 @@ internal class RadMottak(
 internal interface IRadMottak {
     fun behandle(message: ReplikeringsMelding)
     fun behandle(sak: Sak)
-    fun behandle(vedtak: Vedtak)
+    fun behandle(sak: Vedtak)
 }

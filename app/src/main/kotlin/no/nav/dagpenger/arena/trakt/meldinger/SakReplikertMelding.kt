@@ -3,6 +3,7 @@ package no.nav.dagpenger.arena.trakt.meldinger
 import no.nav.dagpenger.arena.trakt.IRadMottak
 import no.nav.dagpenger.arena.trakt.Sak
 import no.nav.helse.rapids_rivers.JsonMessage
+import java.time.LocalDateTime
 
 // Kan tolke en replikert rad fra sak-tabellen
 internal class SakReplikertMelding(packet: JsonMessage) : ReplikeringsMelding(packet) {
@@ -11,7 +12,9 @@ internal class SakReplikertMelding(packet: JsonMessage) : ReplikeringsMelding(pa
     private val sak
         get() = Sak(
             sakId,
-            erDagpenger
+            erDagpenger,
+            LocalDateTime.now(),
+            LocalDateTime.now()
         )
 
     override fun behandle(mediator: IRadMottak) {

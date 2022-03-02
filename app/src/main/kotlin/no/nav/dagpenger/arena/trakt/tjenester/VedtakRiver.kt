@@ -21,7 +21,9 @@ internal class VedtakRiver(
             "after.VEDTAKTYPEKODE",
             "after.UTFALLKODE",
             "after.RETTIGHETKODE",
-            "after.VEDTAKSTATUSKODE"
+            "after.VEDTAKSTATUSKODE",
+            "after.REG_DATO",
+            "after.MOD_DATO",
         )
     }
 

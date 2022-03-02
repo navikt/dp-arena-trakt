@@ -16,8 +16,8 @@ internal class VedtakRepository private constructor(
     constructor(sakRepository: SakRepository) : this(sakRepository, mutableListOf())
 
     init {
-        sakRepository.leggTilObserver(FinnUsendteVedtak(this))
-        sakRepository.leggTilObserver(SlettVedtakFraAndreYtelser(this))
+        sakRepository.leggTilObserver(FinnUsendteVedtak())
+        sakRepository.leggTilObserver(SlettVedtakFraAndreYtelser())
     }
 
     companion object {
@@ -29,11 +29,13 @@ internal class VedtakRepository private constructor(
             |                    vedtaktypekode,
             |                    utfallkode,
             |                    rettighetkode,
-            |                    vedtakstatuskode)
-            |VALUES (?, ?, ?, ?, ?, ?, ?)
-            |ON CONFLICT (vedtak_id) DO NOTHING
+            |                    vedtakstatuskode, 
+            |                    opprettet, 
+            |                    oppdatert)
+            |VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) 
         """.trimMargin()
 
+        // |ON CONFLICT (vedtak_id) DO NOTHING
         @Language("PostgreSQL")
         private const val slettQuery = "DELETE FROM vedtak WHERE vedtak_id = ?"
 
@@ -42,7 +44,8 @@ internal class VedtakRepository private constructor(
             SELECT v.*
             FROM vedtak v
                 LEFT JOIN hendelse_vedtak hv ON v.vedtak_id = hv.vedtak_id
-            WHERE hv.vedtak_id IS NULL AND v.sak_id = ? LIMIT 1000"""
+            WHERE hv.vedtak_id IS NULL AND v.sak_id = ? LIMIT 1000
+        """
     }
 
     fun leggTilObserver(observer: VedtakObserver) = observers.add(observer)
@@ -58,12 +61,14 @@ internal class VedtakRepository private constructor(
                     vedtak.vedtaktypekode,
                     vedtak.utfallkode,
                     vedtak.rettighetkode,
-                    vedtak.vedtakstatuskode
+                    vedtak.vedtakstatuskode,
+                    vedtak.opprettet,
+                    vedtak.oppdatert
                 ).asUpdate
             )
         }.also {
             when (sakRepository.erDagpenger(vedtak.sakId)) {
-                true -> observers.forEach { it.nyttDagpengeVedtak(vedtak) }
+                true -> emitNyttDagpengeVedtak(vedtak)
                 false -> slett(vedtak)
                 null -> {
                     // Vi må vente til vi får sak, så vi kan avgjøre om det er dagpenger
@@ -71,6 +76,9 @@ internal class VedtakRepository private constructor(
             }
         }
     }
+
+    private fun emitNyttDagpengeVedtak(vedtak: Vedtak) =
+        observers.forEach { it.nyttDagpengeVedtak(vedtak) }
 
     fun finnUsendteVedtakMedSak(sakId: Int) =
         using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
@@ -87,19 +95,19 @@ internal class VedtakRepository private constructor(
         session.run(queryOf(slettQuery, vedtakId).asExecute)
     }
 
-    private class FinnUsendteVedtak(private val repository: VedtakRepository) : SakObserver {
+    // Finner dagpengevedtak som ankom før vi hadde sak
+    private inner class FinnUsendteVedtak : SakObserver {
         override fun nySak(sak: Sak) {
             if (!sak.erDagpenger) return
-            repository.finnUsendteVedtakMedSak(sak.sakId).forEach { vedtak ->
-                repository.observers.forEach { it.nyttDagpengeVedtak(vedtak) }
-            }
+            finnUsendteVedtakMedSak(sak.sakId).forEach(::emitNyttDagpengeVedtak)
         }
     }
 
-    private class SlettVedtakFraAndreYtelser(private val repository: VedtakRepository) : SakObserver {
+    // Sletter vedtak fra andre ytelser når vi får saken
+    private inner class SlettVedtakFraAndreYtelser : SakObserver {
         override fun nySak(sak: Sak) {
             if (sak.erDagpenger) return
-            repository.slettVedtakMedSak(sak.sakId)
+            slettVedtakMedSak(sak.sakId)
         }
     }
 
@@ -121,6 +129,8 @@ internal class VedtakRepository private constructor(
         vedtaktypekode = string("vedtaktypekode"),
         utfallkode = string("utfallkode"),
         rettighetkode = string("rettighetkode"),
-        vedtakstatuskode = string("vedtakstatuskode")
+        vedtakstatuskode = string("vedtakstatuskode"),
+        opprettet = localDateTime("opprettet"),
+        oppdatert = localDateTime("oppdatert")
     )
 }

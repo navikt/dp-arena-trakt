@@ -15,8 +15,8 @@ internal class SakRepository private constructor(
         @Language("PostgreSQL")
         private val lagreQuery = """
             |INSERT INTO sak (sak_id,
-            |                 er_dagpenger)
-            |VALUES (?, ?)
+            |                 er_dagpenger, opprettet, oppdatert)
+            |VALUES (?, ?, ?, ?)
             |ON CONFLICT (sak_id) DO NOTHING
         """.trimMargin()
     }
@@ -30,6 +30,8 @@ internal class SakRepository private constructor(
                     lagreQuery,
                     sak.sakId,
                     sak.erDagpenger,
+                    sak.opprettet,
+                    sak.oppdatert
                 ).asUpdate
             )
         }.also {

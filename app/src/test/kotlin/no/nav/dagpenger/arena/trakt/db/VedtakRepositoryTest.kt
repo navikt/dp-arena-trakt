@@ -10,6 +10,7 @@ import no.nav.dagpenger.arena.trakt.helpers.Postgres.withMigratedDb
 import no.nav.dagpenger.arena.trakt.helpers.vedtak
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import java.time.LocalDateTime
 
 internal class VedtakRepositoryTest {
     private val sakRepository = SakRepository()
@@ -25,7 +26,7 @@ internal class VedtakRepositoryTest {
     @Test
     fun `Varsler om nytt vedtak når vi saken er dagpegner`() {
         withMigratedDb {
-            sakRepository.lagre(Sak(1, true))
+            sakRepository.lagre(Sak(1, true, LocalDateTime.now(), LocalDateTime.now()))
             repository.leggTilObserver(testObserver)
             repository.lagre(vedtak(1, 1))
 
@@ -36,7 +37,7 @@ internal class VedtakRepositoryTest {
     @Test
     fun `Varsler ikke om nytt vedtak når saken ikke er dagpenger`() {
         withMigratedDb {
-            sakRepository.lagre(Sak(1, false))
+            sakRepository.lagre(Sak(1, false, LocalDateTime.now(), LocalDateTime.now()))
             repository.leggTilObserver(testObserver)
             repository.lagre(vedtak(1, 1))
 
@@ -52,8 +53,8 @@ internal class VedtakRepositoryTest {
             repository.lagre(vedtak(2, 1))
             repository.lagre(vedtak(3, 2))
 
-            sakRepository.lagre(Sak(1, true))
-            sakRepository.lagre(Sak(2, false))
+            sakRepository.lagre(Sak(1, true, LocalDateTime.now(), LocalDateTime.now()))
+            sakRepository.lagre(Sak(2, false, LocalDateTime.now(), LocalDateTime.now()))
 
             assertEquals(2, testObserver.nyeVedtak.size)
         }
@@ -66,8 +67,8 @@ internal class VedtakRepositoryTest {
             repository.lagre(vedtak(1, 1))
             repository.lagre(vedtak(2, 2))
 
-            sakRepository.lagre(Sak(1, true))
-            sakRepository.lagre(Sak(2, false))
+            sakRepository.lagre(Sak(1, true, LocalDateTime.now(), LocalDateTime.now()))
+            sakRepository.lagre(Sak(2, false, LocalDateTime.now(), LocalDateTime.now()))
 
             assertEquals(1, testObserver.nyeVedtak.size)
             assertEquals(1, antallVedtak())

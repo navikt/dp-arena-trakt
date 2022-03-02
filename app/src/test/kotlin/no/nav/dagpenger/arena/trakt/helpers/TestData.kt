@@ -2,6 +2,8 @@ package no.nav.dagpenger.arena.trakt.helpers
 
 import no.nav.dagpenger.arena.trakt.Vedtak
 import org.intellij.lang.annotations.Language
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 internal fun vedtak(vedtakId: Int = 1, sakId: Int = 1) = Vedtak(
     sakId = sakId,
@@ -11,6 +13,8 @@ internal fun vedtak(vedtakId: Int = 1, sakId: Int = 1) = Vedtak(
     utfallkode = "JA",
     rettighetkode = "DAGO",
     vedtakstatuskode = "IVERK",
+    opprettet = LocalDateTime.now(),
+    oppdatert = LocalDateTime.now(),
 )
 
 @Language("JSON")
@@ -39,7 +43,8 @@ internal fun vedtaksfaktaJSON(vedtakId: Int = 123, kode: String = "ENDRTILUNN") 
       "time": "2021-11-24T09:36:54.56467414"
     }
   ]
-}""".trimMargin()
+}
+""".trimMargin()
 
 @Language("JSON")
 internal fun beregningsleddJSON(vedtakId: Int = 123, kode: String = "DPTEL") = """{
@@ -72,23 +77,33 @@ internal fun beregningsleddJSON(vedtakId: Int = 123, kode: String = "DPTEL") = "
       "time": "2021-11-24T09:36:53.467315483"
     }
   ]
-}""".trimMargin()
+}
+""".trimMargin()
+
+private val arenaDateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
 
 @Language("JSON")
-internal fun vedtakJSON(vedtakId: Int = 123, sakId: Int = 12345) = """{
+internal fun vedtakJSON(
+    vedtakId: Int = 123,
+    sakId: Int = 12345,
+    opType: String = "I",
+    pos: String = "00000000000019642427",
+    status: String = "IVERK",
+    modDato: LocalDateTime = LocalDateTime.parse("2019-09-27 04:04:26", arenaDateFormatter)
+) = """{
   "table": "SIAMO.VEDTAK",
-  "op_type": "I",
+  "op_type": "$opType",
   "op_ts": "2021-11-18 11:36:18.004455",
   "current_ts": "2021-11-18 12:53:14.964000",
-  "pos": "00000000000019642427",
+  "pos": "$pos",
   "after": {
     "VEDTAK_ID": $vedtakId,
     "SAK_ID": $sakId,
-    "VEDTAKSTATUSKODE": "IVERK",
+    "VEDTAKSTATUSKODE": "$status",
     "VEDTAKTYPEKODE": "O",
     "REG_DATO": "2019-09-27 04:04:26",
     "REG_USER": "ANB1243",
-    "MOD_DATO": "2019-09-27 04:04:26",
+    "MOD_DATO": "${modDato.format(arenaDateFormatter)}",
     "MOD_USER": "AGH1243",
     "UTFALLKODE": "JA",
     "BEGRUNNELSE": "Syntetisert rettighet",
@@ -132,7 +147,8 @@ internal fun vedtakJSON(vedtakId: Int = 123, sakId: Int = 12345) = """{
       "time": "2021-11-25T15:40:57.301038008"
     }
   ]
-}""".trimMargin()
+}
+""".trimMargin()
 
 @Language("JSON")
 internal fun sakJSON(sakId: Int = 12345, saksKode: String = "AAP") = """{
@@ -153,7 +169,8 @@ internal fun sakJSON(sakId: Int = 12345, saksKode: String = "AAP") = """{
       "time": "2021-11-24T09:36:53.467315483"
     }
   ]
-}""".trimMargin()
+}
+""".trimMargin()
 
 @Language("JSON")
 internal fun nyRettighetVedtakJSON(vedtakId: Int = 123, sakId: Int = 12345) = """{
@@ -213,4 +230,5 @@ internal fun nyRettighetVedtakJSON(vedtakId: Int = 123, sakId: Int = 12345) = ""
       "time": "2021-11-25T15:40:57.301038008"
     }
   ]
-}""".trimMargin()
+}
+""".trimMargin()

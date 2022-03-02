@@ -7,6 +7,7 @@ import java.util.UUID
 
 internal class VedtakHendelse(private val vedtak: Vedtak) : Hendelse(UUID.randomUUID()) {
     internal val vedtakId = vedtak.vedtakId
+    internal val oppdatert = vedtak.oppdatert
     private val root: ObjectNode = objectMapper.createObjectNode()
     private val rettighetstype get() = Rettighetstype.valueOf(vedtak.rettighetkode).navn
     private val vedtakstype get() = Vedtakstype.valueOf(vedtak.vedtaktypekode).navn
@@ -24,6 +25,8 @@ internal class VedtakHendelse(private val vedtak: Vedtak) : Hendelse(UUID.random
         root.put("type", vedtakstype)
         root.put("status", status)
         root.put("utfall", utfall)
+        root.put("opprettet", vedtak.opprettet.toString())
+        root.put("oppdatert", vedtak.oppdatert.toString())
     }
 
     private enum class Rettighetstype(val navn: String) {

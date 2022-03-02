@@ -1,5 +1,7 @@
 package no.nav.dagpenger.arena.trakt
 
+import java.time.LocalDateTime
+
 data class Vedtak(
     val sakId: Int,
     val vedtakId: Int,
@@ -8,4 +10,6 @@ data class Vedtak(
     val utfallkode: String,
     val rettighetkode: String,
     val vedtakstatuskode: String,
+    val opprettet: LocalDateTime,
+    val oppdatert: LocalDateTime,
 )
