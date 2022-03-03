@@ -38,7 +38,7 @@ internal class ReplikeringMediator(
     override fun onRecognizedMessage(message: ReplikeringsMelding, context: MessageContext) {
         try {
             messageRecognized = true
-            message.logRecognized(logg)
+            message.logRecognized(sikkerlogg)
             replikeringslogg.lagre(message)
 
             if (message.skalDuplikatsjekkes && replikeringslogg.erBehandlet(message.id)) {

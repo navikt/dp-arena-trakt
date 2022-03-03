@@ -17,7 +17,7 @@ internal abstract class ReplikeringsMelding(private val packet: JsonMessage) {
     internal abstract fun meldingBeskrivelse(): String
 
     internal fun logRecognized(logger: Logger) =
-        logger.info("gjenkjente {} med id={} som={}", this::class.simpleName, id, meldingBeskrivelse())
+        logger.info("gjenkjente {} med id={} som={}:\n{}", this::class.simpleName, id, meldingBeskrivelse(), toJson())
 
     internal fun logDuplikat(logger: Logger) =
         logger.warn("har mottatt duplikat {} med id={}", this::class.simpleName, id)
