@@ -17,7 +17,7 @@ spec:
           name: kafka_consumergroup_group_lag
           selector:
             matchLabels:
-              group: dp-arena-trakt-v12
+              group: {{kafka.consumer_group_id}}
         target:
           type: AverageValue
           averageValue: 500

@@ -1,5 +1,7 @@
 app: dp-arena-trakt
-kafka_pool: nav-dev
+kafka:
+  pool: nav-dev
+  consumer_group_id: dp-arena-trakt-v1
 replicas_min: 9
 replicas_max: 9
 db_tier: db-custom-4-3840
