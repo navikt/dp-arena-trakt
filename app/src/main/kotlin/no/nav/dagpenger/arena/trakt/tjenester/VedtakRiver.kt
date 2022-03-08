@@ -25,6 +25,8 @@ internal class VedtakRiver(
             "after.REG_DATO",
             "after.MOD_DATO",
             "after.LOPENRVEDTAK",
+            "after.LOPENRSAK",
+            "after.AAR",
         )
         message.rejectValue("after.RETTIGHETKODE", "AA115")
         message.rejectValue("after.RETTIGHETKODE", "AAP")

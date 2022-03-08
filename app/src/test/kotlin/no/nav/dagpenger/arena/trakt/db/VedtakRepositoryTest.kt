@@ -24,7 +24,7 @@ internal class VedtakRepositoryTest {
     }
 
     @Test
-    fun `Varsler om nytt vedtak når vi saken er dagpegner`() {
+    fun `Varsler om nytt vedtak når saken er dagpenger`() {
         withMigratedDb {
             sakRepository.lagre(Sak(1, true, LocalDateTime.now(), LocalDateTime.now()))
             repository.leggTilObserver(testObserver)

@@ -12,4 +12,5 @@ data class Vedtak(
     val vedtakstatuskode: String,
     val opprettet: LocalDateTime,
     val oppdatert: LocalDateTime,
+    val saknummer: String,
 )

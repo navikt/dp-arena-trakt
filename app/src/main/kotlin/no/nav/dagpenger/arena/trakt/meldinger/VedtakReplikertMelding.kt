@@ -16,7 +16,10 @@ internal class VedtakReplikertMelding(packet: JsonMessage) : ReplikeringsMelding
     private val personId = packet["after.PERSON_ID"].asInt()
     private val opprettet = packet["after.REG_DATO"].asArenaDato()
     private val oppdatert = packet["after.MOD_DATO"].asArenaDato()
-    private val løpenummer = packet["after.LOPENRVEDTAK"].asInt()
+    private val løpenummerVedtak = packet["after.LOPENRVEDTAK"].asInt()
+    private val løpenummerSak = packet["after.LOPENRSAK"].asText()
+    private val år = packet["after.AAR"].asText()
+    private val saksnummer = år + løpenummerSak
     private val vedtak
         get() = Vedtak(
             sakId,
@@ -27,12 +30,13 @@ internal class VedtakReplikertMelding(packet: JsonMessage) : ReplikeringsMelding
             rettighetkode,
             vedtakstatuskode,
             opprettet,
-            oppdatert
+            oppdatert,
+            saksnummer
         )
 
     override fun behandle(mediator: IRadMottak) {
         mediator.behandle(vedtak)
     }
 
-    override fun meldingBeskrivelse() = "Vedtak=$vedtakId, sak=$sakId, løpenummer=$løpenummer"
+    override fun meldingBeskrivelse() = "Vedtak=$vedtakId, sak=$sakId, løpenummer=$løpenummerVedtak"
 }
