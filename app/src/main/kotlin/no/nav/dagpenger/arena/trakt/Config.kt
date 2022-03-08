@@ -30,7 +30,6 @@ internal object Config {
             "KAFKA_RAPID_TOPIC" to "teamdagpenger.rapid.v1",
             "KAFKA_EXTRA_TOPIC" to arenaTopics(miljø = "q1"),
             "KAFKA_RESET_POLICY" to "earliest",
-            "BATCH_INSERT" to "false"
         )
     )
     private val prodProperties = ConfigurationMap(
