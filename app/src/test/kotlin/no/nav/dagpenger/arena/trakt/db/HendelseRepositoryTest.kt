@@ -30,7 +30,6 @@ internal class HendelseRepositoryTest {
 
             with(testRapid.inspektør) {
                 val melding = message(0)
-
                 assertDoesNotThrow { UUID.fromString(melding["@meldingId"].asText()) }
                 assertEquals(1, melding["vedtakId"].asInt())
                 assertEquals(1, melding["sakId"].asInt())
@@ -38,6 +37,8 @@ internal class HendelseRepositoryTest {
                 assertEquals("Ny rettighet", melding["type"].asText())
                 assertEquals("Iverksatt", melding["status"].asText())
                 assertEquals("Ja", melding["utfall"].asText())
+                assertEquals("Ja", melding["utfall"].asText())
+                assertEquals("2019580493", melding["saknummer"].asText())
             }
         }
     }
