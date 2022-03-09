@@ -13,4 +13,5 @@ data class Vedtak(
     val opprettet: LocalDateTime,
     val oppdatert: LocalDateTime,
     val saknummer: String,
+    val løpenummer: Int,
 )

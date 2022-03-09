@@ -32,8 +32,9 @@ internal class VedtakRepository private constructor(
             |                    vedtakstatuskode, 
             |                    opprettet, 
             |                    oppdatert,
-            |                    saknummer)
-            |VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
+            |                    saknummer,
+            |                    lopenummer)
+            |VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
             |ON CONFLICT (vedtak_id, oppdatert) DO NOTHING
         """.trimMargin()
 
@@ -65,7 +66,8 @@ internal class VedtakRepository private constructor(
                     vedtak.vedtakstatuskode,
                     vedtak.opprettet,
                     vedtak.oppdatert,
-                    vedtak.saknummer
+                    vedtak.saknummer,
+                    vedtak.løpenummer,
                 ).asUpdate
             )
         }.also {
@@ -134,6 +136,7 @@ internal class VedtakRepository private constructor(
         vedtakstatuskode = string("vedtakstatuskode"),
         opprettet = localDateTime("opprettet"),
         oppdatert = localDateTime("oppdatert"),
-        saknummer = string("saknummer")
+        saknummer = string("saknummer"),
+        løpenummer = int("lopenummer")
     )
 }

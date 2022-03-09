@@ -18,7 +18,8 @@ internal fun vedtak(vedtakId: Int = 1, sakId: Int = 1): Vedtak {
         vedtakstatuskode = "IVERK",
         opprettet = LocalDateTime.now(),
         oppdatert = LocalDateTime.now(),
-        saknummer = år + løpenrSak
+        saknummer = år + løpenrSak,
+        løpenummer = 1
     )
 }
 

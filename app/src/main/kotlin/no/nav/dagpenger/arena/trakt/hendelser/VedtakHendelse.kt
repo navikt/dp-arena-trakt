@@ -29,6 +29,7 @@ internal class VedtakHendelse(private val vedtak: Vedtak) : Hendelse(UUID.random
         root.put("opprettet", vedtak.opprettet.toString())
         root.put("oppdatert", vedtak.oppdatert.toString())
         root.put("saknummer", vedtak.saknummer)
+        root.put("løpenummer", vedtak.løpenummer)
     }
 
     private enum class Rettighetstype(val navn: String) {
