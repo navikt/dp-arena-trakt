@@ -20,6 +20,8 @@ CREATE TABLE IF NOT EXISTS vedtak
     innlest          TIMESTAMP DEFAULT NOW() NOT NULL,
     opprettet        TIMESTAMP               NOT NULL,
     oppdatert        TIMESTAMP               NOT NULL,
+    saknummer        TEXT                    NOT NULL,
+    lopenummer       INT                     NOT NULL,
     UNIQUE (vedtak_id, oppdatert)
 );
 
