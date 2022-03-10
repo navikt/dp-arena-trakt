@@ -1,7 +1,8 @@
 package no.nav.dagpenger.arena.trakt.db
 
+import no.nav.dagpenger.arena.trakt.IRadMottak
 import no.nav.dagpenger.arena.trakt.helpers.Postgres.withMigratedDb
-import no.nav.dagpenger.arena.trakt.meldinger.SakReplikertMelding
+import no.nav.dagpenger.arena.trakt.meldinger.ReplikeringsMelding
 import no.nav.helse.rapids_rivers.JsonMessage
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -10,19 +11,7 @@ import org.junit.jupiter.api.Test
 
 internal class ReplikeringsloggTest {
     private val repository = Replikeringslogg()
-    private val message = SakReplikertMelding(
-        JsonMessage.newMessage(
-            mapOf(
-                "table" to "SIAMO.SAK",
-                "pos" to "0001",
-                "op_type" to "I",
-                "op_ts" to "2021-11-18 11:37:16.455389"
-            )
-        ).apply {
-            requireKey("table", "pos", "op_type", "op_ts")
-            interestedIn("after.SAK_ID", "after.SAKSKODE")
-        }
-    )
+    private val message = TestReplikertMelding()
 
     @Test
     fun `Lagrer mottak av en rad, og kan sjekke om den er behandlet`() {
@@ -33,4 +22,22 @@ internal class ReplikeringsloggTest {
             assertTrue(repository.erBehandlet(message.id))
         }
     }
+}
+
+private class TestReplikertMelding(packet: JsonMessage) : ReplikeringsMelding(packet) {
+    constructor() : this(
+        JsonMessage.newMessage(
+            mapOf(
+                "table" to "SIAMO.SAK",
+                "pos" to "0001",
+                "op_type" to "I",
+                "op_ts" to "2021-11-18 11:37:16.455389"
+            )
+        ).apply {
+            requireKey("table", "pos", "op_type", "op_ts")
+        }
+    )
+
+    override fun behandle(mediator: IRadMottak) = TODO("Not yet implemented")
+    override fun meldingBeskrivelse() = "En fin beskrivelse"
 }
