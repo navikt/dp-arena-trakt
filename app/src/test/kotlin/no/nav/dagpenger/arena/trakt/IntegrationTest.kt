@@ -68,14 +68,16 @@ class IntegrationTest {
     @Test
     fun `vedtak med samme id, men ulik sak hoppes over`() {
         withMigratedDb {
-            val now = LocalDateTime.now()
-            testRapid.sendTestMessage(sakJSON(1, "DAGP", "1"))
-            testRapid.sendTestMessage(vedtakJSON(1, 1, "I", "1", "REGIS", now.minusHours(3)))
-            testRapid.sendTestMessage(sakJSON(2, "AAP", "2"))
-            testRapid.sendTestMessage(vedtakJSON(1, 2, "I", "2", "REGIS", now.minusHours(3)))
+            with(testRapid) {
+                sendTestMessage(sakJSON(1, "DAGP", "1"))
+                sendTestMessage(vedtakJSON(1, 1, "I", "1"))
+                sendTestMessage(vedtakJSON(1, 1, "I", "2", "IVERK", LocalDateTime.now()))
+                sendTestMessage(sakJSON(2, "AAP", "2"))
+                sendTestMessage(vedtakJSON(1, 2, "I", "3"))
+            }
 
             with(testRapid.inspektør) {
-                assertEquals(1, size)
+                assertEquals(2, size)
                 val vedtakHendelse = message(0)
                 assertEquals("vedtak", vedtakHendelse["@event_name"].asText())
                 assertEquals("arena", vedtakHendelse["@kilde"].asText())

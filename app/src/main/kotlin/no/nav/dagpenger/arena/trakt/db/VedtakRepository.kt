@@ -92,7 +92,7 @@ internal class VedtakRepository private constructor(
             gjenbruktVedtakIdQuery,
             vedtak.vedtakId,
             vedtak.sakId
-        ).map { it.int(1) == 1 }.asSingle
+        ).map { it.int(1) >= 1 }.asSingle
     ) ?: false
 
     private fun emitNyttDagpengeVedtak(vedtak: Vedtak) =
