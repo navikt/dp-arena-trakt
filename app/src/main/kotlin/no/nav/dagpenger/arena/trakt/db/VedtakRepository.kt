@@ -1,6 +1,7 @@
 package no.nav.dagpenger.arena.trakt.db
 
 import kotliquery.Row
+import kotliquery.Session
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
@@ -48,12 +49,17 @@ internal class VedtakRepository private constructor(
                 LEFT JOIN hendelse_vedtak hv ON v.vedtak_id = hv.vedtak_id
             WHERE hv.vedtak_id IS NULL AND v.sak_id = ? LIMIT 1000
         """
+
+        @Language("PostgreSQL")
+        private const val gjenbruktVedtakIdQuery = "SELECT COUNT(1) FROM vedtak WHERE vedtak_id=? AND sak_id != ?"
     }
 
     fun leggTilObserver(observer: VedtakObserver) = observers.add(observer)
 
     fun lagre(vedtak: Vedtak): Int {
         return using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
+            if (session.gjenbruktVedtakId(vedtak)) throw IllegalArgumentException("Samme vedtakId er brukt i flere saker")
+
             session.run(
                 queryOf(
                     lagreQuery,
@@ -80,6 +86,14 @@ internal class VedtakRepository private constructor(
             }
         }
     }
+
+    private fun Session.gjenbruktVedtakId(vedtak: Vedtak) = run(
+        queryOf(
+            gjenbruktVedtakIdQuery,
+            vedtak.vedtakId,
+            vedtak.sakId
+        ).map { it.int(1) == 1 }.asSingle
+    ) ?: false
 
     private fun emitNyttDagpengeVedtak(vedtak: Vedtak) =
         observers.forEach { it.nyttDagpengeVedtak(vedtak) }

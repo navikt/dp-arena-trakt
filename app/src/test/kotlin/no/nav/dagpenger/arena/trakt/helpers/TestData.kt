@@ -94,12 +94,12 @@ internal fun vedtakJSON(
 """.trimMargin()
 
 @Language("JSON")
-internal fun sakJSON(sakId: Int = 12345, saksKode: String = "AAP") = """{
+internal fun sakJSON(sakId: Int = 12345, saksKode: String = "AAP", pos: String = "00000000000003215801") = """{
   "table": "SIAMO.SAK",
   "op_type": "I",
   "op_ts": "2021-11-18 11:25:45.338291",
   "current_ts": "2021-11-18 11:57:59.252008",
-  "pos": "00000000000003215801",
+  "pos": "$pos",
   "after": {
     "SAK_ID": $sakId,
     "SAKSKODE": "$saksKode",
