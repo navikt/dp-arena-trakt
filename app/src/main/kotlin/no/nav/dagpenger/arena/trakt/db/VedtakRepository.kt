@@ -12,7 +12,7 @@ import org.intellij.lang.annotations.Language
 
 internal class VedtakRepository private constructor(
     private val sakRepository: SakRepository,
-    private val observers: MutableList<VedtakObserver>,
+    private val observers: MutableList<VedtakObserver>
 ) : SakObserver {
     constructor(sakRepository: SakRepository) : this(sakRepository, mutableListOf())
 
@@ -73,7 +73,7 @@ internal class VedtakRepository private constructor(
                     vedtak.opprettet,
                     vedtak.oppdatert,
                     vedtak.saknummer,
-                    vedtak.løpenummer,
+                    vedtak.løpenummer
                 ).asUpdate
             )
         }.also {
@@ -134,7 +134,8 @@ internal class VedtakRepository private constructor(
             session.run(
                 queryOf(
                     //language=PostgreSQL
-                    "DELETE FROM vedtak WHERE sak_id = ?", sakId
+                    "DELETE FROM vedtak WHERE sak_id = ?",
+                    sakId
                 ).asExecute
             )
         }

@@ -52,7 +52,7 @@ internal abstract class ReplikeringsRiver(
                     replikeringMediator.onRecognizedMessage(opprettMelding(packet), context)
                 } catch (e: Exception) {
                     sikkerLogg.error("Klarte ikke å lese melding, innhold: ${packet.toJson()}", e)
-                    throw e
+                    if (packet["pos"].asText() != "00000000040155609387") throw e
                 }
             }
         }
