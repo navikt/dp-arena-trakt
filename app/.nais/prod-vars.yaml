@@ -2,5 +2,6 @@ app: dp-arena-trakt
 kafka:
   pool: nav-prod
   consumer_group_id: dp-arena-trakt-v1
-replicas_min: 1
-replicas_max: 1
+replicas:
+  min: 1
+  mar: 1

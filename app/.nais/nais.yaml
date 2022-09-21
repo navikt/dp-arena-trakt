@@ -19,9 +19,7 @@ spec:
     enabled: true
     path: /metrics
   replicas:
-    min: {{replicas_min}}
-    max: {{replicas_max}}
-    cpuThresholdPercentage: 70
+    disableAutoScaling: true
   strategy:
     type: Recreate
   resources:

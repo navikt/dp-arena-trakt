@@ -8,8 +8,8 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: dp-arena-trakt
-  minReplicas: 1
-  maxReplicas: 9
+  minReplicas: {{replicas.min}}
+  maxReplicas: {{replicas.max}}
   metrics:
     - type: External
       external:
