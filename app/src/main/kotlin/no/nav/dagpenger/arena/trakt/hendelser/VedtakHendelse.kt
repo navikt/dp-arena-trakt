@@ -2,6 +2,8 @@ package no.nav.dagpenger.arena.trakt.hendelser
 
 import com.fasterxml.jackson.databind.node.ObjectNode
 import no.nav.dagpenger.arena.trakt.Vedtak
+import no.nav.helse.rapids_rivers.JsonMessage
+import no.nav.helse.rapids_rivers.MessageProblems
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -66,5 +68,5 @@ internal class VedtakHendelse(private val vedtak: Vedtak) : Hendelse(UUID.random
         AVBRUTT("Avbrutt")
     }
 
-    override fun toJson() = root.toString()
+    override fun message(): JsonMessage = JsonMessage(root.toString(), MessageProblems(root.toString()))
 }

@@ -29,8 +29,8 @@ internal class HendelseRepository(private val rapidsConnection: RapidsConnection
         using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
             session.transaction {
                 it.lagre(hendelse)
-                rapidsConnection.publish(hendelse.toJson()).also {
-                    sikkerlogg.info { "Publiserte nytt dagpengevedtak: ${hendelse.toJson()}" }
+                rapidsConnection.publish(hendelse.message().toJson()).also {
+                    sikkerlogg.info { "Publiserte nytt dagpengevedtak: ${hendelse.message().toJson()}" }
                 }
             }
         }
