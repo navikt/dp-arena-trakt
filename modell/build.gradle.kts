@@ -8,7 +8,6 @@ repositories {
 
 dependencies {
     testImplementation(kotlin("test"))
-    testImplementation(Junit5.api)
 }
 
 tasks.test {

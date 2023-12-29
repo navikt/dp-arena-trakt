@@ -16,7 +16,7 @@ import java.time.format.DateTimeFormatter
 
 internal abstract class ReplikeringsRiver(
     rapidsConnection: RapidsConnection,
-    private val replikeringMediator: IReplikeringMediator
+    private val replikeringMediator: IReplikeringMediator,
 ) : River.PacketValidation {
     private val river = River(rapidsConnection)
     protected abstract val tabell: String
@@ -41,12 +41,15 @@ internal abstract class ReplikeringsRiver(
             river.register(this)
         }
 
-        override fun onPacket(packet: JsonMessage, context: MessageContext) {
+        override fun onPacket(
+            packet: JsonMessage,
+            context: MessageContext,
+        ) {
             val id = ReplikeringsId(tabell, packet["pos"].asText())
             withLoggingContext(
                 "river_name" to riverName,
                 "tabell" to tabell,
-                "replikering_id" to id.toString()
+                "replikering_id" to id.toString(),
             ) {
                 try {
                     replikeringMediator.onRecognizedMessage(opprettMelding(packet), context)
@@ -57,7 +60,10 @@ internal abstract class ReplikeringsRiver(
             }
         }
 
-        override fun onError(problems: MessageProblems, context: MessageContext) {
+        override fun onError(
+            problems: MessageProblems,
+            context: MessageContext,
+        ) {
             replikeringMediator.onRiverError(riverName, problems, context)
         }
     }
@@ -68,5 +74,5 @@ internal abstract class ReplikeringsRiver(
 }
 
 private var arenaDateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss[.SSSSSS]")
-fun JsonNode.asArenaDato(): LocalDateTime =
-    asText().let { LocalDateTime.parse(it, arenaDateFormatter) }
+
+fun JsonNode.asArenaDato(): LocalDateTime = asText().let { LocalDateTime.parse(it, arenaDateFormatter) }

@@ -17,7 +17,10 @@ internal class SakReplikertMelding(packet: JsonMessage) : ReplikeringsMelding(pa
     private val sak: Sak
         get() {
             return Sak(
-                sakId, erDagpenger, opprettet, oppdatert
+                sakId,
+                erDagpenger,
+                opprettet,
+                oppdatert,
             )
         }
 

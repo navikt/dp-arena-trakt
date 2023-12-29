@@ -15,6 +15,7 @@ import javax.sql.DataSource
 
 private val config = ConfigurationProperties.systemProperties() overriding EnvironmentVariables()
 
+@Suppress("ktlint:standard:class-naming")
 object PostgresDataSourceBuilder {
     object db : PropertyGroup() {
         val host by stringType
@@ -39,8 +40,11 @@ object PostgresDataSourceBuilder {
             maxLifetime = 30001
         }
     }
+
     private fun getOrThrow(key: String): String = OptionHelper.getEnv(key) ?: OptionHelper.getSystemProperty(key)
+
     private val flywayBuilder = Flyway.configure().connectRetries(5)
+
     fun clean(): CleanResult {
         return flywayBuilder.cleanDisabled(
             getOrThrow(ConfigUtils.CLEAN_DISABLED).toBooleanStrict(),

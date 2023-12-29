@@ -39,7 +39,7 @@ internal class VedtakHendelse(private val vedtak: Vedtak) : Hendelse(UUID.random
         PERM("Permittering"),
         LONN("Lønnsgarantimidler"),
         FISK("Permittering fiskeindustri"),
-        DEKS("Eksport")
+        DEKS("Eksport"),
     }
 
     private enum class Vedtakstype(val navn: String) {
@@ -65,7 +65,7 @@ internal class VedtakHendelse(private val vedtak: Vedtak) : Hendelse(UUID.random
     private enum class Utfall(val navn: String) {
         JA("Ja"),
         NEI("Nei"),
-        AVBRUTT("Avbrutt")
+        AVBRUTT("Avbrutt"),
     }
 
     override fun message(): JsonMessage = JsonMessage(root.toString(), MessageProblems(root.toString()))

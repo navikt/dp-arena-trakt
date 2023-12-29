@@ -46,6 +46,8 @@ internal class RadMottak(
 
 internal interface IRadMottak {
     fun behandle(message: ReplikeringsMelding)
+
     fun behandle(sak: Sak)
+
     fun behandle(vedtak: Vedtak)
 }

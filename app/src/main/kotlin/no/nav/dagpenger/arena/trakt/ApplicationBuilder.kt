@@ -10,9 +10,10 @@ import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.RapidsConnection.StatusListener
 
 internal class ApplicationBuilder(config: Map<String, String>) : StatusListener {
-    private val rapidsConnection = RapidApplication.Builder(
-        RapidApplication.RapidApplicationConfig.fromEnv(config)
-    ).build()
+    private val rapidsConnection =
+        RapidApplication.Builder(
+            RapidApplication.RapidApplicationConfig.fromEnv(config),
+        ).build()
 
     init {
         rapidsConnection.register(this)
@@ -28,7 +29,7 @@ internal class ApplicationBuilder(config: Map<String, String>) : StatusListener 
             ReplikeringMediator(
                 rapidsConnection,
                 RadMottak(sakRepository, vedtakRepository, hendelseRepository),
-                Replikeringslogg()
+                Replikeringslogg(),
             )
         }
     }

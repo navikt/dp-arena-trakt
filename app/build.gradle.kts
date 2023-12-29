@@ -1,20 +1,19 @@
 buildscript { repositories { mavenCentral() } }
 
 plugins {
-    id("dagpenger.common")
-    id("dagpenger.rapid-and-rivers")
+    application
+    id("common")
 }
 
 dependencies {
     implementation(project(":modell"))
-    implementation(Database.Kotlinquery)
-    implementation(Konfig.konfig)
-    implementation(Database.Flyway)
-    implementation(Database.HikariCP)
-    implementation(Database.Postgres)
-    testImplementation(TestContainers.postgresql)
-    testImplementation(Junit5.api)
-    testImplementation(Mockk.mockk)
+    implementation(libs.rapids.and.rivers)
+    implementation(libs.kotlin.logging)
+    implementation(libs.konfig)
+    implementation(libs.bundles.postgres)
+
+    testImplementation(libs.bundles.postgres.test)
+    testImplementation(libs.mockk)
 }
 
 application {

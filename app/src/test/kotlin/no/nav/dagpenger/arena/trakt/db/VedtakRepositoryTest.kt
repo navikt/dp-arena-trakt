@@ -76,19 +76,22 @@ internal class VedtakRepositoryTest {
         }
     }
 
-    private fun antallSaker() = using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
-        session.run(queryOf("SELECT COUNT(1) AS antall FROM sak").map { it.int("antall") }.asSingle)
-    }
-
-    private fun antallVedtak() = using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
-        session.run(queryOf("SELECT COUNT(1) AS antall FROM vedtak").map { it.int("antall") }.asSingle)
-    }
-
-    private val testObserver = object : VedtakObserver {
-        val nyeVedtak = mutableListOf<Vedtak>()
-
-        override fun nyttDagpengeVedtak(vedtak: Vedtak) {
-            nyeVedtak.add(vedtak)
+    private fun antallSaker() =
+        using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
+            session.run(queryOf("SELECT COUNT(1) AS antall FROM sak").map { it.int("antall") }.asSingle)
         }
-    }
+
+    private fun antallVedtak() =
+        using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
+            session.run(queryOf("SELECT COUNT(1) AS antall FROM vedtak").map { it.int("antall") }.asSingle)
+        }
+
+    private val testObserver =
+        object : VedtakObserver {
+            val nyeVedtak = mutableListOf<Vedtak>()
+
+            override fun nyttDagpengeVedtak(vedtak: Vedtak) {
+                nyeVedtak.add(vedtak)
+            }
+        }
 }

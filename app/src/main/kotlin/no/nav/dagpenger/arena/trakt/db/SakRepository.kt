@@ -7,18 +7,19 @@ import no.nav.dagpenger.arena.trakt.Sak
 import org.intellij.lang.annotations.Language
 
 internal class SakRepository private constructor(
-    private val observers: MutableList<SakObserver>
+    private val observers: MutableList<SakObserver>,
 ) {
     constructor() : this(mutableListOf<SakObserver>())
 
     companion object {
         @Language("PostgreSQL")
-        private val lagreQuery = """
+        private val lagreQuery =
+            """
             |INSERT INTO sak (sak_id,
             |                 er_dagpenger, opprettet, oppdatert)
             |VALUES (?, ?, ?, ?)
             |ON CONFLICT (sak_id) DO NOTHING
-        """.trimMargin()
+            """.trimMargin()
     }
 
     fun leggTilObserver(observer: SakObserver) = observers.add(observer)
@@ -31,21 +32,22 @@ internal class SakRepository private constructor(
                     sak.sakId,
                     sak.erDagpenger,
                     sak.opprettet,
-                    sak.oppdatert
-                ).asUpdate
+                    sak.oppdatert,
+                ).asUpdate,
             )
         }.also {
             observers.forEach { it.nySak(sak) }
         }
     }
 
-    fun erDagpenger(sakId: Int) = using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
-        session.run(
-            queryOf("SELECT er_dagpenger AS er_dagpenger FROM sak WHERE sak_id = ?", sakId).map {
-                it.boolean("er_dagpenger")
-            }.asSingle
-        )
-    }
+    fun erDagpenger(sakId: Int) =
+        using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
+            session.run(
+                queryOf("SELECT er_dagpenger AS er_dagpenger FROM sak WHERE sak_id = ?", sakId).map {
+                    it.boolean("er_dagpenger")
+                }.asSingle,
+            )
+        }
 
     interface SakObserver {
         fun nySak(sak: Sak) {}

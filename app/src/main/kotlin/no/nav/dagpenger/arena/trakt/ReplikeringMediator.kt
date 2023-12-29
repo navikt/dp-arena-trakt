@@ -35,7 +35,10 @@ internal class ReplikeringMediator(
         riverErrors.clear()
     }
 
-    override fun onRecognizedMessage(message: ReplikeringsMelding, context: MessageContext) {
+    override fun onRecognizedMessage(
+        message: ReplikeringsMelding,
+        context: MessageContext,
+    ) {
         try {
             messageRecognized = true
             message.logRecognized(sikkerlogg)
@@ -55,31 +58,49 @@ internal class ReplikeringMediator(
         }
     }
 
-    override fun onRiverError(riverName: String, problems: MessageProblems, context: MessageContext) {
+    override fun onRiverError(
+        riverName: String,
+        problems: MessageProblems,
+        context: MessageContext,
+    ) {
         riverErrors.add(riverName to problems)
     }
 
     fun afterRiverHandling(message: String) {
         if (messageRecognized || riverErrors.isEmpty()) return
-        sikkerlogg.warn("kunne ikke gjenkjenne melding:\n\t$message\n\nProblemer:\n${riverErrors.joinToString(separator = "\n") { "${it.first}:\n${it.second}" }}")
+        sikkerlogg.warn(
+            "kunne ikke gjenkjenne melding:\n\t$message\n\nProblemer:\n${riverErrors.joinToString(
+                separator = "\n",
+            ) { "${it.first}:\n${it.second}" }}",
+        )
     }
 
-    private fun severeErrorHandler(err: Exception, message: ReplikeringsMelding) {
+    private fun severeErrorHandler(
+        err: Exception,
+        message: ReplikeringsMelding,
+    ) {
         errorHandler(err, message)
         throw err
     }
 
-    private fun errorHandler(err: Exception, message: ReplikeringsMelding) {
+    private fun errorHandler(
+        err: Exception,
+        message: ReplikeringsMelding,
+    ) {
         errorHandler(err, message.toJson())
     }
 
-    private fun errorHandler(err: Exception, message: String, context: Map<String, String> = emptyMap()) {
+    private fun errorHandler(
+        err: Exception,
+        message: String,
+        context: Map<String, String> = emptyMap(),
+    ) {
         logg.error("alvorlig feil: ${err.message} (se sikkerlogg for melding)", err)
         withMDC(context) { sikkerlogg.error("alvorlig feil: ${err.message}\n\t$message", err) }
     }
 
     private inner class DelegatedRapid(
-        private val rapidsConnection: RapidsConnection
+        private val rapidsConnection: RapidsConnection,
     ) : RapidsConnection(), RapidsConnection.MessageListener {
         override fun rapidName() = "replikeringsMediator"
 
@@ -87,7 +108,10 @@ internal class ReplikeringMediator(
             rapidsConnection.register(this)
         }
 
-        override fun onMessage(message: String, context: MessageContext) {
+        override fun onMessage(
+            message: String,
+            context: MessageContext,
+        ) {
             beforeRiverHandling()
             notifyMessage(message, context)
             afterRiverHandling(message)
@@ -97,16 +121,28 @@ internal class ReplikeringMediator(
             rapidsConnection.publish(message)
         }
 
-        override fun publish(key: String, message: String) {
+        override fun publish(
+            key: String,
+            message: String,
+        ) {
             rapidsConnection.publish(key, message)
         }
 
         override fun start() = throw IllegalStateException()
+
         override fun stop() = throw IllegalStateException()
     }
 }
 
 internal interface IReplikeringMediator {
-    fun onRecognizedMessage(message: ReplikeringsMelding, context: MessageContext)
-    fun onRiverError(riverName: String, problems: MessageProblems, context: MessageContext)
+    fun onRecognizedMessage(
+        message: ReplikeringsMelding,
+        context: MessageContext,
+    )
+
+    fun onRiverError(
+        riverName: String,
+        problems: MessageProblems,
+        context: MessageContext,
+    )
 }

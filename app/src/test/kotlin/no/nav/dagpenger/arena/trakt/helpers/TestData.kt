@@ -5,7 +5,10 @@ import org.intellij.lang.annotations.Language
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-internal fun vedtak(vedtakId: Int = 1, sakId: Int = 1): Vedtak {
+internal fun vedtak(
+    vedtakId: Int = 1,
+    sakId: Int = 1,
+): Vedtak {
     val år = "2019"
     val løpenrSak = "580493"
     return Vedtak(
@@ -19,7 +22,7 @@ internal fun vedtak(vedtakId: Int = 1, sakId: Int = 1): Vedtak {
         opprettet = LocalDateTime.now(),
         oppdatert = LocalDateTime.now(),
         saknummer = år + løpenrSak,
-        løpenummer = 1
+        løpenummer = 1,
     )
 }
 
@@ -32,7 +35,7 @@ internal fun vedtakJSON(
     opType: String = "I",
     pos: String = "00000000000019642427",
     status: String = "IVERK",
-    modDato: LocalDateTime = LocalDateTime.parse("2019-09-27 04:04:26", arenaDateFormatter)
+    modDato: LocalDateTime = LocalDateTime.parse("2019-09-27 04:04:26", arenaDateFormatter),
 ) = """{
   "table": "SIAMO.VEDTAK",
   "op_type": "$opType",
@@ -91,10 +94,14 @@ internal fun vedtakJSON(
     }
   ]
 }
-""".trimMargin()
+    """.trimMargin()
 
 @Language("JSON")
-internal fun sakJSON(sakId: Int = 12345, saksKode: String = "AAP", pos: String = "00000000000003215801") = """{
+internal fun sakJSON(
+    sakId: Int = 12345,
+    saksKode: String = "AAP",
+    pos: String = "00000000000003215801",
+) = """{
   "table": "SIAMO.SAK",
   "op_type": "I",
   "op_ts": "2021-11-18 11:25:45.338291",
@@ -132,4 +139,4 @@ internal fun sakJSON(sakId: Int = 12345, saksKode: String = "AAP", pos: String =
     }
   ]
 }
-""".trimMargin()
+    """.trimMargin()

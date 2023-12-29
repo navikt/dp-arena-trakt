@@ -22,7 +22,7 @@ class IntegrationTest {
         ReplikeringMediator(
             testRapid,
             radMottak,
-            Replikeringslogg()
+            Replikeringslogg(),
         )
     }
 

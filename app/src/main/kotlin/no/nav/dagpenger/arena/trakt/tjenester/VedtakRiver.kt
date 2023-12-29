@@ -8,7 +8,7 @@ import no.nav.helse.rapids_rivers.RapidsConnection
 // Fanger opp vedtak og tolker de
 internal class VedtakRiver(
     rapidsConnection: RapidsConnection,
-    mediator: IReplikeringMediator
+    mediator: IReplikeringMediator,
 ) : ReplikeringsRiver(rapidsConnection, mediator) {
     override val tabell = "SIAMO.VEDTAK"
     override val riverName = "vedtak"

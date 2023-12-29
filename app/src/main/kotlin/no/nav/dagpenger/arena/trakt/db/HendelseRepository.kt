@@ -18,10 +18,10 @@ internal class HendelseRepository(private val rapidsConnection: RapidsConnection
         internal fun fraVedtak(vedtak: Vedtak) = VedtakHendelse(vedtak)
 
         @Language("PostgreSQL")
-        private const val lagreQuery = "INSERT INTO hendelse (melding_id) VALUES (?)"
+        private const val LAGRE_QUERY = "INSERT INTO hendelse (melding_id) VALUES (?)"
 
         @Language("PostgreSQL")
-        private const val vedtakLinkQuery =
+        private const val VEDTAK_LINK_QUERY =
             "INSERT INTO hendelse_vedtak (melding_id, vedtak_id, oppdatert)\nVALUES (?, ?, ?)"
     }
 
@@ -41,12 +41,14 @@ internal class HendelseRepository(private val rapidsConnection: RapidsConnection
         this.lagreLink(hendelse)
     }
 
-    private fun Session.lagreHendelse(hendelse: Hendelse) = this.run(queryOf(lagreQuery, hendelse.meldingId).asUpdate)
+    private fun Session.lagreHendelse(hendelse: Hendelse) = this.run(queryOf(LAGRE_QUERY, hendelse.meldingId).asUpdate)
 
-    private fun Session.lagreLink(hendelse: Hendelse) = when (hendelse) {
-        is VedtakHendelse -> this.run(
-            queryOf(vedtakLinkQuery, hendelse.meldingId, hendelse.vedtakId, hendelse.oppdatert).asExecute
-        )
-        else -> throw IllegalArgumentException("Ukjent hendelsetype")
-    }
+    private fun Session.lagreLink(hendelse: Hendelse) =
+        when (hendelse) {
+            is VedtakHendelse ->
+                this.run(
+                    queryOf(VEDTAK_LINK_QUERY, hendelse.meldingId, hendelse.vedtakId, hendelse.oppdatert).asExecute,
+                )
+            else -> throw IllegalArgumentException("Ukjent hendelsetype")
+        }
 }

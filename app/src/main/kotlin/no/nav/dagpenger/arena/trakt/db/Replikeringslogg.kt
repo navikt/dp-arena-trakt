@@ -10,23 +10,26 @@ import org.intellij.lang.annotations.Language
 internal class Replikeringslogg {
     companion object {
         @Language("PostgreSQL")
-        private val lagreQuery = """
+        private val lagreQuery =
+            """
             |INSERT INTO replikeringslogg(replikering_id, operasjon, replikert, først_sett, beskrivelse)
             |VALUES (?, ?, ?, NOW(), ?)
             |ON CONFLICT (replikering_id) DO NOTHING
-        """.trimMargin()
+            """.trimMargin()
 
         @Language("PostgreSQL")
-        private val markerSomBehandletQuery = """
+        private val markerSomBehandletQuery =
+            """
             |UPDATE replikeringslogg SET behandlet=NOW()
             |WHERE replikering_id=?
-        """.trimMargin()
+            """.trimMargin()
 
         @Language("PostgreSQL")
-        private val erBehandletQuery = """
+        private val erBehandletQuery =
+            """
             |SELECT behandlet FROM replikeringslogg
             |WHERE replikering_id=?
-        """.trimMargin()
+            """.trimMargin()
     }
 
     fun lagre(message: ReplikeringsMelding) {
@@ -37,8 +40,8 @@ internal class Replikeringslogg {
                     message.id.toString(),
                     message.operasjon,
                     message.operasjon_ts,
-                    message.meldingBeskrivelse()
-                ).asUpdate
+                    message.meldingBeskrivelse(),
+                ).asUpdate,
             )
         }
     }

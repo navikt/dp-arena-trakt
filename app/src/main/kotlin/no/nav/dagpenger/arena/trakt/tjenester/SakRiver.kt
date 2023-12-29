@@ -8,7 +8,7 @@ import no.nav.helse.rapids_rivers.RapidsConnection
 
 internal class SakRiver(
     rapidsConnection: RapidsConnection,
-    mediator: IReplikeringMediator
+    mediator: IReplikeringMediator,
 ) : ReplikeringsRiver(rapidsConnection, mediator) {
     override val tabell = "SIAMO.SAK"
     override val riverName = "sak"

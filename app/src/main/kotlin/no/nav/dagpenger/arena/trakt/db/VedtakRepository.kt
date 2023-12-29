@@ -12,7 +12,7 @@ import org.intellij.lang.annotations.Language
 
 internal class VedtakRepository private constructor(
     private val sakRepository: SakRepository,
-    private val observers: MutableList<VedtakObserver>
+    private val observers: MutableList<VedtakObserver>,
 ) : SakObserver {
     constructor(sakRepository: SakRepository) : this(sakRepository, mutableListOf())
 
@@ -23,7 +23,8 @@ internal class VedtakRepository private constructor(
 
     companion object {
         @Language("PostgreSQL")
-        private val lagreQuery = """
+        private val lagreQuery =
+            """
             |INSERT INTO vedtak (vedtak_id,
             |                    sak_id,
             |                    person_id,
@@ -37,13 +38,13 @@ internal class VedtakRepository private constructor(
             |                    lopenummer)
             |VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
             |ON CONFLICT (vedtak_id, oppdatert) DO NOTHING
-        """.trimMargin()
+            """.trimMargin()
 
         @Language("PostgreSQL")
-        private const val slettQuery = "DELETE FROM vedtak WHERE vedtak_id = ?"
+        private const val SLETT_QUERY = "DELETE FROM vedtak WHERE vedtak_id = ?"
 
         @Language("PostgreSQL")
-        private const val finnUsendteVedtakQuery = """
+        private const val FINN_USENDTE_VEDTAK_QUERY = """
             SELECT v.*
             FROM vedtak v
                 LEFT JOIN hendelse_vedtak hv ON v.vedtak_id = hv.vedtak_id
@@ -51,7 +52,7 @@ internal class VedtakRepository private constructor(
         """
 
         @Language("PostgreSQL")
-        private const val gjenbruktVedtakIdQuery = "SELECT COUNT(1) FROM vedtak WHERE vedtak_id=? AND sak_id != ?"
+        private const val GJENBRUKT_VEDTAK_ID_QUERY = "SELECT COUNT(1) FROM vedtak WHERE vedtak_id=? AND sak_id != ?"
     }
 
     fun leggTilObserver(observer: VedtakObserver) = observers.add(observer)
@@ -73,8 +74,8 @@ internal class VedtakRepository private constructor(
                     vedtak.opprettet,
                     vedtak.oppdatert,
                     vedtak.saknummer,
-                    vedtak.løpenummer
-                ).asUpdate
+                    vedtak.løpenummer,
+                ).asUpdate,
             )
         }.also {
             when (sakRepository.erDagpenger(vedtak.sakId)) {
@@ -87,20 +88,20 @@ internal class VedtakRepository private constructor(
         }
     }
 
-    private fun Session.gjenbruktVedtakId(vedtak: Vedtak) = run(
-        queryOf(
-            gjenbruktVedtakIdQuery,
-            vedtak.vedtakId,
-            vedtak.sakId
-        ).map { it.int(1) >= 1 }.asSingle
-    ) ?: false
+    private fun Session.gjenbruktVedtakId(vedtak: Vedtak) =
+        run(
+            queryOf(
+                GJENBRUKT_VEDTAK_ID_QUERY,
+                vedtak.vedtakId,
+                vedtak.sakId,
+            ).map { it.int(1) >= 1 }.asSingle,
+        ) ?: false
 
-    private fun emitNyttDagpengeVedtak(vedtak: Vedtak) =
-        observers.forEach { it.nyttDagpengeVedtak(vedtak) }
+    private fun emitNyttDagpengeVedtak(vedtak: Vedtak) = observers.forEach { it.nyttDagpengeVedtak(vedtak) }
 
     fun finnUsendteVedtakMedSak(sakId: Int) =
         using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
-            session.run(queryOf(finnUsendteVedtakQuery, sakId).map { it.vedtak() }.asList)
+            session.run(queryOf(FINN_USENDTE_VEDTAK_QUERY, sakId).map { it.vedtak() }.asList)
         }
 
     internal interface VedtakObserver {
@@ -109,9 +110,10 @@ internal class VedtakRepository private constructor(
 
     private fun slett(vedtak: Vedtak) = slett(vedtak.vedtakId)
 
-    private fun slett(vedtakId: Int) = using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
-        session.run(queryOf(slettQuery, vedtakId).asExecute)
-    }
+    private fun slett(vedtakId: Int) =
+        using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
+            session.run(queryOf(SLETT_QUERY, vedtakId).asExecute)
+        }
 
     // Finner dagpengevedtak som ankom før vi hadde sak
     private inner class FinnUsendteVedtak : SakObserver {
@@ -135,23 +137,24 @@ internal class VedtakRepository private constructor(
                 queryOf(
                     //language=PostgreSQL
                     "DELETE FROM vedtak WHERE sak_id = ?",
-                    sakId
-                ).asExecute
+                    sakId,
+                ).asExecute,
             )
         }
     }
 
-    private fun Row.vedtak() = Vedtak(
-        sakId = int("sak_id"),
-        vedtakId = int("vedtak_id"),
-        personId = int("person_id"),
-        vedtaktypekode = string("vedtaktypekode"),
-        utfallkode = string("utfallkode"),
-        rettighetkode = string("rettighetkode"),
-        vedtakstatuskode = string("vedtakstatuskode"),
-        opprettet = localDateTime("opprettet"),
-        oppdatert = localDateTime("oppdatert"),
-        saknummer = string("saknummer"),
-        løpenummer = int("lopenummer")
-    )
+    private fun Row.vedtak() =
+        Vedtak(
+            sakId = int("sak_id"),
+            vedtakId = int("vedtak_id"),
+            personId = int("person_id"),
+            vedtaktypekode = string("vedtaktypekode"),
+            utfallkode = string("utfallkode"),
+            rettighetkode = string("rettighetkode"),
+            vedtakstatuskode = string("vedtakstatuskode"),
+            opprettet = localDateTime("opprettet"),
+            oppdatert = localDateTime("oppdatert"),
+            saknummer = string("saknummer"),
+            løpenummer = int("lopenummer"),
+        )
 }

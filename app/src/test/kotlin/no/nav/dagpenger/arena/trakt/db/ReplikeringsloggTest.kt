@@ -31,13 +31,14 @@ private class TestReplikertMelding(packet: JsonMessage) : ReplikeringsMelding(pa
                 "table" to "SIAMO.SAK",
                 "pos" to "0001",
                 "op_type" to "I",
-                "op_ts" to "2021-11-18 11:37:16.455389"
-            )
+                "op_ts" to "2021-11-18 11:37:16.455389",
+            ),
         ).apply {
             requireKey("table", "pos", "op_type", "op_ts")
-        }
+        },
     )
 
     override fun behandle(mediator: IRadMottak) = TODO("Not yet implemented")
+
     override fun meldingBeskrivelse() = "En fin beskrivelse"
 }

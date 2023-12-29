@@ -21,19 +21,20 @@ internal class VedtakReplikertMelding(packet: JsonMessage) : ReplikeringsMelding
     private val år = packet["after.AAR"].asText()
     private val saksnummer = år + løpenummerSak
     private val vedtak
-        get() = Vedtak(
-            sakId,
-            vedtakId,
-            personId,
-            vedtaktypekode,
-            utfallkode,
-            rettighetkode,
-            vedtakstatuskode,
-            opprettet,
-            oppdatert,
-            saksnummer,
-            løpenummer
-        )
+        get() =
+            Vedtak(
+                sakId,
+                vedtakId,
+                personId,
+                vedtaktypekode,
+                utfallkode,
+                rettighetkode,
+                vedtakstatuskode,
+                opprettet,
+                oppdatert,
+                saksnummer,
+                løpenummer,
+            )
 
     override fun behandle(mediator: IRadMottak) {
         mediator.behandle(vedtak)

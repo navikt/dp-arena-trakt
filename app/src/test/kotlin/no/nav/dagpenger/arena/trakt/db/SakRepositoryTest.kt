@@ -16,8 +16,8 @@ internal class SakRepositoryTest {
                     sakId = 1,
                     erDagpenger = true,
                     opprettet = LocalDateTime.now(),
-                    oppdatert = LocalDateTime.now()
-                )
+                    oppdatert = LocalDateTime.now(),
+                ),
             )
         }
     }
