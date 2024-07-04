@@ -25,7 +25,7 @@ jobs:
           DEPENDENCY_GRAPH_INCLUDE_CONFIGURATIONS: compileClasspath|runtimeClasspath
         with:
           dependency-graph: generate-and-submit
-      - run: ./gradlew --configuration-cache build
+      - run: ./gradlew --configuration-cache build installDist
 
       - name: Build and push
         uses: docker/build-push-action@v6
