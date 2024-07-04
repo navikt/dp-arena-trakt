@@ -28,7 +28,7 @@ jobs:
       - run: ./gradlew --configuration-cache build installDist
 
       - name: Build and push
-        uses: docker/build-push-action@v6
+        uses: nais/docker-build-push@v0
         id: docker-build-push
         with:
           team: teamdagpenger
