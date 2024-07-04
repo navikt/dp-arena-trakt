@@ -8,7 +8,7 @@ on:
 permissions:
   contents: read
   id-token: write
-  
+
 jobs:
   build:
     name: Build and publish Docker image
@@ -34,8 +34,6 @@ jobs:
         with:
           team: teamdagpenger
           tag: ${{ github.sha }}
-          dockerfile: app/Dockerfile # optional, default Dockerfile
-          docker_context: app # optional, default .
           identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
           project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
     outputs:
