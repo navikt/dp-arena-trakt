@@ -5,8 +5,9 @@ on:
     branches-ignore:
       - 'dependabot/**'
 
-env:
-  IMAGE: ghcr.io/${{ github.repository }}/dp-arena-trakt:${{ github.sha }}
+permissions:
+  contents: read
+  id-token: write
 
 jobs:
   build:
