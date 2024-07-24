@@ -7,7 +7,9 @@ import no.nav.helse.rapids_rivers.MessageProblems
 import java.time.LocalDateTime
 import java.util.UUID
 
-internal class VedtakHendelse(private val vedtak: Vedtak) : Hendelse(UUID.randomUUID()) {
+internal class VedtakHendelse(
+    private val vedtak: Vedtak,
+) : Hendelse(UUID.randomUUID()) {
     internal val vedtakId = vedtak.vedtakId
     internal val oppdatert = vedtak.oppdatert
     private val root: ObjectNode = objectMapper.createObjectNode()
@@ -34,7 +36,9 @@ internal class VedtakHendelse(private val vedtak: Vedtak) : Hendelse(UUID.random
         root.put("løpenummer", vedtak.løpenummer)
     }
 
-    private enum class Rettighetstype(val navn: String) {
+    private enum class Rettighetstype(
+        val navn: String,
+    ) {
         DAGO("Ordinær"),
         PERM("Permittering"),
         LONN("Lønnsgarantimidler"),
@@ -42,7 +46,9 @@ internal class VedtakHendelse(private val vedtak: Vedtak) : Hendelse(UUID.random
         DEKS("Eksport"),
     }
 
-    private enum class Vedtakstype(val navn: String) {
+    private enum class Vedtakstype(
+        val navn: String,
+    ) {
         E("Endring"),
         F("Forlenget ventetid"),
         G("Gjenopptak"),
@@ -52,7 +58,9 @@ internal class VedtakHendelse(private val vedtak: Vedtak) : Hendelse(UUID.random
         T("Tidsbegrenset bortfall"),
     }
 
-    private enum class Status(val navn: String) {
+    private enum class Status(
+        val navn: String,
+    ) {
         AVSLU("Avsluttet"),
         GODKJ("Godkjent"),
         INNST("Innstilt"),
@@ -62,7 +70,9 @@ internal class VedtakHendelse(private val vedtak: Vedtak) : Hendelse(UUID.random
         REGIS("Registrert"),
     }
 
-    private enum class Utfall(val navn: String) {
+    private enum class Utfall(
+        val navn: String,
+    ) {
         JA("Ja"),
         NEI("Nei"),
         AVBRUTT("Avbrutt"),

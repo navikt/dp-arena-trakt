@@ -6,7 +6,9 @@ import no.nav.dagpenger.arena.trakt.tjenester.asArenaDato
 import no.nav.helse.rapids_rivers.JsonMessage
 
 // Tolker innholdet i en replikert rad fra vedtakstabellen
-internal class VedtakReplikertMelding(packet: JsonMessage) : ReplikeringsMelding(packet) {
+internal class VedtakReplikertMelding(
+    packet: JsonMessage,
+) : ReplikeringsMelding(packet) {
     private val vedtakId = packet["after.VEDTAK_ID"].asInt()
     private val sakId = packet["after.SAK_ID"].asInt()
     private val utfallkode = packet["after.UTFALLKODE"].asText()

@@ -15,7 +15,8 @@ internal class RadMottak(
     private val sakRepository: SakRepository,
     private val vedtakRepository: VedtakRepository,
     private val hendelseRepository: HendelseRepository,
-) : IRadMottak, VedtakObserver {
+) : IRadMottak,
+    VedtakObserver {
     init {
         vedtakRepository.leggTilObserver(this)
     }

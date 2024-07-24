@@ -57,8 +57,8 @@ internal class VedtakRepository private constructor(
 
     fun leggTilObserver(observer: VedtakObserver) = observers.add(observer)
 
-    fun lagre(vedtak: Vedtak): Int {
-        return using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
+    fun lagre(vedtak: Vedtak): Int =
+        using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
             if (session.gjenbruktVedtakId(vedtak)) throw IllegalArgumentException("Samme vedtakId er brukt i flere saker")
 
             session.run(
@@ -86,7 +86,6 @@ internal class VedtakRepository private constructor(
                 }
             }
         }
-    }
 
     private fun Session.gjenbruktVedtakId(vedtak: Vedtak) =
         run(

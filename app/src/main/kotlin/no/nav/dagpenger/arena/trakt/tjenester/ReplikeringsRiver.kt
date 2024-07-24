@@ -34,7 +34,9 @@ internal abstract class ReplikeringsRiver(
 
     protected abstract fun opprettMelding(packet: JsonMessage): ReplikeringsMelding
 
-    private inner class RiverImpl(river: River) : River.PacketListener {
+    private inner class RiverImpl(
+        river: River,
+    ) : River.PacketListener {
         init {
             river.validate(::validateReplikering)
             river.validate(this@ReplikeringsRiver)

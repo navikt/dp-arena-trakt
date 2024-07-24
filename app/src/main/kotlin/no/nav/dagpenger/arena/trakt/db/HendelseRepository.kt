@@ -13,7 +13,9 @@ import org.intellij.lang.annotations.Language
 
 private val sikkerlogg = KotlinLogging.logger("tjenestekall.HendelseRepository")
 
-internal class HendelseRepository(private val rapidsConnection: RapidsConnection) {
+internal class HendelseRepository(
+    private val rapidsConnection: RapidsConnection,
+) {
     companion object {
         internal fun fraVedtak(vedtak: Vedtak) = VedtakHendelse(vedtak)
 

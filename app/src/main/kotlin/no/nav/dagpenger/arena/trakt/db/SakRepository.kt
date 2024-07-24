@@ -24,8 +24,8 @@ internal class SakRepository private constructor(
 
     fun leggTilObserver(observer: SakObserver) = observers.add(observer)
 
-    fun lagre(sak: Sak): Int {
-        return using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
+    fun lagre(sak: Sak): Int =
+        using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
             session.run(
                 queryOf(
                     lagreQuery,
@@ -38,14 +38,14 @@ internal class SakRepository private constructor(
         }.also {
             observers.forEach { it.nySak(sak) }
         }
-    }
 
     fun erDagpenger(sakId: Int) =
         using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
             session.run(
-                queryOf("SELECT er_dagpenger AS er_dagpenger FROM sak WHERE sak_id = ?", sakId).map {
-                    it.boolean("er_dagpenger")
-                }.asSingle,
+                queryOf("SELECT er_dagpenger AS er_dagpenger FROM sak WHERE sak_id = ?", sakId)
+                    .map {
+                        it.boolean("er_dagpenger")
+                    }.asSingle,
             )
         }
 

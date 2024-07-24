@@ -45,14 +45,17 @@ object PostgresDataSourceBuilder {
 
     private val flywayBuilder = Flyway.configure().connectRetries(5)
 
-    fun clean(): CleanResult {
-        return flywayBuilder.cleanDisabled(
-            getOrThrow(ConfigUtils.CLEAN_DISABLED).toBooleanStrict(),
-        ).dataSource(dataSource).load().clean()
-    }
+    fun clean(): CleanResult =
+        flywayBuilder
+            .cleanDisabled(
+                getOrThrow(ConfigUtils.CLEAN_DISABLED).toBooleanStrict(),
+            ).dataSource(dataSource)
+            .load()
+            .clean()
 
     fun runMigration(initSql: String? = null) =
-        Flyway.configure()
+        Flyway
+            .configure()
             .dataSource(dataSource)
             .initSql(initSql)
             .load()

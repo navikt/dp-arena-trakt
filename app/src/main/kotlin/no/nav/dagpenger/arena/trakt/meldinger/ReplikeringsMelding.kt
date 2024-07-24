@@ -6,7 +6,9 @@ import no.nav.helse.rapids_rivers.JsonMessage
 import org.slf4j.Logger
 
 @Suppress("ktlint:standard:property-naming")
-internal abstract class ReplikeringsMelding(private val packet: JsonMessage) {
+internal abstract class ReplikeringsMelding(
+    private val packet: JsonMessage,
+) {
     private val tabell = packet["table"].asText()
     private val posisjon = packet["pos"].asText()
     internal val id = ReplikeringsId(tabell, posisjon)
@@ -25,9 +27,10 @@ internal abstract class ReplikeringsMelding(private val packet: JsonMessage) {
 
     internal fun toJson() = packet.toJson()
 
-    internal class ReplikeringsId(private val tabell: String, private val posisjon: String) {
-        override fun toString(): String {
-            return "$tabell.$posisjon"
-        }
+    internal class ReplikeringsId(
+        private val tabell: String,
+        private val posisjon: String,
+    ) {
+        override fun toString(): String = "$tabell.$posisjon"
     }
 }

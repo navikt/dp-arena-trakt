@@ -101,7 +101,8 @@ internal class ReplikeringMediator(
 
     private inner class DelegatedRapid(
         private val rapidsConnection: RapidsConnection,
-    ) : RapidsConnection(), RapidsConnection.MessageListener {
+    ) : RapidsConnection(),
+        RapidsConnection.MessageListener {
         override fun rapidName() = "replikeringsMediator"
 
         init {

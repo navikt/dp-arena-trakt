@@ -9,11 +9,14 @@ import no.nav.helse.rapids_rivers.RapidApplication
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.RapidsConnection.StatusListener
 
-internal class ApplicationBuilder(config: Map<String, String>) : StatusListener {
+internal class ApplicationBuilder(
+    config: Map<String, String>,
+) : StatusListener {
     private val rapidsConnection =
-        RapidApplication.Builder(
-            RapidApplication.RapidApplicationConfig.fromEnv(config),
-        ).build()
+        RapidApplication
+            .Builder(
+                RapidApplication.RapidApplicationConfig.fromEnv(config),
+            ).build()
 
     init {
         rapidsConnection.register(this)
