@@ -1,9 +1,9 @@
 package no.nav.dagpenger.arena.trakt.meldinger
 
+import com.github.navikt.tbd_libs.rapids_and_rivers.JsonMessage
 import no.nav.dagpenger.arena.trakt.IRadMottak
 import no.nav.dagpenger.arena.trakt.Vedtak
 import no.nav.dagpenger.arena.trakt.tjenester.asArenaDato
-import no.nav.helse.rapids_rivers.JsonMessage
 
 // Tolker innholdet i en replikert rad fra vedtakstabellen
 internal class VedtakReplikertMelding(

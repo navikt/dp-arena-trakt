@@ -14,6 +14,7 @@ dependencies {
 
     testImplementation(libs.bundles.postgres.test)
     testImplementation(libs.mockk)
+    testImplementation(libs.rapids.and.rivers.test)
 }
 
 application {

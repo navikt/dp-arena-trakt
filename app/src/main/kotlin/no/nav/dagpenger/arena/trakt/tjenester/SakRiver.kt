@@ -1,10 +1,10 @@
 package no.nav.dagpenger.arena.trakt.tjenester
 
 import com.fasterxml.jackson.databind.JsonNode
+import com.github.navikt.tbd_libs.rapids_and_rivers.JsonMessage
+import com.github.navikt.tbd_libs.rapids_and_rivers_api.RapidsConnection
 import no.nav.dagpenger.arena.trakt.IReplikeringMediator
 import no.nav.dagpenger.arena.trakt.meldinger.SakReplikertMelding
-import no.nav.helse.rapids_rivers.JsonMessage
-import no.nav.helse.rapids_rivers.RapidsConnection
 
 internal class SakRiver(
     rapidsConnection: RapidsConnection,

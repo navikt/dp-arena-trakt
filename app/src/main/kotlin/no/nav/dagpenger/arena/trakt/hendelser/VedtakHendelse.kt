@@ -1,9 +1,11 @@
 package no.nav.dagpenger.arena.trakt.hendelser
 
 import com.fasterxml.jackson.databind.node.ObjectNode
+import com.github.navikt.tbd_libs.rapids_and_rivers.JsonMessage
+import com.github.navikt.tbd_libs.rapids_and_rivers_api.MessageProblems
+import io.micrometer.prometheusmetrics.PrometheusConfig
+import io.micrometer.prometheusmetrics.PrometheusMeterRegistry
 import no.nav.dagpenger.arena.trakt.Vedtak
-import no.nav.helse.rapids_rivers.JsonMessage
-import no.nav.helse.rapids_rivers.MessageProblems
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -78,5 +80,10 @@ internal class VedtakHendelse(
         AVBRUTT("Avbrutt"),
     }
 
-    override fun message(): JsonMessage = JsonMessage(root.toString(), MessageProblems(root.toString()))
+    override fun message(): JsonMessage =
+        JsonMessage(
+            root.toString(),
+            MessageProblems(root.toString()),
+            metrics = PrometheusMeterRegistry(PrometheusConfig.DEFAULT),
+        )
 }

@@ -1,14 +1,15 @@
 package no.nav.dagpenger.arena.trakt
 
+import com.github.navikt.tbd_libs.rapids_and_rivers.withMDC
+import com.github.navikt.tbd_libs.rapids_and_rivers_api.MessageContext
+import com.github.navikt.tbd_libs.rapids_and_rivers_api.MessageProblems
+import com.github.navikt.tbd_libs.rapids_and_rivers_api.RapidsConnection
+import io.micrometer.core.instrument.MeterRegistry
 import mu.KotlinLogging
 import no.nav.dagpenger.arena.trakt.db.Replikeringslogg
 import no.nav.dagpenger.arena.trakt.meldinger.ReplikeringsMelding
 import no.nav.dagpenger.arena.trakt.tjenester.SakRiver
 import no.nav.dagpenger.arena.trakt.tjenester.VedtakRiver
-import no.nav.helse.rapids_rivers.MessageContext
-import no.nav.helse.rapids_rivers.MessageProblems
-import no.nav.helse.rapids_rivers.RapidsConnection
-import no.nav.helse.rapids_rivers.withMDC
 import java.sql.SQLException
 
 private val logg = KotlinLogging.logger {}
@@ -69,9 +70,11 @@ internal class ReplikeringMediator(
     fun afterRiverHandling(message: String) {
         if (messageRecognized || riverErrors.isEmpty()) return
         sikkerlogg.warn(
-            "kunne ikke gjenkjenne melding:\n\t$message\n\nProblemer:\n${riverErrors.joinToString(
-                separator = "\n",
-            ) { "${it.first}:\n${it.second}" }}",
+            "kunne ikke gjenkjenne melding:\n\t$message\n\nProblemer:\n${
+                riverErrors.joinToString(
+                    separator = "\n",
+                ) { "${it.first}:\n${it.second}" }
+            }",
         )
     }
 
@@ -112,9 +115,10 @@ internal class ReplikeringMediator(
         override fun onMessage(
             message: String,
             context: MessageContext,
+            metrics: MeterRegistry,
         ) {
             beforeRiverHandling()
-            notifyMessage(message, context)
+            notifyMessage(message, context, metrics)
             afterRiverHandling(message)
         }
 

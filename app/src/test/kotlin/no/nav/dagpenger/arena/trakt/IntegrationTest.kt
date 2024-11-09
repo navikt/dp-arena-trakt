@@ -1,5 +1,6 @@
 package no.nav.dagpenger.arena.trakt
 
+import com.github.navikt.tbd_libs.rapids_and_rivers.test_support.TestRapid
 import no.nav.dagpenger.arena.trakt.db.HendelseRepository
 import no.nav.dagpenger.arena.trakt.db.Replikeringslogg
 import no.nav.dagpenger.arena.trakt.db.SakRepository
@@ -7,7 +8,6 @@ import no.nav.dagpenger.arena.trakt.db.VedtakRepository
 import no.nav.dagpenger.arena.trakt.helpers.Postgres.withMigratedDb
 import no.nav.dagpenger.arena.trakt.helpers.sakJSON
 import no.nav.dagpenger.arena.trakt.helpers.vedtakJSON
-import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 import kotlin.test.assertEquals

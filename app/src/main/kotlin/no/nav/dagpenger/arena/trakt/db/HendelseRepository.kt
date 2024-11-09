@@ -1,5 +1,6 @@
 package no.nav.dagpenger.arena.trakt.db
 
+import com.github.navikt.tbd_libs.rapids_and_rivers_api.RapidsConnection
 import kotliquery.Session
 import kotliquery.queryOf
 import kotliquery.sessionOf
@@ -8,7 +9,6 @@ import mu.KotlinLogging
 import no.nav.dagpenger.arena.trakt.Vedtak
 import no.nav.dagpenger.arena.trakt.hendelser.Hendelse
 import no.nav.dagpenger.arena.trakt.hendelser.VedtakHendelse
-import no.nav.helse.rapids_rivers.RapidsConnection
 import org.intellij.lang.annotations.Language
 
 private val sikkerlogg = KotlinLogging.logger("tjenestekall.HendelseRepository")

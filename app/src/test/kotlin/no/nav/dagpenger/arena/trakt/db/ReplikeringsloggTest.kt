@@ -1,9 +1,9 @@
 package no.nav.dagpenger.arena.trakt.db
 
+import com.github.navikt.tbd_libs.rapids_and_rivers.JsonMessage
 import no.nav.dagpenger.arena.trakt.IRadMottak
 import no.nav.dagpenger.arena.trakt.helpers.Postgres.withMigratedDb
 import no.nav.dagpenger.arena.trakt.meldinger.ReplikeringsMelding
-import no.nav.helse.rapids_rivers.JsonMessage
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
