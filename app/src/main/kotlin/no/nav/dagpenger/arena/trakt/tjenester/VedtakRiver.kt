@@ -28,10 +28,10 @@ internal class VedtakRiver(
             "after.LOPENRSAK",
             "after.AAR",
         )
-        message.rejectValue("after.RETTIGHETKODE", "AA115")
-        message.rejectValue("after.RETTIGHETKODE", "AAP")
-        message.rejectValue("after.RETTIGHETKODE", "BEHOV")
-        message.rejectValue("after.RETTIGHETKODE", "TILTAK")
+        message.forbidValue("after.RETTIGHETKODE", "AA115")
+        message.forbidValue("after.RETTIGHETKODE", "AAP")
+        message.forbidValue("after.RETTIGHETKODE", "BEHOV")
+        message.forbidValue("after.RETTIGHETKODE", "TILTAK")
     }
 
     override fun opprettMelding(packet: JsonMessage) = VedtakReplikertMelding(packet)
