@@ -4,8 +4,10 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.github.navikt.tbd_libs.rapids_and_rivers.JsonMessage
 import com.github.navikt.tbd_libs.rapids_and_rivers.River
 import com.github.navikt.tbd_libs.rapids_and_rivers_api.MessageContext
+import com.github.navikt.tbd_libs.rapids_and_rivers_api.MessageMetadata
 import com.github.navikt.tbd_libs.rapids_and_rivers_api.MessageProblems
 import com.github.navikt.tbd_libs.rapids_and_rivers_api.RapidsConnection
+import io.micrometer.core.instrument.MeterRegistry
 import mu.KotlinLogging
 import mu.withLoggingContext
 import no.nav.dagpenger.arena.trakt.IReplikeringMediator
@@ -27,7 +29,7 @@ internal abstract class ReplikeringsRiver(
     }
 
     private fun validateReplikering(packet: JsonMessage) {
-        packet.demandValue("table", tabell)
+        packet.requireValue("table", tabell)
         packet.requireKey("op_type", "pos")
         packet.require("op_ts", JsonNode::asArenaDato)
     }
@@ -46,6 +48,8 @@ internal abstract class ReplikeringsRiver(
         override fun onPacket(
             packet: JsonMessage,
             context: MessageContext,
+            metadata: MessageMetadata,
+            meterRegistry: MeterRegistry,
         ) {
             val id = ReplikeringsId(tabell, packet["pos"].asText())
             withLoggingContext(
@@ -65,6 +69,7 @@ internal abstract class ReplikeringsRiver(
         override fun onError(
             problems: MessageProblems,
             context: MessageContext,
+            metadata: MessageMetadata,
         ) {
             replikeringMediator.onRiverError(riverName, problems, context)
         }

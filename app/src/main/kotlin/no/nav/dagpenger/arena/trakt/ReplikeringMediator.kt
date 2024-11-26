@@ -2,6 +2,7 @@ package no.nav.dagpenger.arena.trakt
 
 import com.github.navikt.tbd_libs.rapids_and_rivers.withMDC
 import com.github.navikt.tbd_libs.rapids_and_rivers_api.MessageContext
+import com.github.navikt.tbd_libs.rapids_and_rivers_api.MessageMetadata
 import com.github.navikt.tbd_libs.rapids_and_rivers_api.MessageProblems
 import com.github.navikt.tbd_libs.rapids_and_rivers_api.RapidsConnection
 import io.micrometer.core.instrument.MeterRegistry
@@ -115,10 +116,11 @@ internal class ReplikeringMediator(
         override fun onMessage(
             message: String,
             context: MessageContext,
+            metadata: MessageMetadata,
             metrics: MeterRegistry,
         ) {
             beforeRiverHandling()
-            notifyMessage(message, context, metrics)
+            notifyMessage(message, context, metadata, metrics)
             afterRiverHandling(message)
         }
 
