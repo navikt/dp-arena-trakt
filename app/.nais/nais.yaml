@@ -48,4 +48,4 @@ spec:
         databases:
           - name: arena-data
             envVarPrefix: DB
-        cascadingDelete: false
+        cascadingDelete: true
